@@ -6,8 +6,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     className?: string;
 }
 
-export const activeEffectStyles =
-    "shadow-[0.25rem_0.25rem_#000] -translate-x-1 -translate-y-1 opacity-100";
+export const activeEffectStyles = "shadow-[0.25rem_0.25rem_#000] -translate-x-1 -translate-y-1 opacity-100";
 export const hoverEffectStyles =
     "enabled:hover:text-black enabled:hover:shadow-[0.25rem_0.25rem_#000] enabled:hover:-translate-x-1 enabled:hover:-translate-y-1";
 
@@ -49,7 +48,7 @@ export function Button({ children, size, className, ...props }: ButtonProps) {
             className={`font-manrope ${sizeStyles} ${
                 className ? className : "bg-black text-white enabled:hover:bg-yellow-500"
             }   
-                flex gap-2 items-center justify-center rounded-lg  border border-black transition-all ${hoverEffectStyles} disabled:text-black disabled:border-gray-200 disabled:bg-gray-200 disabled:bg-opacity-100 disabled:cursor-not-allowed
+                flex items-center justify-center gap-2 rounded-lg  border border-black transition-all duration-300 ${hoverEffectStyles} disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-200 disabled:bg-opacity-100 disabled:text-black
             `}
             {...props}
         >

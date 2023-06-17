@@ -1,8 +1,12 @@
-import { Fragment, ReactNode, useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { Fragment, ReactNode, useContext, useEffect, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import Router, { useRouter } from "next/router";
+import axios from "axios";
+import { Menu, Transition } from "@headlessui/react";
 import {
+    CaretDown,
     ClosedCaptioning,
-    Coins,
     FolderUser,
     Gear,
     Image as ImageIcon,
@@ -14,25 +18,18 @@ import {
     X,
 } from "phosphor-react";
 
-import { signOut } from "@/contexts/AuthContext";
+import { AuthContext, signOut } from "@/contexts/AuthContext";
 
-import { Separator } from "../Separator";
-import Link from "next/link";
-import { ButtonLink } from "../ButtonLink";
-import { Menu, Transition } from "@headlessui/react";
-import { InputText, InputTextSearch } from "../InputText";
-import { Button } from "../Button";
 import { useDebounce } from "@/hooks/useDebounce";
-import axios from "axios";
-import Image from "next/image";
 import useDidMountEffect from "@/hooks/useDidMountEffect";
+import { Separator } from "../Separator";
 
-const activeRouteStyles = "bg-yellow-500 border border-t-black border-b-black border-l-black border-r-yellow-500";
-const notActiveRouteStyles = "border border-transparent hover:bg-yellow-600 hover:bg-opacity-20";
+const activeRouteStyles = "bg-black text-white border border-black";
+const notActiveRouteStyles = "border border-transparent hover:bg-black hover:bg-opacity-10";
 
 interface routeProps {
     name: string;
-    icon: ReactNode;
+    icon?: ReactNode;
     path: string;
     executeOnClick?: () => void;
 }
@@ -69,7 +66,73 @@ const settingsRoutes: routeProps[] = [
     },
 ];
 
-interface BookData {
+const profileRoutes: routeProps[] = [
+    {
+        name: "Perfil",
+        path: "/app/transcribe",
+    },
+    {
+        name: "Livros",
+        path: "/app/home",
+    },
+    {
+        name: "Linha do tempo",
+        path: "/app/home",
+    },
+    {
+        name: "Minhas listas",
+        path: "/app/home",
+    },
+    {
+        name: "Separator",
+        path: "",
+    },
+    {
+        name: "Configurações",
+        path: "/app/home",
+    },
+    {
+        name: "Sair",
+        path: "/app/home",
+    },
+];
+
+const navRoutes: routeProps[] = [
+    {
+        name: "Início",
+        path: "/app/home",
+    },
+    {
+        name: "Livros",
+        path: "/app/home",
+    },
+    {
+        name: "Autores",
+        path: "/app/home",
+    },
+    {
+        name: "Editoras",
+        path: "/app/home",
+    },
+    {
+        name: "Trocas",
+        path: "/app/home",
+    },
+    {
+        name: "Blog",
+        path: "/app/home",
+    },
+    {
+        name: "Convidar amigos",
+        path: "/app/home",
+    },
+    {
+        name: "Seja membro",
+        path: "/app/home",
+    },
+];
+
+export interface BookData {
     kind: string;
     id: string;
     etag: string;
@@ -118,11 +181,17 @@ export function NavBarLoggedComponent() {
     const [isLoadingBooks, setIsLoadingBooks] = useState(false);
     const debouncedSearchName = useDebounce<string>(searchName, 500);
 
+    const { user } = useContext(AuthContext);
     const router = useRouter();
 
     useEffect(() => {
+        let timeoutId: any;
+
         const handleResize = () => {
-            setWindowWidth(window.innerWidth);
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                setWindowWidth(window.innerWidth);
+            }, 400);
         };
 
         setWindowWidth(window.innerWidth);
@@ -131,6 +200,7 @@ export function NavBarLoggedComponent() {
         setIsMounted(true);
 
         return () => {
+            clearTimeout(timeoutId);
             window.removeEventListener("resize", handleResize);
         };
     }, []);
@@ -176,17 +246,22 @@ export function NavBarLoggedComponent() {
         return (
             <>
                 {routes.map((route) => (
-                    <Link
-                        onClick={route.executeOnClick}
-                        key={route.path}
-                        href={route.path}
-                        className={`${
-                            router.pathname === route.path ? activeRouteStyles : notActiveRouteStyles
-                        } rounded-l-full flex items-center gap-2 py-3 pl-8 ml-5 mb-1 select-none cursor-pointer`}
-                    >
-                        {route.icon}
-                        {route.name}
-                    </Link>
+                    <>
+                        {route.name === "Separator" ? (
+                            <Separator className="mx-5 border-black" />
+                        ) : (
+                            <Link
+                                onClick={route.executeOnClick}
+                                key={route.path}
+                                href={route.path}
+                                className={`${
+                                    router.pathname === route.path ? activeRouteStyles : notActiveRouteStyles
+                                } mx-2 mb-1 flex cursor-pointer select-none items-center gap-2 rounded-lg py-2 pl-4`}
+                            >
+                                {route.name}
+                            </Link>
+                        )}
+                    </>
                 ))}
             </>
         );
@@ -194,14 +269,14 @@ export function NavBarLoggedComponent() {
 
     function booksSearchSugestion() {
         return (
-            <div className="absolute top-10 left-0 bg-white text-black border border-black rounded-b-lg w-[32rem] pt-3 pb-2">
+            <div className="absolute left-0 top-10 z-10 w-[32rem] rounded-b-lg border border-black bg-white pb-2 pt-3 text-black">
                 {isLoadingBooks ? (
                     [...Array(3)].map((_, index) => (
-                        <div key={index} className="animate-pulse mb-3 flex items-center gap-4">
-                            <div className="mx-3 bg-gray-200 w-12 h-16 rounded-lg"></div>
+                        <div key={index} className="mb-3 flex animate-pulse items-center gap-4">
+                            <div className="mx-3 h-16 w-12 rounded-lg bg-gray-200"></div>
                             <div className="flex flex-col gap-2">
-                                <div className="bg-gray-200 w-32 h-4 rounded-lg"></div>
-                                <div className="bg-gray-200 w-48 h-4 rounded-lg"></div>
+                                <div className="h-4 w-32 rounded-lg bg-gray-200"></div>
+                                <div className="h-4 w-48 rounded-lg bg-gray-200"></div>
                             </div>
                         </div>
                     ))
@@ -209,14 +284,16 @@ export function NavBarLoggedComponent() {
                     <>
                         {books.items && books.items.length ? (
                             <>
-                                <h2 className="px-4 mb-2 text-xl font-medium">Livros</h2>
+                                <h2 className="mb-2 px-4 text-xl font-medium">Livros</h2>
                                 <div className="flex flex-col">
                                     {books.items.map((book) => (
-                                        <div
+                                        <Link
+                                            href={`/app/books/${book.id}`}
+                                            onClick={() => setSearchName("")}
                                             key={book.id}
-                                            className="py-2 px-4 flex gap-4 cursor-pointer hover:bg-black hover:text-white"
+                                            className="flex cursor-pointer gap-4 px-4 py-2 hover:bg-black hover:text-white"
                                         >
-                                            <div className="w-12 h-16 overflow-hidden border border-black rounded-lg">
+                                            <div className="h-16 w-12 overflow-hidden rounded-lg border border-black">
                                                 {book.volumeInfo.imageLinks?.thumbnail ? (
                                                     <Image
                                                         src={book.volumeInfo.imageLinks?.thumbnail?.replace(
@@ -230,7 +307,7 @@ export function NavBarLoggedComponent() {
                                                         className="w-full overflow-hidden"
                                                     />
                                                 ) : (
-                                                    <div className="h-full flex items-center justify-center">
+                                                    <div className="flex h-full items-center justify-center">
                                                         <ImageIcon size={42} weight="bold" className="text-gray-500" />
                                                     </div>
                                                 )}
@@ -251,7 +328,7 @@ export function NavBarLoggedComponent() {
                                                     {book.volumeInfo.authors?.[0]}
                                                 </span>
                                             </div>
-                                        </div>
+                                        </Link>
                                     ))}
                                 </div>
                             </>
@@ -269,11 +346,11 @@ export function NavBarLoggedComponent() {
             {isMounted && (
                 <>
                     {isMobile ? (
-                        <nav className="text-sm fixed z-10 top-0 w-full py-4 flex items-center justify-between gap-2 bg-primary border-b border-black">
-                            <span className="inline-block ml-4">Contopia</span>
-                            <Menu as="div" className="relative inline-block mr-4">
+                        <nav className="top-0 z-10 flex w-full items-center justify-between gap-2 border-b border-black bg-primary py-4 text-sm">
+                            <span className="ml-4 inline-block">Contopia</span>
+                            <Menu as="div" className="relative mr-4 inline-block">
                                 <div>
-                                    <Menu.Button className="inline-flex w-full justify-center rounded-md text-black p-3 text-sm font-medium hover:bg-yellow-600 hover:bg-opacity-20 focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:ring-opacity-75">
+                                    <Menu.Button className="inline-flex w-full justify-center rounded-md p-3 text-sm font-medium text-black hover:bg-yellow-600 hover:bg-opacity-20 focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:ring-opacity-75">
                                         <List size={24} />
                                     </Menu.Button>
                                 </div>
@@ -286,10 +363,8 @@ export function NavBarLoggedComponent() {
                                     leaveFrom="transform opacity-100 scale-100"
                                     leaveTo="transform opacity-0 scale-95"
                                 >
-                                    <Menu.Items className="absolute -right-5 mt-4 py-6 w-80 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                    <Menu.Items className="absolute -right-5 mt-4 w-80 rounded-md bg-white py-6 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                         <Menu.Item>{routesTree(transcriptionRoutes)}</Menu.Item>
-
-                                        <Separator customStyles="ml-6" />
 
                                         <Menu.Item>{routesTree(settingsRoutes)}</Menu.Item>
                                     </Menu.Items>
@@ -297,35 +372,64 @@ export function NavBarLoggedComponent() {
                             </Menu>
                         </nav>
                     ) : (
-                        <nav className="text-sm fixed z-10 top-0 w-full py-4 flex items-center justify-center gap-2 bg-primary border-b border-black">
-                            <div className="w-full max-w-7xl flex items-center justify-center gap-3">
-                                <span className="inline-block ml-4">Contopia</span>
-                                <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                        <MagnifyingGlass size={18} />
-                                    </div>
-                                    <input
-                                        type="text"
-                                        id="nav-search"
-                                        onChange={(e) => setSearchName(e.target.value)}
-                                        value={searchName}
-                                        placeholder="Busque por título, autor, editora, ISBN..."
-                                        className="block py-3 pl-10 pr-10 text-sm border border-black rounded-lg w-[32rem] outline-none focus:ring-yellow-500 focus:border-yellow-500"
-                                    />
-                                    {searchName && (
-                                        <div
-                                            className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
-                                            onClick={() => setSearchName("")}
-                                        >
-                                            <X size={18} />
+                        <nav className="flex w-full items-center justify-center gap-2 border-b border-black bg-primary py-4 text-sm">
+                            <div className="max-w-7xl">
+                                <div className="flex w-full items-center justify-between gap-4">
+                                    <span className="inline-block">Contopia</span>
+                                    <div className="relative">
+                                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                            <MagnifyingGlass size={18} />
                                         </div>
-                                    )}
+                                        <input
+                                            type="text"
+                                            id="nav-search"
+                                            onChange={(e) => setSearchName(e.target.value)}
+                                            value={searchName}
+                                            placeholder="Busque por título, autor, editora, ISBN..."
+                                            className="block w-[32rem] rounded-lg border border-black py-3 pl-10 pr-10 text-sm outline-none focus:border-yellow-500 focus:ring-yellow-500"
+                                        />
+                                        {searchName && (
+                                            <div
+                                                className="absolute inset-y-0 right-3 flex cursor-pointer items-center"
+                                                onClick={() => setSearchName("")}
+                                            >
+                                                <X size={18} />
+                                            </div>
+                                        )}
 
-                                    {debouncedSearchName && booksSearchSugestion()}
+                                        {debouncedSearchName && booksSearchSugestion()}
+                                    </div>
+
+                                    <Menu as="div" className="relative z-10 inline-block">
+                                        <Menu.Button className="flex items-center gap-2 rounded-lg border border-black bg-white px-4 py-3 text-black transition-all hover:shadow-[0.25rem_0.25rem_#000]">
+                                            <User size={20} />
+                                            <span className="text-sm">{user?.name.split(" ")[0]}</span>
+                                            <CaretDown size={14} />
+                                        </Menu.Button>
+                                        <Transition
+                                            as={Fragment}
+                                            enter="transition ease-out duration-100"
+                                            enterFrom="transform opacity-0 scale-95"
+                                            enterTo="transform opacity-100 scale-100"
+                                            leave="transition ease-in duration-75"
+                                            leaveFrom="transform opacity-100 scale-100"
+                                            leaveTo="transform opacity-0 scale-95"
+                                        >
+                                            <Menu.Items className="absolute right-0 mt-1 w-48 rounded-md border border-black bg-white py-2 shadow-[0.25rem_0.25rem_#000] ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                                <Menu.Item>{routesTree(profileRoutes)}</Menu.Item>
+                                            </Menu.Items>
+                                        </Transition>
+                                    </Menu>
                                 </div>
-                                <Button size="md" className="bg-white text-black">
-                                    <User size={20} />
-                                </Button>
+
+                                <div className="text-md mb-1 mt-4 flex items-center justify-between text-sm font-medium">
+                                    {navRoutes.map((item) => (
+                                        <div className="group relative">
+                                            <Link href={item.path}>{item.name}</Link>
+                                            <div className="absolute bottom-0 left-0 right-auto top-auto h-[1px] w-0 bg-black transition-all duration-200 will-change-auto group-hover:w-full"></div>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </nav>
                     )}

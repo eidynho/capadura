@@ -30,15 +30,14 @@ export default function App({ Component, pageProps }: AppProps) {
         <>
             <Head>
                 <title>
-                    Contopia | A rede social de livros que conecta leitores, recomendações e
-                    descobertas literárias.
+                    Contopia | A rede social de livros que conecta leitores, recomendações e descobertas literárias.
                 </title>
             </Head>
             <div
-                className={`${manrope.variable} font-manrope ${spaceMono.variable} font-space-mono max-w-[120rem] mx-auto`}
+                className={`${manrope.variable} font-manrope ${spaceMono.variable} font-space-mono mx-auto max-w-[120rem]`}
             >
                 <AuthProvider>
-                    <div className="flex">
+                    <div className="flex flex-col">
                         {isLogged ? (
                             <>
                                 <NavBarLoggedComponent />

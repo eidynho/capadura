@@ -1,9 +1,7 @@
 interface SeparatorProps {
-    customStyles?: string;
+    className?: string;
 }
 
-export function Separator({ customStyles }: SeparatorProps) {
-    return (
-        <hr className={`${customStyles ? customStyles : ""} my-4 border-black dark:border-white`} />
-    );
+export function Separator({ className }: SeparatorProps) {
+    return <hr className={`${className ? className : "border-black"} dark:border-primary my-4`} />;
 }

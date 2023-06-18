@@ -6,16 +6,10 @@ export function Header() {
     return (
         <header>
             <NavBarComponent />
-            <article className="py-5 w-full flex flex-col items-center justify-center gap-8 bg-fuchsia-300 lg:mx-0 lg:mt-0 lg:flex-row">
-                <div className="max-w-2xl flex flex-col gap-12">
-                    <h1 className="text-8xl font-medium">
-                        Transcrição em segundos
-                    </h1>
-                    <span className="text-2xl font-medium">
-                        Economize tempo gerando textos a partir de um áudio em
-                        questão de segundos e utilize seu tempo no que realmente
-                        importa.
-                    </span>
+            <article className="flex w-full flex-col items-center justify-center gap-8 bg-fuchsia-300 py-5 lg:mx-0 lg:mt-0 lg:flex-row">
+                <div className="flex max-w-2xl flex-col gap-12">
+                    <h1 className="text-8xl font-medium">Contopia</h1>
+                    <span className="text-2xl font-medium">Sua rede social de livros</span>
                     <ButtonLink
                         href="/signup"
                         size="lg"
@@ -25,7 +19,7 @@ export function Header() {
                     </ButtonLink>
                 </div>
                 <div>
-                    <div className="w-[36rem] h-[36rem] bg-yellow-400 rounded-full"></div>
+                    <div className="h-[36rem] w-[36rem] rounded-full bg-yellow-400"></div>
                 </div>
             </article>
         </header>

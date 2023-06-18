@@ -19,9 +19,9 @@ export default function Login() {
     }
 
     return (
-        <div className="w-full flex">
-            <main className="w-full px-4 lg:px-20 lg:w-3/5">
-                <header className="pt-20 pb-20">
+        <div className="flex w-full">
+            <main className="w-full px-4 lg:w-3/5 lg:px-20">
+                <header className="pb-20 pt-20">
                     <div className="flex items-center justify-between">
                         <Link href="/" className="font-medium">
                             Contopia
@@ -30,34 +30,32 @@ export default function Login() {
                             Criar conta
                         </Link>
                     </div>
-                    <h1 className="mt-20 text-4xl leading-snug font-medium text-justify">
-                        Bem-vindo(a) de volta.
-                    </h1>
+                    <h1 className="mt-20 text-justify text-4xl font-medium leading-snug">Bem-vindo(a) de volta.</h1>
                 </header>
-                <div className="w-full flex flex-col gap-8">
+                <div className="flex w-full flex-col gap-8">
                     <ButtonLink href={getGoogleOAuthURL()} size="md" className="bg-blue-500">
                         Conectar com Google
                     </ButtonLink>
                     <div
                         className="flex items-center
-                            before:content-[''] before:flex-1 before:h-[1px] before:bg-black before:mr-4
-                            after:content-[''] after:flex-1 after:h-[1px] after:bg-black after:ml-4
+                            before:mr-4 before:h-[1px] before:flex-1 before:bg-black before:content-['']
+                            after:ml-4 after:h-[1px] after:flex-1 after:bg-black after:content-['']
                         "
                     >
                         <span>ou</span>
                     </div>
                     <form onSubmit={handleSubmit(handleSignIn)} className="flex flex-col gap-8">
                         <label className="w-full">
-                            <span className="block mb-2 font-medium">Email</span>
+                            <span className="mb-2 block font-medium">Email</span>
                             <input
                                 {...register("email")}
                                 type="text"
-                                className="w-full px-4 py-3 border border-black outline-pink-500 font-normal rounded-md"
+                                className="w-full rounded-md border border-black px-4 py-3 font-normal outline-pink-500"
                             />
                         </label>
                         <label className="w-full">
                             <div className="flex items-center justify-between">
-                                <span className="block mb-2 font-medium">Senha</span>
+                                <span className="mb-2 block font-medium">Senha</span>
                                 <Link href="#" className="font-medium underline">
                                     Esqueci minha senha
                                 </Link>
@@ -65,13 +63,13 @@ export default function Login() {
                             <input
                                 {...register("password")}
                                 type="password"
-                                className="w-full px-4 py-3 border border-black outline-pink-500 font-normal rounded-md"
+                                className="w-full rounded-md border border-black px-4 py-3 font-normal outline-pink-500"
                             />
                         </label>
 
                         <Button size="md">Entrar</Button>
                     </form>
-                    <span className="block font-medium mb-8">
+                    <span className="mb-8 block font-medium">
                         Você concorda com nossos{" "}
                         <Link href="" className="underline">
                             Termos de Uso
@@ -84,8 +82,8 @@ export default function Login() {
                     </span>
                 </div>
             </main>
-            <aside className="hidden lg:w-2/5 lg:block">
-                <div className="w-full h-screen bg-black"></div>
+            <aside className="hidden lg:block lg:w-2/5">
+                <div className="h-screen w-full bg-black"></div>
             </aside>
         </div>
     );

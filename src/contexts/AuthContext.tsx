@@ -93,7 +93,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 createdAt: created_at,
             });
 
-            Router.push("/app/transcribe");
+            Router.push("/app/books");
         } catch (err) {
             throw new Error("Failed on trying to sign in: " + err);
         }

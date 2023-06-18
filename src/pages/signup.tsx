@@ -14,10 +14,10 @@ export default function SignUp() {
     const { register, handleSubmit } = useForm();
     const { signIn } = useContext(AuthContext);
 
-    async function handleSignUp({ name, email, password }: FieldValues) {
+    async function handleSignUp({ username, email, password }: FieldValues) {
         try {
             await api.post("/users", {
-                name,
+                username,
                 email,
                 password,
             });
@@ -27,7 +27,7 @@ export default function SignUp() {
                 password,
             });
 
-            Router.push("/app/transcribe");
+            Router.push("/app/books");
         } catch (err) {
             throw new Error("Failed to create account: " + err);
         }
@@ -63,9 +63,9 @@ export default function SignUp() {
                     </div>
                     <form onSubmit={handleSubmit(handleSignUp)} className="flex flex-col gap-8">
                         <label className="w-full">
-                            <span className="mb-2 block font-medium">Nome</span>
+                            <span className="mb-2 block font-medium">Nome do usuário</span>
                             <input
-                                {...register("name")}
+                                {...register("username")}
                                 type="text"
                                 className="w-full rounded-md border border-black px-4 py-3 font-normal outline-pink-500"
                             />

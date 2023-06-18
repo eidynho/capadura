@@ -1,27 +1,18 @@
 import { useEffect, useState } from "react";
-import Router from "next/router";
+import Link from "next/link";
 import { ArrowLeft, ArrowRight, BookOpen, Image as ImageIcon, User } from "phosphor-react";
 
-import { api } from "@/lib/api";
 import { useDebounce } from "@/hooks/useDebounce";
 
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/Button";
-import { Breadcrumb, BreadcrumbItem } from "@/components/layout/Breadcrumb";
 import { Title } from "@/components/Title";
 import { InputTextSearch } from "@/components/InputText";
 import axios from "axios";
 import Image from "next/image";
 import { GoogleAPIData } from "@/components/layout/NavBarLogged";
 
-const breadcrumbItems: BreadcrumbItem[] = [
-    {
-        name: "Minhas transcrições",
-        path: "",
-    },
-];
-
-export default function MyTranscriptions() {
+export default function Books() {
     const [isLoading, setIsLoading] = useState(true);
     const [books, setBooks] = useState<GoogleAPIData>({
         items: [],
@@ -67,7 +58,6 @@ export default function MyTranscriptions() {
 
     return (
         <Container>
-            <Breadcrumb items={breadcrumbItems} />
             <div className="flex flex-col justify-center">
                 <Title>Biblioteca</Title>
 
@@ -82,7 +72,8 @@ export default function MyTranscriptions() {
 
                     <div className="flex w-full flex-wrap justify-center gap-4">
                         {books.items.map((item) => (
-                            <div
+                            <Link
+                                href={`/app/books/${item.id}`}
                                 key={item.id}
                                 className="h-44 w-2/5 cursor-pointer rounded-lg border border-black p-2 transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[0.25rem_0.25rem_#000]"
                             >
@@ -90,7 +81,10 @@ export default function MyTranscriptions() {
                                     <div className="h-[9.75rem] w-[7rem] overflow-hidden rounded-lg border border-black">
                                         {item.volumeInfo.imageLinks?.thumbnail ? (
                                             <Image
-                                                src={item.volumeInfo.imageLinks?.thumbnail?.replace("edge=curl", "")}
+                                                src={item.volumeInfo.imageLinks?.thumbnail?.replace(
+                                                    "edge=curl",
+                                                    "",
+                                                )}
                                                 alt=""
                                                 width={110}
                                                 height={160}
@@ -99,7 +93,11 @@ export default function MyTranscriptions() {
                                             />
                                         ) : (
                                             <div className="flex h-full items-center justify-center">
-                                                <ImageIcon size={42} weight="bold" className="text-gray-500" />
+                                                <ImageIcon
+                                                    size={42}
+                                                    weight="bold"
+                                                    className="text-gray-500"
+                                                />
                                             </div>
                                         )}
                                     </div>
@@ -117,7 +115,9 @@ export default function MyTranscriptions() {
                                                         item.volumeInfo.publishedDate.split("-")[0]}
                                                 </span>
                                             </div>
-                                            <span className="block text-sm">{item.volumeInfo.subtitle}</span>
+                                            <span className="block text-sm">
+                                                {item.volumeInfo.subtitle}
+                                            </span>
                                             <span className="flex items-center gap-2 text-sm underline">
                                                 <User size={20} />
                                                 {item.volumeInfo.authors?.[0]}
@@ -127,20 +127,27 @@ export default function MyTranscriptions() {
                                                 {item.volumeInfo.pageCount}
                                             </span>
                                         </div>
-                                        <span className="line-clamp-2 text-sm">{item.volumeInfo.description}</span>
+                                        <span className="line-clamp-2 text-sm">
+                                            {item.volumeInfo.description}
+                                        </span>
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
                         ))}
                     </div>
 
                     <div className="mt-3 flex flex-col items-center text-sm">
                         <span>
-                            Exibindo <strong>{(page - 1) * 10 + 1}</strong> a <strong>{(page - 1) * 10 + 10}</strong> de{" "}
+                            Exibindo <strong>{(page - 1) * 10 + 1}</strong> a{" "}
+                            <strong>{(page - 1) * 10 + 10}</strong> de{" "}
                             <strong>{books.totalItems}</strong> resultados
                         </span>
                         <div className="mt-3 flex items-center gap-4">
-                            <Button size="sm" onClick={() => setPage((prev) => prev - 1)} disabled={page === 1}>
+                            <Button
+                                size="sm"
+                                onClick={() => setPage((prev) => prev - 1)}
+                                disabled={page === 1}
+                            >
                                 <ArrowLeft size={18} />
                                 Anterior
                             </Button>

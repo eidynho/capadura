@@ -132,7 +132,7 @@ const navRoutes: routeProps[] = [
     },
 ];
 
-export interface BookData {
+export interface BookDataFromGoogle {
     kind: string;
     id: string;
     etag: string;
@@ -153,9 +153,13 @@ export interface BookData {
         averageRating?: number;
         ratingsCount?: number;
         maturityRating: string;
-        imageLinks: {
-            smallThumbnail: string;
-            thumbnail: string;
+        imageLinks?: {
+            smallThumbnail?: string;
+            thumbnail?: string;
+            small?: string;
+            medium?: string;
+            large?: string;
+            extraLarge?: string;
         };
         language: string;
     };
@@ -165,7 +169,7 @@ export interface BookData {
 }
 
 export interface GoogleAPIData {
-    items: BookData[];
+    items: BookDataFromGoogle[];
     totalItems: number;
 }
 
@@ -246,7 +250,7 @@ export function NavBarLoggedComponent() {
         return (
             <>
                 {routes.map((route) => (
-                    <>
+                    <Fragment key={route.name}>
                         {route.name === "Separator" ? (
                             <Separator className="mx-5 border-black" />
                         ) : (
@@ -255,13 +259,15 @@ export function NavBarLoggedComponent() {
                                 key={route.path}
                                 href={route.path}
                                 className={`${
-                                    router.pathname === route.path ? activeRouteStyles : notActiveRouteStyles
+                                    router.pathname === route.path
+                                        ? activeRouteStyles
+                                        : notActiveRouteStyles
                                 } mx-2 mb-1 flex cursor-pointer select-none items-center gap-2 rounded-lg py-2 pl-4`}
                             >
                                 {route.name}
                             </Link>
                         )}
-                    </>
+                    </Fragment>
                 ))}
             </>
         );
@@ -308,19 +314,28 @@ export function NavBarLoggedComponent() {
                                                     />
                                                 ) : (
                                                     <div className="flex h-full items-center justify-center">
-                                                        <ImageIcon size={42} weight="bold" className="text-gray-500" />
+                                                        <ImageIcon
+                                                            size={42}
+                                                            weight="bold"
+                                                            className="text-gray-500"
+                                                        />
                                                     </div>
                                                 )}
                                             </div>
 
                                             <div>
                                                 <div className="flex items-center gap-2">
-                                                    <h2 className="line-clamp-1" title={book.volumeInfo.title}>
+                                                    <h2
+                                                        className="line-clamp-1"
+                                                        title={book.volumeInfo.title}
+                                                    >
                                                         {book.volumeInfo.title}
                                                     </h2>
                                                     <span className="text-xs text-gray-500">
                                                         {book.volumeInfo.publishedDate &&
-                                                            book.volumeInfo.publishedDate.split("-")[0]}
+                                                            book.volumeInfo.publishedDate.split(
+                                                                "-",
+                                                            )[0]}
                                                     </span>
                                                 </div>
                                                 <span className="flex items-center gap-2 text-sm">
@@ -333,7 +348,9 @@ export function NavBarLoggedComponent() {
                                 </div>
                             </>
                         ) : (
-                            <span className="inline-block px-4 pb-2">Nenhum resultado encontrado.</span>
+                            <span className="inline-block px-4 pb-2">
+                                Nenhum resultado encontrado.
+                            </span>
                         )}
                     </>
                 )}
@@ -403,7 +420,9 @@ export function NavBarLoggedComponent() {
                                     <Menu as="div" className="relative z-10 inline-block">
                                         <Menu.Button className="flex items-center gap-2 rounded-lg border border-black bg-white px-4 py-3 text-black transition-all hover:shadow-[0.25rem_0.25rem_#000]">
                                             <User size={20} />
-                                            <span className="text-sm">{user?.name.split(" ")[0]}</span>
+                                            <span className="text-sm">
+                                                {user?.name.split(" ")[0]}
+                                            </span>
                                             <CaretDown size={14} />
                                         </Menu.Button>
                                         <Transition

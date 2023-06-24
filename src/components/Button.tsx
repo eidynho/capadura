@@ -6,7 +6,8 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     className?: string;
 }
 
-export const activeEffectStyles = "shadow-[0.25rem_0.25rem_#000] -translate-x-1 -translate-y-1 opacity-100";
+export const activeEffectStyles =
+    "shadow-[0.25rem_0.25rem_#000] -translate-x-1 -translate-y-1 opacity-100";
 export const hoverEffectStyles =
     "enabled:hover:text-black enabled:hover:shadow-[0.25rem_0.25rem_#000] enabled:hover:-translate-x-1 enabled:hover:-translate-y-1";
 

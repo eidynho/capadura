@@ -3,30 +3,30 @@ import { Dialog, Transition } from "@headlessui/react";
 import { X } from "phosphor-react";
 import { manrope } from "@/pages/_app";
 
-interface BaseModalTypes {
+interface BaseDialogProps {
     children: ReactNode;
     size?: string;
     title: string;
     description?: string;
     isOpen: boolean;
-    toggleModal: () => void;
+    toggleDialog: () => void;
 }
 
-export function BaseModal({
+export function BaseDialog({
     children,
     size,
     title,
     description,
     isOpen,
-    toggleModal,
-}: BaseModalTypes) {
+    toggleDialog,
+}: BaseDialogProps) {
     return (
         <>
             <Transition appear show={isOpen} as={Fragment}>
                 <Dialog
                     as="div"
                     className={`relative z-10 ${manrope.variable} font-manrope`}
-                    onClose={toggleModal}
+                    onClose={toggleDialog}
                 >
                     <Transition.Child
                         as={Fragment}
@@ -66,10 +66,9 @@ export function BaseModal({
                                             {title}
                                         </Dialog.Title>
                                         <button
-                                            onClick={toggleModal}
+                                            onClick={toggleDialog}
                                             className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-black 
                                             hover:bg-gray-400/20 dark:text-white"
-                                            data-modal-hide="defaultModal"
                                         >
                                             <X size={24} />
                                         </button>

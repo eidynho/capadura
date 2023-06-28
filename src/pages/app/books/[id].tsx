@@ -1,13 +1,28 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Image from "next/image";
 import axios, { AxiosError } from "axios";
 import { format, getYear, isValid, parse, parseISO } from "date-fns";
 import { toast } from "react-toastify";
-import { Clock, Image as ImageIcon, Heart, Star, BookOpen, PlusCircle } from "phosphor-react";
+import {
+    Clock,
+    Image as ImageIcon,
+    Heart,
+    Star,
+    BookOpen,
+    PlusCircle,
+    User,
+    DotsThreeVertical,
+    LockSimple,
+    LockSimpleOpen,
+    ProhibitInset,
+    Trash,
+    PencilSimple,
+} from "phosphor-react";
 
 import { api } from "@/lib/api";
+import { AuthContext } from "@/contexts/AuthContext";
 
 import { Container } from "@/components/layout/Container";
 import { Title } from "@/components/Title";
@@ -15,7 +30,9 @@ import { Subtitle } from "@/components/Subtitle";
 import { Separator } from "@/components/Separator";
 import { Button } from "@/components/Button";
 import { BookDataFromGoogle } from "@/components/layout/NavBarLogged";
-import { ReadProgressModal } from "@/components/modals/ReadProgressModal";
+import { NewReadProgressDialog } from "@/components/dialogs/NewReadProgressDialog";
+import { Menu, Transition } from "@headlessui/react";
+import { UpdateReadProgressDialog } from "@/components/dialogs/UpdateReadProgressDialog";
 
 interface BookImagesDataFromGoogle {
     id: string;
@@ -65,6 +82,13 @@ interface ReadData {
     }[];
 }
 
+interface EditReadData {
+    description: string;
+    is_spoiler: boolean;
+    page: number | null;
+    countType: "page" | "percentage";
+}
+
 const bookTabs = [
     {
         name: "Minha leitura",
@@ -82,10 +106,15 @@ const bookTabs = [
 
 export default function Book() {
     const router = useRouter();
+    const { user } = useContext(AuthContext);
+
     const [bookData, setBookData] = useState<BookData | null>(null);
     const [isLoadingData, setIsLoadingData] = useState(true);
     const [currentTab, setCurrentTab] = useState(0);
+
     const [userReads, setUserReads] = useState<ReadData[] | null>(null);
+    const [isOpenUpdateProgressDialog, setIsOpenUpdateProgressDialog] = useState(false);
+    const [progressData, setProgressData] = useState<EditReadData | null>(null);
 
     async function fetchBookFromGoogle() {
         try {
@@ -210,6 +239,17 @@ export default function Book() {
         }
     }
 
+    function editReadProgress({ description, is_spoiler, page, countType }: EditReadData) {
+        setProgressData({
+            description,
+            is_spoiler,
+            page,
+            countType,
+        });
+
+        setIsOpenUpdateProgressDialog(true);
+    }
+
     function bookHeader() {
         return (
             <div className="mb-3 flex flex-col items-center gap-2 md:items-start">
@@ -232,28 +272,84 @@ export default function Book() {
 
     function readsProgress() {
         return (
-            <div className="rounded-lg border border-black p-4 text-sm">
+            <div className="rounded-lg border border-black p-6 text-sm">
                 <div className="flex flex-1 flex-col gap-2">
                     {userReads?.length ? (
                         userReads.map((read) => (
                             <Fragment key={read.id}>
+                                <div className="flex items-start justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <User size={20} />
+                                        <span>{user?.name}</span>
+                                    </div>
+
+                                    <Menu as="div" className="relative inline-block">
+                                        <Menu.Button className="cursor-pointer rounded-lg p-1 text-sm hover:bg-gray-400/20">
+                                            <DotsThreeVertical size={20} />
+                                        </Menu.Button>
+                                        <Transition
+                                            as={Fragment}
+                                            enter="transition ease-out duration-100"
+                                            enterFrom="transform opacity-0 scale-95"
+                                            enterTo="transform opacity-100 scale-100"
+                                            leave="transition ease-in duration-75"
+                                            leaveFrom="transform opacity-100 scale-100"
+                                            leaveTo="transform opacity-0 scale-95"
+                                        >
+                                            <Menu.Items className="absolute right-0 z-10 mt-1 w-48 rounded-md border border-black bg-white py-2 shadow-[0.25rem_0.25rem_#000] ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                                <Menu.Item>
+                                                    <div className="mx-2 mb-1 flex cursor-pointer select-none items-center gap-2 rounded-lg border border-transparent py-2 pl-4 hover:bg-black hover:bg-opacity-10">
+                                                        {read.is_private ? (
+                                                            <>
+                                                                <LockSimpleOpen
+                                                                    size={16}
+                                                                    weight="bold"
+                                                                />
+                                                                Tornar público
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <LockSimple
+                                                                    size={16}
+                                                                    weight="bold"
+                                                                />
+                                                                Tornar privado
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                </Menu.Item>
+                                                <Menu.Item>
+                                                    <div className="mx-2 mb-1 flex cursor-pointer select-none items-center gap-2 rounded-lg border border-transparent py-2 pl-4 hover:bg-black hover:bg-opacity-10">
+                                                        <ProhibitInset size={18} weight="bold" />
+                                                        Abandonar leitura
+                                                    </div>
+                                                </Menu.Item>
+                                                <Menu.Item>
+                                                    <div className="mx-2 mb-1 flex cursor-pointer select-none items-center gap-2 rounded-lg border border-transparent py-2 pl-4 text-red-900 hover:bg-red-500 hover:bg-opacity-10">
+                                                        <Trash size={18} weight="bold" />
+                                                        Excluir
+                                                    </div>
+                                                </Menu.Item>
+                                            </Menu.Items>
+                                        </Transition>
+                                    </Menu>
+                                </div>
+
                                 <div className="mt-3 flex items-center">
                                     <div className="flex items-center gap-1 text-sm font-medium">
                                         <span>
-                                            {read.progress[read.progress.length - 1]?.page ??
-                                                read.progress[read.progress.length - 1]?.percentage}
+                                            {read.progress[0]?.page ?? read.progress[0]?.percentage}
                                         </span>
                                     </div>
                                     <div className="relative mx-2 h-5 flex-1 overflow-hidden rounded border border-black bg-white dark:bg-gray-700">
                                         <div
-                                            className={`w-[${
-                                                read.progress[read.progress.length - 1]?.percentage
-                                            }%] h-5 bg-pink-500`}
+                                            className="h-5 bg-pink-500"
+                                            style={{
+                                                width: `${read.progress[0]?.percentage}%` ?? 0,
+                                            }}
                                         ></div>
                                         <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-semibold">
-                                            {`${
-                                                read.progress[read.progress.length - 1]?.percentage
-                                            }%`}
+                                            {`${read.progress[0]?.percentage}%`}
                                         </span>
                                     </div>
                                     <span className="w-8 text-sm font-medium">
@@ -281,32 +377,127 @@ export default function Book() {
 
                                 <div className="mt-4">
                                     {bookData && (
-                                        <ReadProgressModal bookData={bookData} readId={read.id} />
+                                        <NewReadProgressDialog
+                                            bookTitle={bookData?.title}
+                                            bookPageCount={bookData?.pageCount ?? 0}
+                                            readId={read.id}
+                                        />
                                     )}
                                 </div>
-                                <div className="mt-2 flex h-96 min-h-[6rem] resize-y flex-col gap-3 overflow-y-auto">
-                                    <h4 className="font-semibold">Últimos progressos</h4>
-                                    {read.progress.map((progress) => (
-                                        <div
-                                            key={progress.id}
-                                            className="rounded-lg border border-black p-4"
+                                <div className="mt-2 flex flex-col gap-3">
+                                    <div className="flex items-center justify-between gap-2">
+                                        <h4 className="font-semibold">Últimos progressos</h4>
+                                        <Button
+                                            size="xs"
+                                            className="bg-white text-black enabled:hover:bg-white enabled:hover:shadow-[0.125rem_0.125rem_#000]"
                                         >
-                                            <div className="flex items-center gap-1 text-sm font-medium">
-                                                <span>{progress.page}</span>
+                                            Ver todos
+                                        </Button>
+                                    </div>
+                                    <div className="max-h-[32rem] min-h-[8rem] resize-y overflow-y-auto">
+                                        {read.progress.map((progress) => (
+                                            <div
+                                                key={progress.id}
+                                                className="border-t border-black p-4"
+                                            >
+                                                <div className="flex items-start justify-between gap-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <User size={20} />
+                                                        <span>{user?.name}</span>
+                                                        <span className="mt-[2px] text-xs font-semibold text-gray-500">
+                                                            {format(
+                                                                parseISO(
+                                                                    progress.created_at.toString(),
+                                                                ),
+                                                                "dd/MM/yyyy",
+                                                            )}
+                                                        </span>
+                                                    </div>
+
+                                                    <Menu
+                                                        as="div"
+                                                        className="relative inline-block"
+                                                    >
+                                                        <Menu.Button className="cursor-pointer rounded-lg p-1 text-sm hover:bg-gray-400/20">
+                                                            <DotsThreeVertical size={20} />
+                                                        </Menu.Button>
+                                                        <Transition
+                                                            as={Fragment}
+                                                            enter="transition ease-out duration-100"
+                                                            enterFrom="transform opacity-0 scale-95"
+                                                            enterTo="transform opacity-100 scale-100"
+                                                            leave="transition ease-in duration-75"
+                                                            leaveFrom="transform opacity-100 scale-100"
+                                                            leaveTo="transform opacity-0 scale-95"
+                                                        >
+                                                            <Menu.Items className="absolute right-0 z-10 mt-1 w-48 rounded-md border border-black bg-white py-2 shadow-[0.25rem_0.25rem_#000] ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                                                <Menu.Item>
+                                                                    <div
+                                                                        onClick={() =>
+                                                                            editReadProgress({
+                                                                                ...progress,
+                                                                                countType: "page",
+                                                                            })
+                                                                        }
+                                                                        className="mx-2 mb-1 flex cursor-pointer select-none items-center gap-2 rounded-lg border border-transparent py-2 pl-4 hover:bg-black hover:bg-opacity-10"
+                                                                    >
+                                                                        <PencilSimple
+                                                                            size={18}
+                                                                            weight="bold"
+                                                                        />
+                                                                        Editar
+                                                                    </div>
+                                                                </Menu.Item>
+                                                                <Menu.Item>
+                                                                    <div className="mx-2 mb-1 flex cursor-pointer select-none items-center gap-2 rounded-lg border border-transparent py-2 pl-4 text-red-900 hover:bg-red-500 hover:bg-opacity-10">
+                                                                        <Trash
+                                                                            size={18}
+                                                                            weight="bold"
+                                                                        />
+                                                                        Excluir
+                                                                    </div>
+                                                                </Menu.Item>
+                                                            </Menu.Items>
+                                                        </Transition>
+                                                    </Menu>
+                                                </div>
+
+                                                {progress.description && (
+                                                    <p className="mt-2">{progress.description}</p>
+                                                )}
+
+                                                <div className="mt-4 flex items-center">
+                                                    <div className="flex items-center gap-1 text-sm font-medium">
+                                                        <span>{progress.page}</span>
+                                                    </div>
+                                                    <div className="relative mx-2 h-5 flex-1 overflow-hidden rounded  border-black bg-white dark:bg-gray-700">
+                                                        <div
+                                                            className="h-5 bg-pink-500"
+                                                            style={{
+                                                                width:
+                                                                    `${progress.percentage}%` ?? 0,
+                                                            }}
+                                                        ></div>
+                                                        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-semibold">
+                                                            {`${progress.percentage}%`}
+                                                        </span>
+                                                    </div>
+                                                    <span className="w-8 text-sm font-medium">
+                                                        {bookData?.pageCount}
+                                                    </span>
+                                                </div>
                                             </div>
-                                            <div className="relative mx-2 h-5 flex-1 overflow-hidden rounded border border-black bg-white dark:bg-gray-700">
-                                                <div
-                                                    className={`w-[${progress.percentage}%] h-5 bg-pink-500`}
-                                                ></div>
-                                                <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-semibold">
-                                                    {`${progress.percentage}%`}
-                                                </span>
-                                            </div>
-                                            <span className="w-8 text-sm font-medium">
-                                                {bookData?.pageCount}
-                                            </span>
-                                        </div>
-                                    ))}
+                                        ))}
+
+                                        <UpdateReadProgressDialog
+                                            isOpen={isOpenUpdateProgressDialog}
+                                            setIsOpen={setIsOpenUpdateProgressDialog}
+                                            bookTitle={bookData?.title}
+                                            bookPageCount={bookData?.pageCount ?? 0}
+                                            readId={read.id}
+                                            editData={progressData}
+                                        />
+                                    </div>
                                 </div>
                             </Fragment>
                         ))

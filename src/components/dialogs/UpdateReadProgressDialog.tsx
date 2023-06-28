@@ -1,42 +1,51 @@
-import { useState } from "react";
-import Image from "next/image";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
-import { Image as ImageIcon, PlusCircle } from "phosphor-react";
 
 import { api } from "@/lib/api";
-import { BookData } from "@/pages/app/books/[id]";
-import { BaseModal } from "../headless-ui/BaseModal";
+import { ProgressFormSchema, progressFormSchema } from "./NewReadProgressDialog";
+
+import { BaseDialog } from "../headless-ui/BaseDialog";
 import { Button } from "../Button";
 
-const progressFormSchema = z.object({
-    description: z.string().optional(),
-    isSpoiler: z.boolean().default(false),
-    pagesCount: z.coerce.number().nonnegative().min(1, "Campo obrigatório"),
-    countType: z.enum(["page", "percentage"]),
-});
-
-type ProgressFormSchema = z.infer<typeof progressFormSchema>;
-
-interface ReadProgressModalProps {
-    bookData: BookData;
+interface ReadProgressDialogProps {
+    isOpen: boolean;
+    setIsOpen: Dispatch<SetStateAction<boolean>>;
+    bookTitle?: string;
+    bookPageCount: number;
     readId: string;
+    editData: {
+        description: string;
+        is_spoiler: boolean;
+        page: number | null;
+        countType: "page" | "percentage";
+    } | null;
 }
 
-export function ReadProgressModal({ bookData, readId }: ReadProgressModalProps) {
-    const [isOpen, setIsOpen] = useState(false);
-
-    function handleToggleModal(state = false) {
-        setIsOpen(state);
-    }
+export function UpdateReadProgressDialog({
+    isOpen,
+    setIsOpen,
+    bookTitle,
+    bookPageCount,
+    readId,
+    editData,
+}: ReadProgressDialogProps) {
+    useEffect(() => {
+        if (editData) {
+            setValue("description", editData.description);
+            setValue("isSpoiler", editData.is_spoiler);
+            setValue("pagesCount", editData.page || 0);
+            setValue("countType", editData.countType);
+        }
+    }, [isOpen]);
 
     const {
         register,
         handleSubmit,
         formState: { isSubmitting, errors },
         reset,
+        setValue,
     } = useForm<ProgressFormSchema>({
         resolver: zodResolver(progressFormSchema),
         defaultValues: {
@@ -45,27 +54,29 @@ export function ReadProgressModal({ bookData, readId }: ReadProgressModalProps) 
         },
     });
 
-    async function submitNewProgress({
+    async function updateProgress({
         description,
         isSpoiler,
         pagesCount,
         countType,
     }: ProgressFormSchema) {
         try {
-            await api.post("/progress", {
+            await api.put("/progress", {
                 readId,
                 description,
                 isSpoiler,
                 pagesCount,
                 countType,
-                bookPageCount: bookData.pageCount,
+                bookPageCount,
             });
 
-            toast.success("Progresso adicionado com sucesso.");
+            toast.success("Progresso atualizado com sucesso.");
+
             setIsOpen(false);
+
             reset();
         } catch (err) {
-            toast.error("Erro ao adicionar um novo progresso, tente novamente mais tarde.");
+            toast.error("Erro ao atualizar o progresso, tente novamente mais tarde.");
 
             throw err;
         }
@@ -73,49 +84,19 @@ export function ReadProgressModal({ bookData, readId }: ReadProgressModalProps) 
 
     return (
         <>
-            <Button size="sm" onClick={() => handleToggleModal(true)}>
-                <PlusCircle size={20} />
-                <span className="font-medium">Novo progresso</span>
-            </Button>
-
-            <BaseModal
+            <BaseDialog
                 size="max-w-3xl"
-                title={`Progresso de leitura - ${bookData.title}`}
+                title={`Editar: Progresso de leitura - ${bookTitle}`}
                 isOpen={isOpen}
-                toggleModal={() => handleToggleModal(false)}
+                toggleDialog={() => setIsOpen(false)}
             >
-                {/* Modal body */}
+                {/* Dialog body */}
                 <div className="px-4 py-6">
                     <div className="mb-4">
                         <div className="flex items-start gap-8 rounded-lg px-3 py-2">
-                            <div className="flex flex-col items-center gap-2">
-                                {bookData.image ? (
-                                    <Image
-                                        src={bookData.image}
-                                        alt={`Capa do livro ${bookData.title}`}
-                                        title={`Capa do livro ${bookData.title}`}
-                                        width={120}
-                                        height={170}
-                                        priority={true}
-                                        className="rounded-lg"
-                                    />
-                                ) : (
-                                    <div className="flex h-40 w-28 flex-col items-center justify-center rounded-md border border-black bg-gray-300 opacity-70">
-                                        <ImageIcon size={40} />
-                                        <span className="text-xs">Sem imagem</span>
-                                    </div>
-                                )}
-
-                                {bookData.pageCount && (
-                                    <span className="text-xs font-semibold">
-                                        {bookData.pageCount} páginas
-                                    </span>
-                                )}
-                            </div>
-
                             <form
-                                onSubmit={handleSubmit(submitNewProgress)}
-                                className="flex flex-1 flex-col gap-4"
+                                onSubmit={handleSubmit(updateProgress)}
+                                className="flex w-full flex-col gap-4"
                             >
                                 <div>
                                     <label
@@ -161,7 +142,7 @@ export function ReadProgressModal({ bookData, readId }: ReadProgressModalProps) 
                                     >
                                         Páginas/porcentagem lidas
                                     </label>
-                                    <div className="flex items-center gap-4">
+                                    <div className="flex flex-wrap items-center gap-4">
                                         <div className="flex flex-col">
                                             <input
                                                 {...register("pagesCount")}
@@ -222,13 +203,13 @@ export function ReadProgressModal({ bookData, readId }: ReadProgressModalProps) 
                                     type="submit"
                                     className="w-full bg-black text-white hover:bg-yellow-500"
                                 >
-                                    Enviar progresso
+                                    Editar progresso
                                 </Button>
                             </form>
                         </div>
                     </div>
                 </div>
-            </BaseModal>
+            </BaseDialog>
         </>
     );
 }

@@ -1,4 +1,5 @@
 import { useState, useEffect, ReactNode, ButtonHTMLAttributes } from "react";
+import { twMerge } from "tailwind-merge";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     children: ReactNode;
@@ -46,11 +47,12 @@ export function Button({ children, size, className, ...props }: ButtonProps) {
 
     return (
         <button
-            className={`font-manrope ${sizeStyles} ${
-                className ? className : "bg-black text-white enabled:hover:bg-yellow-500"
-            }   
-                flex items-center justify-center gap-2 rounded-lg  border border-black transition-all duration-300 ${hoverEffectStyles} disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-200 disabled:bg-opacity-100 disabled:text-black
-            `}
+            className={twMerge(
+                `${sizeStyles} flex items-center justify-center
+                gap-2 rounded-lg border border-black bg-black  text-white transition-all duration-300 enabled:hover:bg-yellow-500 ${hoverEffectStyles} disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-200 disabled:bg-opacity-100 disabled:text-black
+            `,
+                `${className}`,
+            )}
             {...props}
         >
             {children}

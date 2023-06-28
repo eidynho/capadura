@@ -62,7 +62,7 @@ export interface BookData {
     image?: string;
 }
 
-interface ReadData {
+export interface ReadData {
     id: string;
     book_id: string;
     start_date: Date | string;
@@ -83,6 +83,7 @@ interface ReadData {
 }
 
 interface EditReadData {
+    id: string;
     description: string;
     is_spoiler: boolean;
     page: number | null;
@@ -114,7 +115,7 @@ export default function Book() {
 
     const [userReads, setUserReads] = useState<ReadData[] | null>(null);
     const [isOpenUpdateProgressDialog, setIsOpenUpdateProgressDialog] = useState(false);
-    const [progressData, setProgressData] = useState<EditReadData | null>(null);
+    const [progressEditData, setProgressEditData] = useState<EditReadData | null>(null);
 
     async function fetchBookFromGoogle() {
         try {
@@ -239,8 +240,9 @@ export default function Book() {
         }
     }
 
-    function editReadProgress({ description, is_spoiler, page, countType }: EditReadData) {
-        setProgressData({
+    function editReadProgress({ id, description, is_spoiler, page, countType }: EditReadData) {
+        setProgressEditData({
+            id,
             description,
             is_spoiler,
             page,
@@ -492,10 +494,12 @@ export default function Book() {
                                         <UpdateReadProgressDialog
                                             isOpen={isOpenUpdateProgressDialog}
                                             setIsOpen={setIsOpenUpdateProgressDialog}
+                                            userReads={userReads}
+                                            setUserReads={setUserReads}
+                                            readId={read.id}
                                             bookTitle={bookData?.title}
                                             bookPageCount={bookData?.pageCount ?? 0}
-                                            readId={read.id}
-                                            editData={progressData}
+                                            editData={progressEditData}
                                         />
                                     </div>
                                 </div>

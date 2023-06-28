@@ -8,14 +8,20 @@ import { ProgressFormSchema, progressFormSchema } from "./NewReadProgressDialog"
 
 import { BaseDialog } from "../headless-ui/BaseDialog";
 import { Button } from "../Button";
+import { ReadData } from "@/pages/app/books/[id]";
 
 interface ReadProgressDialogProps {
     isOpen: boolean;
     setIsOpen: Dispatch<SetStateAction<boolean>>;
+
+    userReads: ReadData[];
+    setUserReads: Dispatch<SetStateAction<ReadData[] | null>>;
+
+    readId: string;
     bookTitle?: string;
     bookPageCount: number;
-    readId: string;
     editData: {
+        id: string;
         description: string;
         is_spoiler: boolean;
         page: number | null;
@@ -26,9 +32,13 @@ interface ReadProgressDialogProps {
 export function UpdateReadProgressDialog({
     isOpen,
     setIsOpen,
+
+    userReads,
+    setUserReads,
+
+    readId,
     bookTitle,
     bookPageCount,
-    readId,
     editData,
 }: ReadProgressDialogProps) {
     useEffect(() => {
@@ -62,7 +72,7 @@ export function UpdateReadProgressDialog({
     }: ProgressFormSchema) {
         try {
             await api.put("/progress", {
-                readId,
+                id: editData?.id,
                 description,
                 isSpoiler,
                 pagesCount,
@@ -72,8 +82,36 @@ export function UpdateReadProgressDialog({
 
             toast.success("Progresso atualizado com sucesso.");
 
-            setIsOpen(false);
+            // update front-end
+            userReads.forEach((read) => {
+                if (read.id === readId) {
+                    const progressIndex = read.progress.findIndex(
+                        (progress) => progress.id === editData?.id,
+                    );
+                    if (progressIndex < 0) return;
 
+                    const progress = read.progress[progressIndex];
+
+                    let page = 0;
+                    let percentage = 0;
+                    if (countType === "page") {
+                        page = Math.round(pagesCount);
+                        percentage = Math.round((pagesCount / bookPageCount) * 100);
+                    }
+
+                    if (countType === "percentage") {
+                        page = Math.round((bookPageCount / 100) * pagesCount);
+                        percentage = Math.round(pagesCount);
+                    }
+
+                    progress.description = description ?? "";
+                    progress.is_spoiler = isSpoiler;
+                    progress.page = page;
+                    progress.percentage = percentage;
+                }
+            });
+
+            setIsOpen(false);
             reset();
         } catch (err) {
             toast.error("Erro ao atualizar o progresso, tente novamente mais tarde.");

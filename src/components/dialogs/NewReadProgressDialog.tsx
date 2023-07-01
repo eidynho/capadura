@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -6,7 +6,8 @@ import { toast } from "react-toastify";
 import { PlusCircle } from "phosphor-react";
 
 import { api } from "@/lib/api";
-import { BaseDialog } from "../headless-ui/BaseDialog";
+import { ProgressData, ReadData } from "@/pages/app/books/[id]";
+import { BaseDialog } from "../radix-ui/BaseDialog";
 import { Button } from "../Button";
 
 export const progressFormSchema = z.object({
@@ -19,15 +20,18 @@ export const progressFormSchema = z.object({
 export type ProgressFormSchema = z.infer<typeof progressFormSchema>;
 
 interface NewReadProgressDialogProps {
+    readId: string;
     bookTitle?: string;
     bookPageCount: number;
-    readId: string;
+    setUserReads: Dispatch<SetStateAction<ReadData[] | null>>;
 }
 
 export function NewReadProgressDialog({
+    readId,
     bookTitle,
     bookPageCount,
-    readId,
+
+    setUserReads,
 }: NewReadProgressDialogProps) {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -55,7 +59,7 @@ export function NewReadProgressDialog({
         countType,
     }: ProgressFormSchema) {
         try {
-            await api.post("/progress", {
+            const { data } = await api.post<ProgressData>("/progress", {
                 readId,
                 description,
                 isSpoiler,
@@ -64,8 +68,22 @@ export function NewReadProgressDialog({
                 bookPageCount,
             });
 
-            toast.success("Progresso adicionado com sucesso.");
+            setUserReads((prev) => {
+                if (!prev) return null;
 
+                const updatedReads = [...prev];
+
+                updatedReads.forEach((read) => {
+                    if (read.id === readId) {
+                        read.progress.pop();
+                        read.progress.unshift(data);
+                    }
+                });
+
+                return updatedReads;
+            });
+
+            toast.success("Progresso adicionado com sucesso.");
             setIsOpen(false);
 
             reset();
@@ -87,7 +105,7 @@ export function NewReadProgressDialog({
                 size="max-w-3xl"
                 title={`Novo: Progresso de leitura - ${bookTitle}`}
                 isOpen={isOpen}
-                toggleDialog={() => handleToggleDialog(false)}
+                closeDialog={() => handleToggleDialog(false)}
             >
                 {/* Dialog body */}
                 <div className="px-4 py-6">

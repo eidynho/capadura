@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { api } from "@/lib/api";
 import { ProgressFormSchema, progressFormSchema } from "./NewReadProgressDialog";
 
-import { BaseDialog } from "../headless-ui/BaseDialog";
+import { BaseDialog } from "../radix-ui/BaseDialog";
 import { Button } from "../Button";
 import { ReadData } from "@/pages/app/books/[id]";
 
@@ -80,35 +80,43 @@ export function UpdateReadProgressDialog({
                 bookPageCount,
             });
 
-            toast.success("Progresso atualizado com sucesso.");
+            toast.success("Progresso atualizado.");
 
             // update front-end
-            userReads.forEach((read) => {
-                if (read.id === readId) {
-                    const progressIndex = read.progress.findIndex(
-                        (progress) => progress.id === editData?.id,
-                    );
-                    if (progressIndex < 0) return;
+            setUserReads((prev) => {
+                if (!prev) return null;
 
-                    const progress = read.progress[progressIndex];
+                const updatedReads = [...prev];
 
-                    let page = 0;
-                    let percentage = 0;
-                    if (countType === "page") {
-                        page = Math.round(pagesCount);
-                        percentage = Math.round((pagesCount / bookPageCount) * 100);
+                updatedReads.forEach((read) => {
+                    if (read.id === readId) {
+                        const progressIndex = read.progress.findIndex(
+                            (progress) => progress.id === editData?.id,
+                        );
+                        if (progressIndex < 0) return;
+
+                        const progress = read.progress[progressIndex];
+
+                        let page = 0;
+                        let percentage = 0;
+                        if (countType === "page") {
+                            page = Math.round(pagesCount);
+                            percentage = Math.round((pagesCount / bookPageCount) * 100);
+                        }
+
+                        if (countType === "percentage") {
+                            page = Math.round((bookPageCount / 100) * pagesCount);
+                            percentage = Math.round(pagesCount);
+                        }
+
+                        progress.description = description ?? "";
+                        progress.is_spoiler = isSpoiler;
+                        progress.page = page;
+                        progress.percentage = percentage;
                     }
+                });
 
-                    if (countType === "percentage") {
-                        page = Math.round((bookPageCount / 100) * pagesCount);
-                        percentage = Math.round(pagesCount);
-                    }
-
-                    progress.description = description ?? "";
-                    progress.is_spoiler = isSpoiler;
-                    progress.page = page;
-                    progress.percentage = percentage;
-                }
+                return updatedReads;
             });
 
             setIsOpen(false);
@@ -126,7 +134,7 @@ export function UpdateReadProgressDialog({
                 size="max-w-3xl"
                 title={`Editar: Progresso de leitura - ${bookTitle}`}
                 isOpen={isOpen}
-                toggleDialog={() => setIsOpen(false)}
+                closeDialog={() => setIsOpen(false)}
             >
                 {/* Dialog body */}
                 <div className="px-4 py-6">

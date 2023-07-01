@@ -1,7 +1,8 @@
-import { Fragment, ReactNode } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import { ReactNode } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "phosphor-react";
 import { manrope } from "@/pages/_app";
+import { twMerge } from "tailwind-merge";
 
 interface BaseDialogProps {
     children: ReactNode;
@@ -9,7 +10,7 @@ interface BaseDialogProps {
     title: string;
     description?: string;
     isOpen: boolean;
-    toggleDialog: () => void;
+    closeDialog: () => void;
 }
 
 export function BaseDialog({
@@ -18,15 +19,49 @@ export function BaseDialog({
     title,
     description,
     isOpen,
-    toggleDialog,
+    closeDialog,
 }: BaseDialogProps) {
     return (
         <>
-            <Transition appear show={isOpen} as={Fragment}>
+            <Dialog.Root open={isOpen}>
+                <Dialog.Portal>
+                    <Dialog.Overlay className="dialog-overlay dialog-content fixed inset-0 z-10 bg-black/25 backdrop-blur-sm" />
+                    <Dialog.Content
+                        onPointerDownOutside={closeDialog}
+                        className={twMerge(
+                            "fixed left-1/2 top-1/2 z-20 w-[90%] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-primary/80 px-4 py-6 font-manrope shadow-xl backdrop-blur md:w-full md:px-6",
+                            size,
+                            manrope.variable,
+                        )}
+                        style={{
+                            animation: "contentShow 200ms",
+                        }}
+                    >
+                        <div className="flex items-center justify-between">
+                            <Dialog.Title className="text-lg font-medium leading-6">
+                                {title}
+                            </Dialog.Title>
+                            <Dialog.Close asChild>
+                                <button
+                                    onClick={closeDialog}
+                                    className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-black 
+                                    hover:bg-gray-400/20 dark:text-white"
+                                >
+                                    <X size={24} />
+                                </button>
+                            </Dialog.Close>
+                        </div>
+                        <Dialog.Description>{description}</Dialog.Description>
+
+                        {children}
+                    </Dialog.Content>
+                </Dialog.Portal>
+            </Dialog.Root>
+            {/* <Transition appear show={isOpen} as={Fragment}>
                 <Dialog
                     as="div"
                     className={`relative z-10 ${manrope.variable} font-manrope`}
-                    onClose={toggleDialog}
+                    onClose={closeDialog}
                 >
                     <Transition.Child
                         as={Fragment}
@@ -66,7 +101,7 @@ export function BaseDialog({
                                             {title}
                                         </Dialog.Title>
                                         <button
-                                            onClick={toggleDialog}
+                                            onClick={closeDialog}
                                             className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-black 
                                             hover:bg-gray-400/20 dark:text-white"
                                         >
@@ -82,7 +117,7 @@ export function BaseDialog({
                         </div>
                     </div>
                 </Dialog>
-            </Transition>
+            </Transition> */}
         </>
     );
 }

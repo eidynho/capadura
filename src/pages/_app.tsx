@@ -50,7 +50,7 @@ export default function App({ Component, pageProps }: AppProps) {
                                 </MainContainer>
 
                                 <ToastContainer
-                                    position="top-center"
+                                    position="bottom-right"
                                     autoClose={3000}
                                     hideProgressBar
                                     newestOnTop={false}
@@ -59,7 +59,6 @@ export default function App({ Component, pageProps }: AppProps) {
                                     pauseOnFocusLoss={false}
                                     draggable
                                     pauseOnHover
-                                    icon={false}
                                     closeButton={false}
                                     theme="light"
                                 />

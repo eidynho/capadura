@@ -109,6 +109,11 @@ export function UpdateReadProgressDialog({
                             percentage = Math.round(pagesCount);
                         }
 
+                        if (percentage >= 100) {
+                            page = bookPageCount;
+                            percentage = 100;
+                        }
+
                         progress.description = description ?? "";
                         progress.is_spoiler = isSpoiler;
                         progress.page = page;
@@ -122,8 +127,7 @@ export function UpdateReadProgressDialog({
             setIsOpen(false);
             reset();
         } catch (err) {
-            toast.error("Erro ao atualizar o progresso, tente novamente mais tarde.");
-
+            toast.error("Erro ao atualizar o progresso.");
             throw err;
         }
     }

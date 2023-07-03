@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Image from "next/image";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { getYear, isValid, parse } from "date-fns";
 import { Clock, Image as ImageIcon, Heart, Star, BookOpen } from "phosphor-react";
+import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";
 
@@ -134,6 +135,7 @@ export default function Book() {
                 description,
             });
         } catch (err) {
+            toast.error("Erro ao carregar os dados do livro.");
             throw err;
         } finally {
             setIsLoadingData(false);
@@ -185,13 +187,9 @@ export default function Book() {
 
                     const userReadsResponse = await api.get(`/read/${id}`);
                     setUserReads(userReadsResponse.data);
-                    console.log(userReadsResponse.data);
                 }
             } catch (err) {
-                if (err instanceof AxiosError) {
-                    console.log("err", err);
-                }
-
+                toast.error("Erro ao carregar os dados do livro.");
                 throw err;
             } finally {
                 setIsLoadingData(false);
@@ -401,11 +399,11 @@ export default function Book() {
                                     {/* Book action buttons */}
                                     <div className="flex w-full items-center gap-2">
                                         <Button size="sm">
-                                            <Heart size={20} />
+                                            <Heart size={20} weight="bold" />
                                             <span className="font-medium">Curtir</span>
                                         </Button>
                                         <Button size="sm">
-                                            <Clock size={20} />
+                                            <Clock size={20} weight="bold" />
                                             <span className="font-medium">Adicionar a lista</span>
                                         </Button>
                                     </div>

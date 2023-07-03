@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, BookOpen, Image as ImageIcon, User } from "phosphor-react";
+import { toast } from "react-toastify";
 
 import { useDebounce } from "@/hooks/useDebounce";
 
@@ -48,6 +49,7 @@ export default function Books() {
                     totalItems: data.totalItems,
                 });
             } catch (err) {
+                toast.error("Erro ao carregar os livros.");
                 throw err;
             } finally {
                 setIsLoading(false);

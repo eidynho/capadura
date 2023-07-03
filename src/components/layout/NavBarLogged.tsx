@@ -1,8 +1,9 @@
 import { Fragment, ReactNode, useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import axios from "axios";
+import { toast } from "react-toastify";
 import { Menu, Transition } from "@headlessui/react";
 import {
     CaretDown,
@@ -238,6 +239,7 @@ export function NavBarLoggedComponent() {
                     totalItems: data.totalItems,
                 });
             } catch (err) {
+                toast.error("Erro ao carregar livros.");
                 throw err;
             } finally {
                 setIsLoadingBooks(false);

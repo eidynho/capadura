@@ -75,7 +75,10 @@ export function NewReadProgressDialog({
 
                 updatedReads.forEach((read) => {
                     if (read.id === readId) {
-                        read.progress.pop();
+                        if (read.progress.length === 3) {
+                            read.progress.pop();
+                        }
+
                         read.progress.unshift(data);
                     }
                 });
@@ -88,8 +91,7 @@ export function NewReadProgressDialog({
 
             reset();
         } catch (err) {
-            toast.error("Erro ao adicionar um novo progresso, tente novamente mais tarde.");
-
+            toast.error("Erro ao adicionar um novo progresso.");
             throw err;
         }
     }
@@ -97,7 +99,7 @@ export function NewReadProgressDialog({
     return (
         <>
             <Button size="sm" onClick={() => handleToggleDialog(true)}>
-                <PlusCircle size={20} />
+                <PlusCircle size={20} weight="bold" />
                 <span className="font-medium">Novo progresso</span>
             </Button>
 

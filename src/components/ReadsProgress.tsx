@@ -69,11 +69,10 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
 
                 const updatedReads = [...prev];
 
-                updatedReads.forEach((read) => {
-                    if (read.id === readId) {
-                        read.is_private = !currentStatus;
-                    }
-                });
+                const read = updatedReads.find((read) => read.id === readId);
+                if (read) {
+                    read.is_private = !currentStatus;
+                }
 
                 return updatedReads;
             });
@@ -100,11 +99,10 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
 
                 const updatedReads = [...prev];
 
-                updatedReads.forEach((read) => {
-                    if (read.id === readId) {
-                        read.status = status;
-                    }
-                });
+                const read = updatedReads.find((read) => read.id === readId);
+                if (read) {
+                    read.status = status;
+                }
 
                 return updatedReads;
             });

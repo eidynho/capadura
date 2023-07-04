@@ -73,15 +73,14 @@ export function NewReadProgressDialog({
 
                 const updatedReads = [...prev];
 
-                updatedReads.forEach((read) => {
-                    if (read.id === readId) {
-                        if (read.progress.length === 3) {
-                            read.progress.pop();
-                        }
-
-                        read.progress.unshift(data);
+                const read = updatedReads.find((read) => read.id === readId);
+                if (read) {
+                    if (read.progress.length === 3) {
+                        read.progress.pop();
                     }
-                });
+
+                    read.progress.unshift(data);
+                }
 
                 return updatedReads;
             });
@@ -105,7 +104,7 @@ export function NewReadProgressDialog({
 
             <BaseDialog
                 size="max-w-3xl"
-                title={`Novo: Progresso de leitura - ${bookTitle}`}
+                title={`Progresso de leitura - ${bookTitle}`}
                 isOpen={isOpen}
                 closeDialog={() => handleToggleDialog(false)}
             >

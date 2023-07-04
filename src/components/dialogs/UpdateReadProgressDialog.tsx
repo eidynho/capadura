@@ -88,38 +88,33 @@ export function UpdateReadProgressDialog({
 
                 const updatedReads = [...prev];
 
-                updatedReads.forEach((read) => {
-                    if (read.id === readId) {
-                        const progressIndex = read.progress.findIndex(
-                            (progress) => progress.id === editData?.id,
-                        );
-                        if (progressIndex < 0) return;
+                const read = updatedReads.find((read) => read.id === readId);
+                if (read) {
+                    const progress = read.progress.find((progress) => progress.id === editData?.id);
+                    if (!progress) return updatedReads;
 
-                        const progress = read.progress[progressIndex];
-
-                        let page = 0;
-                        let percentage = 0;
-                        if (countType === "page") {
-                            page = Math.round(pagesCount);
-                            percentage = Math.round((pagesCount / bookPageCount) * 100);
-                        }
-
-                        if (countType === "percentage") {
-                            page = Math.round((bookPageCount / 100) * pagesCount);
-                            percentage = Math.round(pagesCount);
-                        }
-
-                        if (percentage >= 100) {
-                            page = bookPageCount;
-                            percentage = 100;
-                        }
-
-                        progress.description = description ?? "";
-                        progress.is_spoiler = isSpoiler;
-                        progress.page = page;
-                        progress.percentage = percentage;
+                    let page = 0;
+                    let percentage = 0;
+                    if (countType === "page") {
+                        page = Math.round(pagesCount);
+                        percentage = Math.round((pagesCount / bookPageCount) * 100);
                     }
-                });
+
+                    if (countType === "percentage") {
+                        page = Math.round((bookPageCount / 100) * pagesCount);
+                        percentage = Math.round(pagesCount);
+                    }
+
+                    if (percentage >= 100) {
+                        page = bookPageCount;
+                        percentage = 100;
+                    }
+
+                    progress.description = description ?? "";
+                    progress.is_spoiler = isSpoiler;
+                    progress.page = page;
+                    progress.percentage = percentage;
+                }
 
                 return updatedReads;
             });
@@ -136,7 +131,7 @@ export function UpdateReadProgressDialog({
         <>
             <BaseDialog
                 size="max-w-3xl"
-                title={`Editar: Progresso de leitura - ${bookTitle}`}
+                title={`Progresso de leitura - ${bookTitle}`}
                 isOpen={isOpen}
                 closeDialog={() => setIsOpen(false)}
             >

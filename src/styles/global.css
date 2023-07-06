@@ -72,6 +72,10 @@ a {
     text-decoration: none;
 }
 
+:focus {
+    outline-color: #eab308;
+}
+
 
 @keyframes contentShow {
     from {

@@ -5,11 +5,13 @@ import {
     ArrowUUpLeft,
     BookOpen,
     DotsThreeVertical,
-    LockSimple,
+    Lock,
     LockSimpleOpen,
     PencilSimple,
     PlusCircle,
     ProhibitInset,
+    Star,
+    StarHalf,
     Trash,
     User,
 } from "phosphor-react";
@@ -23,6 +25,8 @@ import { BookData, ReadData } from "@/pages/app/books/[id]";
 import { NewReadProgressDialog } from "./dialogs/NewReadProgressDialog";
 import { UpdateReadProgressDialog } from "./dialogs/UpdateReadProgressDialog";
 import { Button } from "./Button";
+import { ReadReviewDialog } from "./dialogs/ReadReviewDialog";
+import { Badge } from "./Badge";
 
 interface EditReadData {
     id: string;
@@ -37,6 +41,8 @@ interface ReadsProgressProps {
     userReads: ReadData[] | null;
     setUserReads: Dispatch<SetStateAction<ReadData[] | null>>;
 }
+
+type ReadStatus = "ACTIVE" | "FINISHED" | "CANCELLED" | "DELETED";
 
 export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgressProps) {
     const { user } = useContext(AuthContext);
@@ -84,10 +90,7 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
         }
     }
 
-    async function toggleReadStatus(
-        readId: string,
-        status: "ACTIVE" | "FINISHED" | "CANCELLED" | "DELETED",
-    ) {
+    async function toggleReadStatus(readId: string, status: ReadStatus) {
         try {
             await api.put("/read", {
                 readId,
@@ -126,13 +129,53 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
         setIsOpenUpdateProgressDialog(true);
     }
 
+    function renderUserRating(rating: number) {
+        const isInteger = Number.isInteger(rating);
+        const ratingFloor = Math.floor(rating);
+
+        const renderIntegerStars = () => {
+            return [...Array(ratingFloor)].map((_, index) => (
+                <Star key={index} size={16} weight="fill" />
+            ));
+        };
+
+        return (
+            <>
+                {renderIntegerStars()}
+                {!isInteger && <StarHalf size={16} weight="fill" />}
+            </>
+        );
+    }
+
+    function renderReadStatus(status: ReadStatus) {
+        let message = "";
+        let variant: "green" | "sky" | "yellow" | "red" | "gray" = "gray";
+
+        switch (status) {
+            case "ACTIVE":
+                message = "Em andamento";
+                variant = "sky";
+                break;
+            case "FINISHED":
+                message = "Leitura finalizada";
+                variant = "green";
+                break;
+            case "CANCELLED":
+                message = "Leitura abandonada";
+                variant = "yellow";
+                break;
+        }
+
+        return <Badge variant={variant}>{message}</Badge>;
+    }
+
     return (
         <div className="rounded-lg border border-black text-sm">
             <div className="flex flex-1 flex-col gap-2">
                 {userReads?.length ? (
                     userReads.map((read) => (
                         <div key={read.id} className="relative">
-                            {/* read canceled */}
+                            {/* read cancelled */}
                             {read.status === "CANCELLED" && (
                                 <div className="absolute z-10 flex h-full w-full flex-col items-center justify-center gap-2 rounded-lg bg-gradient-to-b from-primary to-black/5 backdrop-blur-sm">
                                     <span className="mx-8 text-center text-lg font-medium">
@@ -151,28 +194,54 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
 
                             <div className="m-6 flex flex-col gap-2 rounded-lg">
                                 {/* read active */}
-                                <div className="flex items-start justify-between">
+                                <div className="flex flex-wrap items-center justify-between gap-3">
                                     <div className="flex items-center gap-2">
                                         <User size={20} />
                                         <span>{user?.name}</span>
+
+                                        <div className="mx-1 h-5 w-px bg-black"></div>
+
+                                        {/* Rating stars */}
+                                        <div className="inline-flex">
+                                            {read.review_rating &&
+                                                renderUserRating(read.review_rating)}
+                                        </div>
                                     </div>
 
-                                    <Menu as="div" className="relative inline-block">
-                                        <Menu.Button className="cursor-pointer rounded-lg p-1 text-sm hover:bg-gray-400/20">
-                                            <DotsThreeVertical size={20} />
-                                        </Menu.Button>
-                                        <Transition
-                                            as={Fragment}
-                                            enter="transition ease-out duration-100"
-                                            enterFrom="transform opacity-0 scale-95"
-                                            enterTo="transform opacity-100 scale-100"
-                                            leave="transition ease-in duration-75"
-                                            leaveFrom="transform opacity-100 scale-100"
-                                            leaveTo="transform opacity-0 scale-95"
-                                        >
-                                            <Menu.Items className="absolute right-0 z-10 mt-1 w-48 rounded-md border border-black bg-white py-2 shadow-[0.25rem_0.25rem_#000] ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                                <Menu.Item>
-                                                    <div
+                                    <div className="flex items-center gap-2">
+                                        {renderReadStatus(read.status as ReadStatus)}
+
+                                        {/* Privacy badge */}
+                                        <Badge variant="gray">
+                                            {read.is_private ? (
+                                                <Lock size={14} />
+                                            ) : (
+                                                <LockSimpleOpen size={14} />
+                                            )}
+                                            {read.is_private ? "Privado" : "Público"}
+                                        </Badge>
+
+                                        {/* Edit rating */}
+                                        <div className="cursor-pointer rounded-lg p-[6px] text-sm hover:bg-gray-400/20">
+                                            <PencilSimple size={17} weight="bold" />
+                                        </div>
+
+                                        <Menu as="div" className="relative inline-block">
+                                            <Menu.Button className="cursor-pointer rounded-lg p-1 text-sm hover:bg-gray-400/20">
+                                                <DotsThreeVertical size={20} weight="bold" />
+                                            </Menu.Button>
+                                            <Transition
+                                                as={Fragment}
+                                                enter="transition ease-out duration-100"
+                                                enterFrom="transform opacity-0 scale-95"
+                                                enterTo="transform opacity-100 scale-100"
+                                                leave="transition ease-in duration-75"
+                                                leaveFrom="transform opacity-100 scale-100"
+                                                leaveTo="transform opacity-0 scale-95"
+                                            >
+                                                <Menu.Items className="absolute right-0 z-10 mt-1 w-48 rounded-md border border-black bg-white py-2 shadow-[0.25rem_0.25rem_#000] ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                                    <Menu.Item
+                                                        as="div"
                                                         onClick={() =>
                                                             toggleReadPrivacy(
                                                                 read.id,
@@ -191,36 +260,68 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
                                                             </>
                                                         ) : (
                                                             <>
-                                                                <LockSimple
-                                                                    size={16}
-                                                                    weight="bold"
-                                                                />
+                                                                <Lock size={16} weight="bold" />
                                                                 <span>Tornar privado</span>
                                                             </>
                                                         )}
-                                                    </div>
-                                                </Menu.Item>
-                                                <Menu.Item>
-                                                    <div
-                                                        onClick={() =>
-                                                            toggleReadStatus(read.id, "CANCELLED")
-                                                        }
-                                                        className="mx-2 mb-1 flex cursor-pointer select-none items-center gap-2 rounded-lg border border-transparent py-2 pl-4 hover:bg-black hover:bg-opacity-10"
+                                                    </Menu.Item>
+                                                    {read.status !== "FINISHED" && (
+                                                        <Menu.Item
+                                                            as="div"
+                                                            onClick={() =>
+                                                                toggleReadStatus(
+                                                                    read.id,
+                                                                    "CANCELLED",
+                                                                )
+                                                            }
+                                                            className="mx-2 mb-1 flex cursor-pointer select-none items-center gap-2 rounded-lg border border-transparent py-2 pl-4 hover:bg-black hover:bg-opacity-10"
+                                                        >
+                                                            <ProhibitInset
+                                                                size={18}
+                                                                weight="bold"
+                                                            />
+                                                            <span>Abandonar leitura</span>
+                                                        </Menu.Item>
+                                                    )}
+                                                    <Menu.Item
+                                                        as="div"
+                                                        className="mx-2 mb-1 flex cursor-pointer select-none items-center gap-2 rounded-lg border border-transparent py-2 pl-4 text-red-900 hover:bg-red-500 hover:bg-opacity-10"
                                                     >
-                                                        <ProhibitInset size={18} weight="bold" />
-                                                        <span>Abandonar leitura</span>
-                                                    </div>
-                                                </Menu.Item>
-                                                <Menu.Item>
-                                                    <div className="mx-2 mb-1 flex cursor-pointer select-none items-center gap-2 rounded-lg border border-transparent py-2 pl-4 text-red-900 hover:bg-red-500 hover:bg-opacity-10">
                                                         <Trash size={18} weight="bold" />
                                                         <span>Excluir</span>
-                                                    </div>
-                                                </Menu.Item>
-                                            </Menu.Items>
-                                        </Transition>
-                                    </Menu>
+                                                    </Menu.Item>
+                                                </Menu.Items>
+                                            </Transition>
+                                        </Menu>
+                                    </div>
                                 </div>
+
+                                <div className="my-1 flex flex-wrap items-center justify-between gap-2">
+                                    <div className="text-sm">
+                                        <span className="mr-1 font-bold">Início da leitura:</span>
+                                        <span>
+                                            {format(
+                                                parseISO(read.start_date.toString()),
+                                                "dd/MM/yyyy",
+                                            )}
+                                        </span>
+                                    </div>
+                                    {read.end_date && (
+                                        <div className="text-sm">
+                                            <span className="mr-1 font-bold">Fim da leitura:</span>
+                                            <span>
+                                                {format(
+                                                    parseISO(read?.end_date.toString()),
+                                                    "dd/MM/yyyy",
+                                                )}
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {read.review_content && (
+                                    <p className="text-justify">{read.review_content}</p>
+                                )}
 
                                 <div className="mt-3 flex items-center">
                                     <div className="flex items-center gap-1 text-sm font-medium">
@@ -242,37 +343,30 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
                                     </span>
                                 </div>
 
-                                <div className="text-sm">
-                                    <span className="mr-1 font-semibold">Início da leitura:</span>
-                                    <span>
-                                        {format(parseISO(read.start_date.toString()), "dd/MM/yyyy")}
-                                    </span>
-                                </div>
-                                {read.end_date && (
-                                    <div className="text-sm">
-                                        <span className="mr-1 font-semibold">Fim da leitura:</span>
-                                        <span>
-                                            {format(
-                                                parseISO(read?.end_date.toString()),
-                                                "dd/MM/yyyy",
+                                {bookData && (
+                                    <div className="mt-2 flex items-center gap-2">
+                                        {read.progress[0]?.percentage !== 100 && (
+                                            <NewReadProgressDialog
+                                                readId={read.id}
+                                                bookTitle={bookData?.title}
+                                                bookPageCount={bookData?.pageCount ?? 0}
+                                                setUserReads={setUserReads}
+                                            />
+                                        )}
+
+                                        {read.review_rating === null &&
+                                            read.progress[0]?.percentage === 100 && (
+                                                <ReadReviewDialog
+                                                    readId={read.id}
+                                                    bookTitle={bookData?.title}
+                                                    setUserReads={setUserReads}
+                                                />
                                             )}
-                                        </span>
                                     </div>
                                 )}
-
-                                <div className="mt-4">
-                                    {bookData && (
-                                        <NewReadProgressDialog
-                                            readId={read.id}
-                                            bookTitle={bookData?.title}
-                                            bookPageCount={bookData?.pageCount ?? 0}
-                                            setUserReads={setUserReads}
-                                        />
-                                    )}
-                                </div>
                                 <div className="mt-2 flex flex-col gap-3">
                                     <div className="flex items-center justify-between gap-2">
-                                        <h4 className="font-semibold">Últimos progressos</h4>
+                                        <h4 className="font-bold">Últimos progressos</h4>
                                         <Button
                                             size="xs"
                                             className="bg-white text-black enabled:hover:bg-white enabled:hover:shadow-[0.125rem_0.125rem_#000]"
@@ -306,7 +400,10 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
                                                             className="relative inline-block"
                                                         >
                                                             <Menu.Button className="cursor-pointer rounded-lg p-1 text-sm hover:bg-gray-400/20">
-                                                                <DotsThreeVertical size={20} />
+                                                                <DotsThreeVertical
+                                                                    size={20}
+                                                                    weight="bold"
+                                                                />
                                                             </Menu.Button>
                                                             <Transition
                                                                 as={Fragment}
@@ -318,32 +415,31 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
                                                                 leaveTo="transform opacity-0 scale-95"
                                                             >
                                                                 <Menu.Items className="absolute right-0 z-10 mt-1 w-48 rounded-md border border-black bg-white py-2 shadow-[0.25rem_0.25rem_#000] ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                                                    <Menu.Item>
-                                                                        <div
-                                                                            onClick={() =>
-                                                                                editReadProgress({
-                                                                                    ...progress,
-                                                                                    countType:
-                                                                                        "page",
-                                                                                })
-                                                                            }
-                                                                            className="mx-2 mb-1 flex cursor-pointer select-none items-center gap-2 rounded-lg border border-transparent py-2 pl-4 hover:bg-black hover:bg-opacity-10"
-                                                                        >
-                                                                            <PencilSimple
-                                                                                size={18}
-                                                                                weight="bold"
-                                                                            />
-                                                                            <span>Editar</span>
-                                                                        </div>
+                                                                    <Menu.Item
+                                                                        as="div"
+                                                                        onClick={() =>
+                                                                            editReadProgress({
+                                                                                ...progress,
+                                                                                countType: "page",
+                                                                            })
+                                                                        }
+                                                                        className="mx-2 mb-1 flex cursor-pointer select-none items-center gap-2 rounded-lg border border-transparent py-2 pl-4 hover:bg-black hover:bg-opacity-10"
+                                                                    >
+                                                                        <PencilSimple
+                                                                            size={18}
+                                                                            weight="bold"
+                                                                        />
+                                                                        <span>Editar</span>
                                                                     </Menu.Item>
-                                                                    <Menu.Item>
-                                                                        <div className="mx-2 mb-1 flex cursor-pointer select-none items-center gap-2 rounded-lg border border-transparent py-2 pl-4 text-red-900 hover:bg-red-500 hover:bg-opacity-10">
-                                                                            <Trash
-                                                                                size={18}
-                                                                                weight="bold"
-                                                                            />
-                                                                            <span>Excluir</span>
-                                                                        </div>
+                                                                    <Menu.Item
+                                                                        as="div"
+                                                                        className="mx-2 mb-1 flex cursor-pointer select-none items-center gap-2 rounded-lg border border-transparent py-2 pl-4 text-red-900 hover:bg-red-500 hover:bg-opacity-10"
+                                                                    >
+                                                                        <Trash
+                                                                            size={18}
+                                                                            weight="bold"
+                                                                        />
+                                                                        <span>Excluir</span>
                                                                     </Menu.Item>
                                                                 </Menu.Items>
                                                             </Transition>
@@ -351,7 +447,7 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
                                                     </div>
 
                                                     {progress.description && (
-                                                        <p className="mt-2">
+                                                        <p className="mt-2 text-justify">
                                                             {progress.description}
                                                         </p>
                                                     )}

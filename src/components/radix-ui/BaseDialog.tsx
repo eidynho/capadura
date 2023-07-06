@@ -29,7 +29,7 @@ export function BaseDialog({
                     <Dialog.Content
                         onPointerDownOutside={closeDialog}
                         className={twMerge(
-                            "fixed left-1/2 top-1/2 z-20 w-[90%] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-primary/80 px-4 py-6 font-manrope shadow-xl backdrop-blur md:w-full md:px-6",
+                            "fixed left-1/2 top-1/2 z-20 w-[90%] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-primary/80 px-4 py-6 font-manrope shadow-xl backdrop-blur focus-visible:outline-none md:w-full md:px-6",
                             size,
                             manrope.variable,
                         )}

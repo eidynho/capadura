@@ -9,6 +9,7 @@ import { ProgressFormSchema, progressFormSchema } from "./NewReadProgressDialog"
 import { BaseDialog } from "../radix-ui/BaseDialog";
 import { Button } from "../Button";
 import { ReadData } from "@/pages/app/books/[id]";
+import { CircleNotch } from "phosphor-react";
 
 interface ReadProgressDialogProps {
     isOpen: boolean;
@@ -156,7 +157,7 @@ export function UpdateReadProgressDialog({
                                         id="description-progress"
                                         rows={4}
                                         placeholder="O que está achando?"
-                                        className="mt-1 block w-full rounded-lg border border-black bg-white bg-opacity-60 px-3 py-2 text-sm outline-none focus:border-yellow-500 focus:ring-yellow-500"
+                                        className="mt-1 block w-full rounded-lg border border-black bg-white bg-opacity-60 px-3 py-2 text-sm outline-none focus:border-yellow-500"
                                     ></textarea>
 
                                     <div className="mt-1 flex items-center gap-x-3">
@@ -202,7 +203,7 @@ export function UpdateReadProgressDialog({
                                                 } mt-1 w-40 rounded-lg border px-3 py-2 text-sm outline-none focus:border-yellow-500 focus:ring-yellow-500`}
                                             />
                                             {errors.pagesCount && (
-                                                <span className="text-xs text-red-500">
+                                                <span className="text-xs font-semibold text-red-500">
                                                     Campo obrigatório
                                                 </span>
                                             )}
@@ -247,8 +248,20 @@ export function UpdateReadProgressDialog({
                                     size="md"
                                     type="submit"
                                     className="w-full bg-black text-white hover:bg-yellow-500"
+                                    disabled={isSubmitting}
                                 >
-                                    Editar progresso
+                                    {isSubmitting ? (
+                                        <>
+                                            <CircleNotch
+                                                size={22}
+                                                weight="bold"
+                                                className="animate-spin"
+                                            />
+                                            <span>Editando...</span>
+                                        </>
+                                    ) : (
+                                        <span>Editar progresso</span>
+                                    )}
                                 </Button>
                             </form>
                         </div>

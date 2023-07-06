@@ -48,10 +48,10 @@ export function Button({ children, size, className, ...props }: ButtonProps) {
     return (
         <button
             className={twMerge(
-                `${sizeStyles} flex items-center justify-center
-                gap-2 rounded-lg border border-black bg-black  text-white transition-all duration-300 enabled:hover:bg-yellow-500 ${hoverEffectStyles} disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-200 disabled:bg-opacity-100 disabled:text-black
-            `,
-                `${className}`,
+                "flex items-center justify-center gap-2 rounded-lg border border-black bg-black  text-white transition-all duration-300 enabled:hover:bg-yellow-500 disabled:cursor-default disabled:border-black disabled:bg-black/80 disabled:bg-opacity-100 disabled:text-white",
+                hoverEffectStyles,
+                sizeStyles,
+                className,
             )}
             {...props}
         >

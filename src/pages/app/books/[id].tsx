@@ -61,7 +61,8 @@ export interface ReadData {
     end_date: Date | string | null;
     is_private: boolean;
     review_content: string | null;
-    review_rating: string | null;
+    review_rating: number | null;
+    review_is_spoiler: boolean | null;
     status: string;
     progress: ProgressData[];
 }

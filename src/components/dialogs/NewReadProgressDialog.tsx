@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "react-toastify";
-import { PlusCircle } from "phosphor-react";
+import { CircleNotch, PlusCircle } from "phosphor-react";
 
 import { api } from "@/lib/api";
 import { ProgressData, ReadData } from "@/pages/app/books/[id]";
@@ -85,7 +85,7 @@ export function NewReadProgressDialog({
                 return updatedReads;
             });
 
-            toast.success("Progresso adicionado com sucesso.");
+            toast.success("Progresso adicionado.");
             setIsOpen(false);
 
             reset();
@@ -129,7 +129,7 @@ export function NewReadProgressDialog({
                                         id="description-progress"
                                         rows={4}
                                         placeholder="O que está achando?"
-                                        className="mt-1 block w-full rounded-lg border border-black bg-white bg-opacity-60 px-3 py-2 text-sm outline-none focus:border-yellow-500 focus:ring-yellow-500"
+                                        className="mt-1 block w-full rounded-lg border border-black bg-white bg-opacity-60 px-3 py-2 text-sm outline-none focus:border-yellow-500"
                                     ></textarea>
 
                                     <div className="mt-1 flex items-center gap-x-3">
@@ -175,7 +175,7 @@ export function NewReadProgressDialog({
                                                 } mt-1 w-40 rounded-lg border px-3 py-2 text-sm outline-none focus:border-yellow-500 focus:ring-yellow-500`}
                                             />
                                             {errors.pagesCount && (
-                                                <span className="text-xs text-red-500">
+                                                <span className="text-xs font-semibold text-red-500">
                                                     Campo obrigatório
                                                 </span>
                                             )}
@@ -220,8 +220,20 @@ export function NewReadProgressDialog({
                                     size="md"
                                     type="submit"
                                     className="w-full bg-black text-white hover:bg-yellow-500"
+                                    disabled={isSubmitting}
                                 >
-                                    Enviar progresso
+                                    {isSubmitting ? (
+                                        <>
+                                            <CircleNotch
+                                                size={22}
+                                                weight="bold"
+                                                className="animate-spin"
+                                            />
+                                            <span>Enviando...</span>
+                                        </>
+                                    ) : (
+                                        <span>Enviar progresso</span>
+                                    )}
                                 </Button>
                             </form>
                         </div>

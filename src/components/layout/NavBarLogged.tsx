@@ -405,7 +405,7 @@ export function NavBarLoggedComponent() {
                                             onChange={(e) => setSearchName(e.target.value)}
                                             value={searchName}
                                             placeholder="Busque por título, autor, editora, ISBN..."
-                                            className="block w-[32rem] rounded-lg border border-black py-3 pl-10 pr-10 text-sm outline-none focus:border-yellow-500 focus:ring-yellow-500"
+                                            className="block w-[32rem] rounded-lg border border-black py-3 pl-10 pr-10 text-sm outline-none focus:border-yellow-500"
                                         />
                                         {searchName && (
                                             <div

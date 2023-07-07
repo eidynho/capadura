@@ -14,8 +14,6 @@ import { CircleNotch } from "phosphor-react";
 interface ReadProgressDialogProps {
     isOpen: boolean;
     setIsOpen: Dispatch<SetStateAction<boolean>>;
-
-    userReads: ReadData[];
     setUserReads: Dispatch<SetStateAction<ReadData[] | null>>;
 
     readId: string;
@@ -33,10 +31,7 @@ interface ReadProgressDialogProps {
 export function UpdateReadProgressDialog({
     isOpen,
     setIsOpen,
-
-    userReads,
     setUserReads,
-
     readId,
     bookTitle,
     bookPageCount,

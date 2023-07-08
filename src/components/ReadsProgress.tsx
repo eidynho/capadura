@@ -50,23 +50,46 @@ type ReadStatus = "ACTIVE" | "FINISHED" | "CANCELLED" | "DELETED";
 export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgressProps) {
     const { user } = useContext(AuthContext);
 
+    const [isFetching, setIsFetching] = useState(false);
     const [isOpenUpdateProgressDialog, setIsOpenUpdateProgressDialog] = useState(false);
     const [progressEditData, setProgressEditData] = useState<EditReadData | null>(null);
 
     async function startNewRead() {
+        if (userReads && userReads.length > 50) {
+            toast.error("Limite de leitura atingido.");
+            return;
+        }
+
+        if (isFetching) return;
+        setIsFetching(true);
+
         try {
             const { data } = await api.post("/read", {
                 bookId: bookData?.id,
             });
 
-            setUserReads([data]);
+            setUserReads((prev) => {
+                if (!prev) {
+                    return [data];
+                }
+
+                const updatedReads = [...prev];
+
+                updatedReads.unshift(data);
+                return updatedReads;
+            });
         } catch (err) {
             toast.error("Erro ao iniciar a leitura.");
             throw err;
+        } finally {
+            setIsFetching(false);
         }
     }
 
     async function toggleReadPrivacy(readId: string, currentStatus: boolean) {
+        if (isFetching) return;
+        setIsFetching(true);
+
         try {
             await api.put("/read", {
                 readId,
@@ -90,10 +113,15 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
         } catch (err) {
             toast.error("Erro ao alterar privacidade da leitura.");
             throw err;
+        } finally {
+            setIsFetching(false);
         }
     }
 
     async function toggleReadStatus(readId: string, status: ReadStatus) {
+        if (isFetching) return;
+        setIsFetching(true);
+
         try {
             await api.put("/read", {
                 readId,
@@ -117,6 +145,8 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
         } catch (err) {
             toast.error("Erro ao alterar o status da leitura.");
             throw err;
+        } finally {
+            setIsFetching(false);
         }
     }
 

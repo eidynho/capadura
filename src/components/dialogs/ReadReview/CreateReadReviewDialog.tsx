@@ -5,7 +5,7 @@ import { BookData, ReadData } from "@/pages/app/books/[id]";
 
 import { Button } from "@/components/Button";
 import { BaseDialog } from "@/components/radix-ui/BaseDialog";
-import { FormReadReview } from "@/components/FormReadReview";
+import { FormReadReview } from "./FormReadReview";
 
 interface ReadReviewDialogProps {
     readId?: string;

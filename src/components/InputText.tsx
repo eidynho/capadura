@@ -27,7 +27,7 @@ export function InputText({ htmlFor, label, placeholder, className }: InputTextP
                 name={htmlFor}
                 className={`${
                     className ? className : ""
-                } block py-2 pl-3 mt-2 text-sm border border-black rounded-lg outline-none focus:ring-yellow-500 focus:border-yellow-500`}
+                } mt-2 block rounded-lg border border-black py-2 pl-3 text-sm outline-none focus:border-yellow-500 focus:ring-yellow-500`}
                 placeholder={placeholder}
             />
         </div>
@@ -47,7 +47,7 @@ export function InputTextSearch({
                 {label}
             </label>
             <div className="relative">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                     <MagnifyingGlass size={18} />
                 </div>
                 <input
@@ -55,7 +55,7 @@ export function InputTextSearch({
                     id={id}
                     onChange={onChange}
                     placeholder={placeholder}
-                    className="block p-2 pl-10 text-sm border border-black rounded-lg w-80 outline-none focus:ring-yellow-500 focus:border-yellow-500"
+                    className="block w-80 rounded-lg border border-black p-2 pl-10 text-sm outline-none focus:border-yellow-500 focus:ring-yellow-500"
                 />
             </div>
         </div>

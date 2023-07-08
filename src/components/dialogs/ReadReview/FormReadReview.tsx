@@ -8,7 +8,8 @@ import { toast } from "react-toastify";
 import { BookData, ReadData } from "@/pages/app/books/[id]";
 import { api } from "@/lib/api";
 
-import { Button } from "./Button";
+import { Button } from "@/components/Button";
+import { ratingFormat } from "@/utils/rating-format";
 
 const readReviewFormSchema = z.object({
     content: z.string().optional(),
@@ -24,6 +25,12 @@ interface FormReadReviewProps {
     isReviewWithoutProgress?: boolean;
     bookData: BookData | null;
     executeOnSubmit: () => void;
+
+    editData?: {
+        reviewContent?: string;
+        reviewRating: number;
+        reviewIsSpoiler: boolean;
+    };
 }
 
 export function FormReadReview({
@@ -32,6 +39,7 @@ export function FormReadReview({
     isReviewWithoutProgress,
     bookData,
     executeOnSubmit,
+    editData,
 }: FormReadReviewProps) {
     const [contentHeight, setContentHeight] = useState("h-40");
     const [hoverPositionRating, setHoverPositionRating] = useState<number>(0);
@@ -52,12 +60,23 @@ export function FormReadReview({
     });
 
     useEffect(() => {
-        const formatedRating = formatRating();
+        const formatedRating = ratingFormat(rating, true);
+
         if (typeof formatedRating === "number") {
             setValue("rating", formatedRating);
             trigger("rating");
         }
     }, [rating]);
+
+    useEffect(() => {
+        if (!editData) return;
+
+        setValue("content", editData.reviewContent);
+        setValue("isSpoiler", editData.reviewIsSpoiler);
+
+        const unformatedRating = ratingFormat(editData.reviewRating, false);
+        setRating(unformatedRating);
+    }, [editData]);
 
     async function submitReview({ content, rating, isSpoiler }: ReviewReadFormSchema) {
         try {
@@ -106,7 +125,7 @@ export function FormReadReview({
                 reviewContent: content,
                 reviewRating: rating,
                 reviewIsSpoiler: isSpoiler,
-                endRead: true,
+                endRead: !editData,
             });
 
             setUserReads((prev) => {
@@ -147,35 +166,6 @@ export function FormReadReview({
         },
         [setHoverPositionRating],
     );
-
-    function formatRating() {
-        if (!rating) return null;
-
-        switch (true) {
-            case rating <= 0.1:
-                return 0.0;
-            case rating <= 0.175:
-                return 0.5;
-            case rating <= 0.3:
-                return 1.0;
-            case rating <= 0.375:
-                return 1.5;
-            case rating <= 0.5:
-                return 2.0;
-            case rating <= 0.575:
-                return 2.5;
-            case rating <= 0.7:
-                return 3.0;
-            case rating <= 0.775:
-                return 3.5;
-            case rating <= 0.9:
-                return 4.0;
-            case rating <= 0.95:
-                return 4.5;
-            case rating > 0.95:
-                return 5.0;
-        }
-    }
 
     return (
         <form onSubmit={handleSubmit(submitReview)} className="flex w-full flex-col gap-4">
@@ -221,7 +211,7 @@ export function FormReadReview({
                             <div className="flex flex-col">
                                 <span className="text-sm font-semibold">Nota</span>
                                 <span className="text-xs font-semibold">
-                                    {`${formatRating()?.toFixed(1) ?? "----"} / 5.0`}
+                                    {`${ratingFormat(rating, true)?.toFixed(1) ?? "----"} / 5.0`}
                                 </span>
                             </div>
                             <div

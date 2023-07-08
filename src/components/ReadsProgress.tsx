@@ -26,6 +26,7 @@ import { UpdateReadProgressDialog } from "./dialogs/UpdateReadProgressDialog";
 import { CreateReadReviewDialog } from "./dialogs/ReadReview/CreateReadReviewDialog";
 import { Button } from "./Button";
 import { Badge } from "./Badge";
+import { UpdateReadReviewDialog } from "./dialogs/ReadReview/UpdateReadReviewDialog";
 
 interface EditReadData {
     id: string;
@@ -221,9 +222,16 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
                                     </Badge>
 
                                     {/* Edit rating */}
-                                    <div className="cursor-pointer rounded-lg p-[6px] text-sm hover:bg-gray-400/20">
-                                        <PencilSimple size={17} weight="bold" />
-                                    </div>
+                                    <UpdateReadReviewDialog
+                                        readId={read.id}
+                                        bookData={bookData}
+                                        setUserReads={setUserReads}
+                                        editData={{
+                                            reviewContent: read.review_content || undefined,
+                                            reviewRating: read.review_rating ?? 0,
+                                            reviewIsSpoiler: read.review_is_spoiler ?? false,
+                                        }}
+                                    />
 
                                     <Menu as="div" className="relative inline-block">
                                         <Menu.Button className="cursor-pointer rounded-lg p-1 text-sm hover:bg-gray-400/20">

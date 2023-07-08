@@ -50,7 +50,7 @@ export function CreateReadReviewDialog({
             ) : (
                 <Button
                     size="sm"
-                    className="enabled:hover:bg-green-500 enabled:hover:text-white"
+                    className="w-full bg-green-500 enabled:hover:bg-green-500 enabled:hover:text-white"
                     onClick={() => handleToggleDialog(true)}
                 >
                     <Star size={18} weight="bold" />

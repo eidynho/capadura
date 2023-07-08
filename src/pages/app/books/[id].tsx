@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import axios from "axios";
 import { getYear, isValid, parse } from "date-fns";
-import { Clock, Image as ImageIcon, Heart, Star, BookOpen } from "phosphor-react";
+import { Clock, Image as ImageIcon, Heart, BookOpen } from "phosphor-react";
 import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";
@@ -16,6 +16,7 @@ import { Separator } from "@/components/Separator";
 import { Button } from "@/components/Button";
 import { BookDataFromGoogle } from "@/components/layout/NavBarLogged";
 import { ReadsProgress } from "@/components/ReadsProgress";
+import { BookRatingChart } from "@/components/BookRatingChart";
 
 interface BookImagesDataFromGoogle {
     id: string;
@@ -319,68 +320,7 @@ export default function Book() {
                             </div>
 
                             {/* Community rating */}
-                            <div className="mt-3 flex flex-col justify-center rounded-lg border border-black px-4 pb-6 pt-4 text-sm">
-                                <div className="my-1 flex items-center justify-between">
-                                    <h3 className="font-semibold">Avaliações</h3>
-                                    <div className="flex items-center gap-1">
-                                        <Star size={14} weight="fill" />
-                                        <p className="text-sm font-medium text-gray-900 dark:text-white">
-                                            4.95 (12)
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="mt-4 flex items-center">
-                                    <div className="flex items-center gap-1 text-sm font-medium">
-                                        <span>5</span>
-                                        <Star size={14} weight="fill" />
-                                    </div>
-                                    <div className="mx-2 h-5 flex-1 overflow-hidden rounded border border-black bg-white dark:bg-gray-700">
-                                        <div className="h-5 w-[70%] rounded bg-yellow-500"></div>
-                                    </div>
-                                    <span className="w-8 text-sm font-medium">70%</span>
-                                </div>
-                                <div className="mt-4 flex items-center">
-                                    <div className="flex items-center gap-1 text-sm font-medium">
-                                        <span>4</span>
-                                        <Star size={14} weight="fill" />
-                                    </div>
-                                    <div className="mx-2 h-5 flex-1 overflow-hidden rounded border border-black bg-white dark:bg-gray-700">
-                                        <div className="h-5 w-[17%] rounded bg-yellow-500"></div>
-                                    </div>
-                                    <span className="w-8 text-sm font-medium">17%</span>
-                                </div>
-                                <div className="mt-4 flex items-center">
-                                    <div className="flex items-center gap-1 text-sm font-medium">
-                                        <span>3</span>
-                                        <Star size={14} weight="fill" />
-                                    </div>
-                                    <div className="mx-2 h-5 flex-1 overflow-hidden rounded border border-black bg-white dark:bg-gray-700">
-                                        <div className="h-5 w-[8%] rounded bg-yellow-500"></div>
-                                    </div>
-                                    <span className="w-8 text-sm font-medium">8%</span>
-                                </div>
-                                <div className="mt-4 flex items-center">
-                                    <div className="flex items-center gap-1 text-sm font-medium">
-                                        <span>2</span>
-                                        <Star size={14} weight="fill" />
-                                    </div>
-                                    <div className="mx-2 h-5 flex-1 overflow-hidden rounded border border-black bg-white dark:bg-gray-700">
-                                        <div className="h-5 w-[4%] rounded bg-yellow-500"></div>
-                                    </div>
-                                    <span className="w-8 text-sm font-medium">4%</span>
-                                </div>
-                                <div className="mt-4 flex items-center">
-                                    <div className="flex items-center gap-1 text-sm font-medium">
-                                        <span>1</span>
-                                        <Star size={14} weight="fill" />
-                                    </div>
-                                    <div className="mx-2 h-5 flex-1 overflow-hidden rounded border border-black bg-white dark:bg-gray-700">
-                                        <div className="h-5 w-[1%] rounded bg-yellow-500"></div>
-                                    </div>
-                                    <span className="w-8 text-sm font-medium">1%</span>
-                                </div>
-                            </div>
+                            <BookRatingChart />
                         </div>
 
                         <div className="flex w-full flex-col md:w-[calc(100%-344px)]">

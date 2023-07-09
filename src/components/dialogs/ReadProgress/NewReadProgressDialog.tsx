@@ -52,6 +52,10 @@ export function NewReadProgressDialog({
 
                 const read = updatedReads.find((read) => read.id === readId);
                 if (read) {
+                    if (!read.progress) {
+                        read.progress = [];
+                    }
+
                     if (read.progress.length === 3) {
                         read.progress.pop();
                     }

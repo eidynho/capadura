@@ -320,7 +320,7 @@ export default function Book() {
                             </div>
 
                             {/* Community rating */}
-                            <BookRatingChart />
+                            {bookData?.id && <BookRatingChart bookId={bookData.id} />}
                         </div>
 
                         <div className="flex w-full flex-col md:w-[calc(100%-344px)]">

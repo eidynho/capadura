@@ -70,7 +70,7 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
 
             setUserReads((prev) => {
                 if (!prev) {
-                    return [data];
+                    return [{ ...data, progress: [] }];
                 }
 
                 const updatedReads = [...prev];
@@ -187,41 +187,38 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
 
     return (
         <>
-            <div>
-                {!userReads ||
-                    (userReads?.[0].status === "FINISHED" && (
-                        <div className="flex flex-col items-center gap-2 py-4">
-                            <div className="flex w-full flex-col items-center justify-center gap-2 px-4 lg:flex-row">
-                                <Button
-                                    size="md"
-                                    onClick={startNewRead}
-                                    className="group w-full gap-3 bg-transparent text-black enabled:hover:bg-pink-500 lg:w-64"
-                                >
-                                    <PlusCircle
-                                        size={28}
-                                        className="text-pink-500 transition-colors group-hover:text-black"
-                                    />
-                                    <div className="flex flex-col items-start">
-                                        <span className="font-medium">Nova leitura</span>
-                                        <span className="-mt-[2px] text-start text-xs font-semibold text-gray-500 transition-colors group-hover:text-black">
-                                            Vou começar uma nova leitura
-                                        </span>
-                                    </div>
-                                </Button>
-
-                                {!userReads && (
-                                    <CreateReadReviewDialog
-                                        bookData={bookData}
-                                        setUserReads={setUserReads}
-                                        isReviewWithoutProgress={true}
-                                    />
-                                )}
+            {(!userReads?.length || userReads[0].status === "FINISHED") && (
+                <div className="flex flex-col items-center gap-2 py-4">
+                    <div className="flex w-full flex-col items-center justify-center gap-2 px-4 lg:flex-row">
+                        <Button
+                            size="md"
+                            onClick={startNewRead}
+                            className="group w-full gap-3 bg-transparent text-black enabled:hover:bg-pink-500 lg:w-64"
+                        >
+                            <PlusCircle
+                                size={28}
+                                className="text-pink-500 transition-colors group-hover:text-black"
+                            />
+                            <div className="flex flex-col items-start">
+                                <span className="font-medium">Nova leitura</span>
+                                <span className="-mt-[2px] text-start text-xs font-semibold text-gray-500 transition-colors group-hover:text-black">
+                                    Vou começar uma nova leitura
+                                </span>
                             </div>
-                        </div>
-                    ))}
-            </div>
+                        </Button>
 
-            {userReads?.length &&
+                        {!userReads && (
+                            <CreateReadReviewDialog
+                                bookData={bookData}
+                                setUserReads={setUserReads}
+                                isReviewWithoutProgress={true}
+                            />
+                        )}
+                    </div>
+                </div>
+            )}
+
+            {userReads?.[0] &&
                 userReads.map((read) => (
                     <div key={read.id} className="relative rounded-lg border border-black text-sm">
                         {/* read cancelled */}
@@ -249,11 +246,13 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
                                     <span>{user?.name}</span>
 
                                     {/* Rating stars */}
-                                    <div className="inline-flex items-center gap-1">
+                                    <div className="inline-flex items-center gap-2">
                                         {read.review_rating ? (
                                             <>
                                                 <div className="mx-1 h-5 w-px bg-black"></div>
-                                                <RatingStars rating={read.review_rating} />
+                                                <div className="inline-flex items-center">
+                                                    <RatingStars rating={read.review_rating} />
+                                                </div>
                                             </>
                                         ) : (
                                             <></>

@@ -9,8 +9,6 @@ import {
     PencilSimple,
     PlusCircle,
     ProhibitInset,
-    Star,
-    StarHalf,
     Trash,
     User,
 } from "phosphor-react";
@@ -20,7 +18,7 @@ import { pt } from "date-fns/locale";
 import { api } from "@/lib/api";
 import { AuthContext } from "@/contexts/AuthContext";
 
-import { BookData, ReadData } from "@/pages/app/books/[id]";
+import { BookData, ReadData } from "@/pages/books/[id]";
 
 import { NewReadProgressDialog } from "./dialogs/ReadProgress/NewReadProgressDialog";
 import { UpdateReadProgressDialog } from "./dialogs/ReadProgress/UpdateReadProgressDialog";
@@ -34,7 +32,7 @@ interface EditReadData {
     readId: string;
     id: string;
     description: string;
-    is_spoiler: boolean;
+    isSpoiler: boolean;
     page: number | null;
     countType: "page" | "percentage";
 }
@@ -103,7 +101,7 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
 
                 const read = updatedReads.find((read) => read.id === readId);
                 if (read) {
-                    read.is_private = !currentStatus;
+                    read.isPrivate = !currentStatus;
                 }
 
                 return updatedReads;
@@ -150,12 +148,12 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
         }
     }
 
-    function editProgress({ readId, id, description, is_spoiler, page, countType }: EditReadData) {
+    function editProgress({ readId, id, description, isSpoiler, page, countType }: EditReadData) {
         setProgressEditData({
             readId,
             id,
             description,
-            is_spoiler,
+            isSpoiler,
             page,
             countType,
         });
@@ -247,11 +245,11 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
 
                                     {/* Rating stars */}
                                     <div className="inline-flex items-center gap-2">
-                                        {read.review_rating ? (
+                                        {read.reviewRating ? (
                                             <>
                                                 <div className="mx-1 h-5 w-px bg-black"></div>
                                                 <div className="inline-flex items-center">
-                                                    <RatingStars rating={read.review_rating} />
+                                                    <RatingStars rating={read.reviewRating} />
                                                 </div>
                                             </>
                                         ) : (
@@ -265,24 +263,24 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
 
                                     {/* Privacy badge */}
                                     <Badge variant="gray">
-                                        {read.is_private ? (
+                                        {read.isPrivate ? (
                                             <Lock size={14} />
                                         ) : (
                                             <LockSimpleOpen size={14} />
                                         )}
-                                        {read.is_private ? "Privado" : "Público"}
+                                        {read.isPrivate ? "Privado" : "Público"}
                                     </Badge>
 
                                     {/* Edit rating */}
-                                    {typeof read.review_rating === "number" && (
+                                    {typeof read.reviewRating === "number" && (
                                         <UpdateReadReviewDialog
                                             readId={read.id}
                                             bookData={bookData}
                                             setUserReads={setUserReads}
                                             editData={{
-                                                reviewContent: read.review_content || undefined,
-                                                reviewRating: read.review_rating ?? 0,
-                                                reviewIsSpoiler: read.review_is_spoiler ?? false,
+                                                reviewContent: read.reviewContent || undefined,
+                                                reviewRating: read.reviewRating ?? 0,
+                                                reviewIsSpoiler: read.reviewIsSpoiler ?? false,
                                             }}
                                         />
                                     )}
@@ -304,11 +302,11 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
                                                 <Menu.Item
                                                     as="div"
                                                     onClick={() =>
-                                                        toggleReadPrivacy(read.id, read.is_private)
+                                                        toggleReadPrivacy(read.id, read.isPrivate)
                                                     }
                                                     className="mx-2 mb-1 flex cursor-pointer select-none items-center gap-2 rounded-lg border border-transparent py-2 pl-4 hover:bg-black hover:bg-opacity-10"
                                                 >
-                                                    {read.is_private ? (
+                                                    {read.isPrivate ? (
                                                         <>
                                                             <LockSimpleOpen
                                                                 size={16}
@@ -353,18 +351,18 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
                                     <span className="mr-1 font-bold">Início da leitura:</span>
                                     <span>
                                         {format(
-                                            parseISO(read.start_date.toString()),
+                                            parseISO(read.startDate.toString()),
                                             "dd 'de' MMMM 'de' yyyy",
                                             { locale: pt },
                                         )}
                                     </span>
                                 </div>
-                                {read.end_date && (
+                                {read.endDate && (
                                     <div className="text-sm">
                                         <span className="mr-1 font-bold">Fim da leitura:</span>
                                         <span>
                                             {format(
-                                                parseISO(read?.end_date.toString()),
+                                                parseISO(read?.endDate.toString()),
                                                 "dd 'de' MMMM 'de' yyyy",
                                                 { locale: pt },
                                             )}
@@ -373,8 +371,8 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
                                 )}
                             </div>
 
-                            {read.review_content && (
-                                <p className="text-justify">{read.review_content}</p>
+                            {read.reviewContent && (
+                                <p className="text-justify">{read.reviewContent}</p>
                             )}
 
                             {bookData && (
@@ -388,7 +386,7 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
                                         />
                                     )}
 
-                                    {read.review_rating === null &&
+                                    {read.reviewRating === null &&
                                         read.progress?.[0]?.percentage === 100 && (
                                             <CreateReadReviewDialog
                                                 readId={read.id}
@@ -420,9 +418,7 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
                                                     <span>{user?.name}</span>
                                                     <span className="mt-[2px] text-xs font-semibold text-gray-500">
                                                         {format(
-                                                            parseISO(
-                                                                progress.created_at.toString(),
-                                                            ),
+                                                            parseISO(progress.createdAt.toString()),
                                                             "dd/MM/yyyy",
                                                         )}
                                                     </span>
@@ -449,7 +445,6 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
                                                                 as="div"
                                                                 onClick={() =>
                                                                     editProgress({
-                                                                        readId: read.id,
                                                                         ...progress,
                                                                         countType: "page",
                                                                     })

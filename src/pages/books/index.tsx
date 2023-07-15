@@ -75,7 +75,7 @@ export default function Books() {
                     <div className="flex w-full flex-wrap justify-center gap-4">
                         {books.items.map((item) => (
                             <Link
-                                href={`/app/books/${item.id}`}
+                                href={`/books/${item.id}`}
                                 key={item.id}
                                 className="h-44 w-2/5 cursor-pointer rounded-lg border border-black p-2 transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[0.25rem_0.25rem_#000]"
                             >

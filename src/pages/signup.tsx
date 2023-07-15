@@ -27,7 +27,7 @@ export default function SignUp() {
                 password,
             });
 
-            Router.push("/app/books");
+            Router.push("/books");
         } catch (err) {
             throw new Error("Failed to create account: " + err);
         }

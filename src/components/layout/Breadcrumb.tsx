@@ -14,11 +14,11 @@ interface BreadcrumbProps {
 
 export function Breadcrumb({ items }: BreadcrumbProps) {
     return (
-        <nav className="flex pr-2 pt-4 pb-3 text-black" aria-label="breadcrumb">
+        <nav className="flex pb-3 pr-2 pt-4 text-black" aria-label="breadcrumb">
             <ol className="inline-flex items-center gap-2">
                 <li>
                     <Link
-                        href="/app"
+                        href="/"
                         className="flex items-center gap-1 text-sm font-medium text-black hover:text-yellow-600 hover:underline"
                     >
                         <House size={16} />

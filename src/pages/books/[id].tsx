@@ -16,7 +16,8 @@ import { Separator } from "@/components/Separator";
 import { Button } from "@/components/Button";
 import { BookDataFromGoogle } from "@/components/layout/NavBarLogged";
 import { ReadsProgress } from "@/components/ReadsProgress";
-import { BookRatingChart } from "@/components/BookRatingChart";
+import { RatingChart } from "@/components/RatingChart";
+import { LinkUnderline } from "@/components/LinkUnderline";
 
 interface BookImagesDataFromGoogle {
     id: string;
@@ -48,24 +49,26 @@ export interface BookData {
 
 export interface ProgressData {
     id: string;
-    read_id: string;
-    created_at: Date | string;
+    readId: string;
+    createdAt: Date | string;
     description: string;
-    is_spoiler: boolean;
+    isSpoiler: boolean;
     page: number | null;
     percentage: number | null;
+    read?: ReadData;
 }
 export interface ReadData {
     id: string;
-    book_id: string;
-    start_date: Date | string;
-    end_date: Date | string | null;
-    is_private: boolean;
-    review_content: string | null;
-    review_rating: number | null;
-    review_is_spoiler: boolean | null;
+    bookId: string;
+    startDate: Date | string;
+    endDate: Date | string | null;
+    isPrivate: boolean;
+    reviewContent: string | null;
+    reviewRating: number | null;
+    reviewIsSpoiler: boolean | null;
     status: string;
     progress: ProgressData[];
+    book?: BookData;
 }
 
 const bookTabs = [
@@ -166,6 +169,8 @@ export default function Book() {
                         description,
                     } = data;
 
+                    console.log("data", data);
+
                     // get image from google
                     const googleImageResponse = await axios.get<BookImagesDataFromGoogle>(
                         `https://www.googleapis.com/books/v1/volumes/${router.query.id}?fields=id,volumeInfo(title,imageLinks)`,
@@ -187,8 +192,8 @@ export default function Book() {
                         ),
                     });
 
-                    const userReadsResponse = await api.get(`/read/${id}`);
-                    setUserReads(userReadsResponse.data);
+                    const userReadsResponse = await api.get(`/user-reads?bookId=${id}`);
+                    setUserReads(userReadsResponse.data.items);
                 }
             } catch (err) {
                 toast.error("Erro ao carregar os dados do livro.");
@@ -261,12 +266,9 @@ export default function Book() {
                                     {isLoadingData ? (
                                         <div className="w-16 animate-pulse rounded-md bg-gray-200"></div>
                                     ) : (
-                                        <div className="group relative">
-                                            <Link href="" className="font-semibold">
-                                                {bookData?.authors}
-                                            </Link>
-                                            <div className="absolute bottom-0 left-0 right-auto top-auto h-[1px] w-0 bg-black transition-all duration-200 will-change-auto group-hover:w-full"></div>
-                                        </div>
+                                        <LinkUnderline href="" className="font-semibold">
+                                            {bookData?.authors}
+                                        </LinkUnderline>
                                     )}
                                 </div>
 
@@ -320,7 +322,7 @@ export default function Book() {
                             </div>
 
                             {/* Community rating */}
-                            {bookData?.id && <BookRatingChart bookId={bookData.id} />}
+                            {bookData?.id && <RatingChart bookId={bookData.id} />}
                         </div>
 
                         <div className="flex w-full flex-col md:w-[calc(100%-344px)]">

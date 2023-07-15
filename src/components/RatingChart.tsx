@@ -7,7 +7,7 @@ import { RatingStars } from "./RatingStars";
 import { api } from "@/lib/api";
 import { toast } from "react-toastify";
 
-interface bookRatings {
+export interface ratingsDataChart {
     data: {
         rating: number;
         amount: number;
@@ -17,11 +17,12 @@ interface bookRatings {
     averageRating: number;
 }
 
-interface BookRatingChartProps {
-    bookId: string;
+interface RatingChartProps {
+    bookId?: string;
+    userId?: string;
 }
-export function BookRatingChart({ bookId }: BookRatingChartProps) {
-    const [bookRatings, setBookRatings] = useState<bookRatings>({
+export function RatingChart({ bookId, userId }: RatingChartProps) {
+    const [bookRatings, setBookRatings] = useState<ratingsDataChart>({
         data: [],
         total: 0,
         averageRating: 0,
@@ -29,20 +30,29 @@ export function BookRatingChart({ bookId }: BookRatingChartProps) {
     const [barGraphData, setBarGraphData] = useState({ x: 0, y: 0 });
 
     useEffect(() => {
-        if (!bookId) return;
+        if (!bookId && !userId) return;
 
-        async function getBookRatings() {
+        async function getReadsRatings() {
             try {
-                const { data } = await api.get(`/${bookId}/ratings`);
+                let query = "";
+                if (bookId) {
+                    query = `bookId=${bookId}`;
+                }
+
+                if (userId) {
+                    query = `userId=${userId}`;
+                }
+
+                const { data } = await api.get(`/read/ratings?${query}`);
 
                 setBookRatings(data);
             } catch (err) {
-                toast("Não foi possível exibir a nota do livro.");
+                toast.error("Não foi possível exibir as avaliações.");
                 throw err;
             }
         }
-        getBookRatings();
-    }, [bookId]);
+        getReadsRatings();
+    }, [bookId, userId]);
 
     function handleClickBar({ rating }: { rating: number }) {
         Router.push(`${bookId}/ratings/${rating}`);
@@ -114,7 +124,7 @@ export function BookRatingChart({ bookId }: BookRatingChartProps) {
                     </div>
                 </div>
             ) : (
-                <div className="mt-5 text-center">Nenhuma avaliação para esse livro.</div>
+                <div className="mt-5 text-center">Nenhuma avaliação encontrada.</div>
             )}
         </div>
     );

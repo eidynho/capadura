@@ -5,7 +5,7 @@ import { z } from "zod";
 import { CircleNotch, Star, StarHalf } from "phosphor-react";
 import { toast } from "react-toastify";
 
-import { BookData, ReadData } from "@/pages/app/books/[id]";
+import { BookData, ReadData } from "@/pages/books/[id]";
 import { api } from "@/lib/api";
 
 import { Button } from "@/components/Button";
@@ -136,10 +136,10 @@ export function FormReadReview({
                 const read = updatedReads.find((read) => read.id === (readId ?? newlyCreatedRead));
                 if (read) {
                     read.status = "FINISHED";
-                    read.review_content = content ?? null;
-                    read.review_rating = rating;
-                    read.review_is_spoiler = isSpoiler;
-                    read.end_date = new Date().toISOString();
+                    read.reviewContent = content ?? null;
+                    read.reviewRating = rating;
+                    read.reviewIsSpoiler = isSpoiler;
+                    read.endDate = new Date().toISOString();
                 }
 
                 return updatedReads;

@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { PencilSimple } from "phosphor-react";
 
-import { BookData, ReadData } from "@/pages/app/books/[id]";
+import { BookData, ReadData } from "@/pages/books/[id]";
 
 import { BaseDialog } from "@/components/radix-ui/BaseDialog";
 import { FormReadReview } from "./FormReadReview";

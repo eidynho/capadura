@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { PlusCircle } from "phosphor-react";
 
 import { api } from "@/lib/api";
-import { ProgressData, ReadData } from "@/pages/app/books/[id]";
+import { ProgressData, ReadData } from "@/pages/books/[id]";
 
 import { FormReadProgress, ProgressFormSchema } from "./FormReadProgress";
 import { Button } from "@/components/Button";

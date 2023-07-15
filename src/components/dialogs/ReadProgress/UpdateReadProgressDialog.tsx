@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";
-import { ReadData } from "@/pages/app/books/[id]";
+import { ReadData } from "@/pages/books/[id]";
 
 import { FormReadProgress, ProgressFormSchema } from "./FormReadProgress";
 import { BaseDialog } from "@/components/radix-ui/BaseDialog";
@@ -18,7 +18,7 @@ interface ReadProgressDialogProps {
         readId: string;
         id: string;
         description: string;
-        is_spoiler: boolean;
+        isSpoiler: boolean;
         page: number | null;
         countType: "page" | "percentage";
     } | null;
@@ -79,7 +79,7 @@ export function UpdateReadProgressDialog({
                     }
 
                     progress.description = description ?? "";
-                    progress.is_spoiler = isSpoiler;
+                    progress.isSpoiler = isSpoiler;
                     progress.page = page;
                     progress.percentage = percentage;
                 }

@@ -7,7 +7,6 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import "@/styles/global.css";
 import { NavBarLoggedComponent } from "@/components/layout/NavBarLogged";
 import { MainContainer } from "@/components/layout/MainContainer";
-import { useRouter } from "next/router";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -25,10 +24,6 @@ export const spaceMono = Space_Mono({
 });
 
 export default function App({ Component, pageProps }: AppProps) {
-    const router = useRouter();
-
-    const isLogged = router.pathname.includes("/app");
-
     return (
         <>
             <Head>
@@ -42,30 +37,24 @@ export default function App({ Component, pageProps }: AppProps) {
             >
                 <AuthProvider>
                     <div className="flex flex-col">
-                        {isLogged ? (
-                            <>
-                                <NavBarLoggedComponent />
-                                <MainContainer>
-                                    <Component {...pageProps} />
-                                </MainContainer>
-
-                                <ToastContainer
-                                    position="bottom-right"
-                                    autoClose={3000}
-                                    hideProgressBar
-                                    newestOnTop={false}
-                                    closeOnClick
-                                    rtl={false}
-                                    pauseOnFocusLoss={false}
-                                    draggable
-                                    pauseOnHover
-                                    closeButton={false}
-                                    theme="light"
-                                />
-                            </>
-                        ) : (
+                        <NavBarLoggedComponent />
+                        <MainContainer>
                             <Component {...pageProps} />
-                        )}
+                        </MainContainer>
+
+                        <ToastContainer
+                            position="bottom-right"
+                            autoClose={3000}
+                            hideProgressBar
+                            newestOnTop={false}
+                            closeOnClick
+                            rtl={false}
+                            pauseOnFocusLoss={false}
+                            draggable
+                            pauseOnHover
+                            closeButton={false}
+                            theme="light"
+                        />
                     </div>
                 </AuthProvider>
             </div>

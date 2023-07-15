@@ -1,18 +1,15 @@
-import { useState, useEffect, ReactNode, ButtonHTMLAttributes } from "react";
+import { useState, useEffect, ReactNode, ButtonHTMLAttributes, ElementType } from "react";
+import { Slot } from "@radix-ui/react-slot";
 import { twMerge } from "tailwind-merge";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     children: ReactNode;
+    asChild?: boolean;
     size?: string;
     className?: string;
 }
 
-export const activeEffectStyles =
-    "shadow-[0.25rem_0.25rem_#000] -translate-x-1 -translate-y-1 opacity-100";
-export const hoverEffectStyles =
-    "enabled:hover:text-black enabled:hover:shadow-[0.25rem_0.25rem_#000] enabled:hover:-translate-x-1 enabled:hover:-translate-y-1";
-
-export function Button({ children, size, className, ...props }: ButtonProps) {
+export function Button({ children, asChild, size, className, ...props }: ButtonProps) {
     const [sizeStyles, setSizeStyles] = useState(() => {
         switch (size) {
             case "xs":
@@ -45,17 +42,18 @@ export function Button({ children, size, className, ...props }: ButtonProps) {
         }
     }, [size]);
 
+    const Component = asChild ? Slot : "button";
+
     return (
-        <button
+        <Component
             className={twMerge(
-                "flex items-center justify-center gap-2 rounded-lg border border-black bg-black  text-white transition-all duration-300 enabled:hover:bg-yellow-500 disabled:cursor-default disabled:border-black disabled:bg-black/80 disabled:bg-opacity-100 disabled:text-white",
-                hoverEffectStyles,
+                `flex items-center justify-center gap-2 rounded-lg border border-black bg-black  text-white transition-all duration-300 hover:-translate-x-1 hover:-translate-y-1 hover:bg-yellow-500 hover:text-black hover:shadow-[0.25rem_0.25rem_#000] disabled:cursor-default disabled:border-black disabled:bg-black/80 disabled:bg-opacity-100 disabled:text-white`,
                 sizeStyles,
                 className,
             )}
             {...props}
         >
             {children}
-        </button>
+        </Component>
     );
 }

@@ -6,6 +6,7 @@ import { api } from "@/lib/api";
 interface UserProps {
     id: string;
     name: string;
+    username: string;
     email: string;
     createdAt: Date;
 }
@@ -46,12 +47,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 try {
                     const { data } = await api.get("/me");
 
-                    const { id, name, email, created_at } = data.user;
+                    const { id, name, username, email, createdAt } = data.user;
                     setUser({
                         id,
                         name,
+                        username,
                         email,
-                        createdAt: created_at,
+                        createdAt,
                     });
                 } catch (err) {
                     signOut();
@@ -85,15 +87,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
             api.defaults.headers["Authorization"] = `Bearer ${data.token}`;
 
-            const { id, name, created_at } = data.user;
+            const { id, name, username, createdAt } = data.user;
             setUser({
                 id,
                 name,
+                username,
                 email,
-                createdAt: created_at,
+                createdAt,
             });
 
-            Router.push("/app/books");
+            Router.push("/books");
         } catch (err) {
             throw new Error("Failed on trying to sign in: " + err);
         }

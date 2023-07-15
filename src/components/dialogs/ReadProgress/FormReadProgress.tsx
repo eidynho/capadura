@@ -19,7 +19,7 @@ interface FormReadProgressProps {
         readId: string;
         id: string;
         description: string;
-        is_spoiler: boolean;
+        isSpoiler: boolean;
         page: number | null;
         countType: "page" | "percentage";
     } | null;
@@ -48,7 +48,7 @@ export function FormReadProgress({ editData, submitForm }: FormReadProgressProps
     useEffect(() => {
         if (editData) {
             setValue("description", editData.description);
-            setValue("isSpoiler", editData.is_spoiler);
+            setValue("isSpoiler", editData.isSpoiler);
             setValue("pagesCount", editData.page || 0);
             setValue("countType", editData.countType);
         }

@@ -24,6 +24,7 @@ import { AuthContext, signOut } from "@/contexts/AuthContext";
 import { useDebounce } from "@/hooks/useDebounce";
 import useDidMountEffect from "@/hooks/useDidMountEffect";
 import { Separator } from "../Separator";
+import { LinkUnderline } from "../LinkUnderline";
 
 const activeRouteStyles = "bg-black text-white border border-black";
 const notActiveRouteStyles = "border border-transparent hover:bg-black hover:bg-opacity-10";
@@ -39,12 +40,12 @@ const transcriptionRoutes: routeProps[] = [
     {
         name: "Transcrever",
         icon: <ClosedCaptioning size={20} />,
-        path: "/app/transcribe",
+        path: "/me",
     },
     {
         name: "Minhas transcrições",
         icon: <FolderUser size={20} />,
-        path: "/app/my-transcriptions",
+        path: "/my-transcriptions",
     },
 ];
 
@@ -52,12 +53,12 @@ const settingsRoutes: routeProps[] = [
     {
         name: "Convidar amigos",
         icon: <UserPlus size={20} />,
-        path: "/app/invite-friends",
+        path: "/invite-friends",
     },
     {
         name: "Gerenciar conta",
         icon: <Gear size={20} />,
-        path: "/app/settings",
+        path: "/settings",
     },
     {
         name: "Sair",
@@ -70,19 +71,19 @@ const settingsRoutes: routeProps[] = [
 const profileRoutes: routeProps[] = [
     {
         name: "Perfil",
-        path: "/app/transcribe",
+        path: "/me",
     },
     {
         name: "Livros",
-        path: "/app/home",
+        path: "/home",
     },
     {
         name: "Linha do tempo",
-        path: "/app/home",
+        path: "/home",
     },
     {
         name: "Minhas listas",
-        path: "/app/home",
+        path: "/home",
     },
     {
         name: "Separator",
@@ -90,46 +91,46 @@ const profileRoutes: routeProps[] = [
     },
     {
         name: "Configurações",
-        path: "/app/home",
+        path: "/home",
     },
     {
         name: "Sair",
-        path: "/app/home",
+        path: "/home",
     },
 ];
 
 const navRoutes: routeProps[] = [
     {
         name: "Início",
-        path: "/app/home",
+        path: "/home",
     },
     {
         name: "Livros",
-        path: "/app/home",
+        path: "/home",
     },
     {
         name: "Autores",
-        path: "/app/home",
+        path: "/home",
     },
     {
         name: "Editoras",
-        path: "/app/home",
+        path: "/home",
     },
     {
         name: "Trocas",
-        path: "/app/home",
+        path: "/home",
     },
     {
         name: "Blog",
-        path: "/app/home",
+        path: "/home",
     },
     {
         name: "Convidar amigos",
-        path: "/app/home",
+        path: "/home",
     },
     {
         name: "Seja membro",
-        path: "/app/home",
+        path: "/home",
     },
 ];
 
@@ -296,7 +297,7 @@ export function NavBarLoggedComponent() {
                                 <div className="flex flex-col">
                                     {books.items.map((book) => (
                                         <Link
-                                            href={`/app/books/${book.id}`}
+                                            href={`/books/${book.id}`}
                                             onClick={() => setSearchName("")}
                                             key={book.id}
                                             className="flex cursor-pointer gap-4 px-4 py-2 hover:bg-black hover:text-white"
@@ -445,10 +446,9 @@ export function NavBarLoggedComponent() {
 
                                 <div className="text-md mb-1 mt-4 flex items-center justify-between text-sm font-medium">
                                     {navRoutes.map((item) => (
-                                        <div className="group relative">
-                                            <Link href={item.path}>{item.name}</Link>
-                                            <div className="absolute bottom-0 left-0 right-auto top-auto h-[1px] w-0 bg-black transition-all duration-200 will-change-auto group-hover:w-full"></div>
-                                        </div>
+                                        <LinkUnderline href={item.path} className="font-medium">
+                                            {item.name}
+                                        </LinkUnderline>
                                     ))}
                                 </div>
                             </div>

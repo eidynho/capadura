@@ -47,11 +47,11 @@ export function ButtonLink({ children, href, size, className }: ButtonProps) {
             className={`font-manrope ${sizeStyles} ${
                 className ? className : "bg-black enabled:hover:bg-yellow-500"
             }   
-                flex gap-2 items-center justify-center rounded-lg text-white border border-black transition-all
-                hover:text-white hover:shadow-[0.25rem_0.25rem_#000] hover:-translate-x-1 hover:-translate-y-1
-                dark:border-white dark:text-white
-                dark:hover:bg-white dark:hover:text-black
-                disabled:text-black disabled:border-gray-200 disabled:bg-gray-200 disabled:bg-opacity-100 disabled:cursor-not-allowed
+                flex items-center justify-center gap-2 rounded-lg border border-black text-white transition-all
+                hover:-translate-x-1 hover:-translate-y-1 hover:text-white hover:shadow-[0.25rem_0.25rem_#000]
+                disabled:cursor-not-allowed disabled:border-gray-200
+                disabled:bg-gray-200 disabled:bg-opacity-100
+                disabled:text-black dark:border-white dark:text-white dark:hover:bg-white dark:hover:text-black
             `}
         >
             {children}

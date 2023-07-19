@@ -9,6 +9,10 @@ interface UserProps {
     username: string;
     email: string;
     createdAt: Date;
+    description: string | null;
+    location: string | null;
+    website: string | null;
+    twitter: string | null;
 }
 
 interface AuthContextType {
@@ -47,13 +51,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 try {
                     const { data } = await api.get("/me");
 
-                    const { id, name, username, email, createdAt } = data.user;
+                    const {
+                        id,
+                        name,
+                        username,
+                        email,
+                        createdAt,
+                        description,
+                        location,
+                        website,
+                        twitter,
+                    } = data.user;
                     setUser({
                         id,
                         name,
                         username,
                         email,
                         createdAt,
+                        description,
+                        location,
+                        website,
+                        twitter,
                     });
                 } catch (err) {
                     signOut();
@@ -87,13 +105,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
             api.defaults.headers["Authorization"] = `Bearer ${data.token}`;
 
-            const { id, name, username, createdAt } = data.user;
+            const { id, name, username, createdAt, description, location, website, twitter } =
+                data.user;
+
             setUser({
                 id,
                 name,
                 username,
                 email,
                 createdAt,
+                description,
+                location,
+                website,
+                twitter,
             });
 
             Router.push("/books");

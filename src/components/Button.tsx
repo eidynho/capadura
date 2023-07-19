@@ -43,11 +43,15 @@ export function Button({ children, asChild, size, className, ...props }: ButtonP
     }, [size]);
 
     const Component = asChild ? Slot : "button";
+    const hoverClasses = asChild
+        ? "hover:-translate-x-1 hover:-translate-y-1 hover:bg-yellow-500 hover:text-black hover:shadow-[0.25rem_0.25rem_#000]"
+        : "enabled:hover:-translate-x-1 enabled:hover:-translate-y-1 enabled:hover:bg-yellow-500 enabled:hover:text-black enabled:hover:shadow-[0.25rem_0.25rem_#000]";
 
     return (
         <Component
             className={twMerge(
-                `flex items-center justify-center gap-2 rounded-lg border border-black bg-black  text-white transition-all duration-300 hover:-translate-x-1 hover:-translate-y-1 hover:bg-yellow-500 hover:text-black hover:shadow-[0.25rem_0.25rem_#000] disabled:cursor-default disabled:border-black disabled:bg-black/80 disabled:bg-opacity-100 disabled:text-white`,
+                `flex items-center justify-center gap-2 rounded-lg border border-black bg-black  text-white transition-all duration-300 disabled:cursor-default disabled:border-black disabled:bg-black/80 disabled:bg-opacity-100 disabled:text-white`,
+                hoverClasses,
                 sizeStyles,
                 className,
             )}

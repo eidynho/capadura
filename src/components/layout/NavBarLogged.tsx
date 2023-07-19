@@ -68,37 +68,6 @@ const settingsRoutes: routeProps[] = [
     },
 ];
 
-const profileRoutes: routeProps[] = [
-    {
-        name: "Perfil",
-        path: "/me",
-    },
-    {
-        name: "Livros",
-        path: "/home",
-    },
-    {
-        name: "Linha do tempo",
-        path: "/home",
-    },
-    {
-        name: "Minhas listas",
-        path: "/home",
-    },
-    {
-        name: "Separator",
-        path: "",
-    },
-    {
-        name: "Configurações",
-        path: "/home",
-    },
-    {
-        name: "Sair",
-        path: "/home",
-    },
-];
-
 const navRoutes: routeProps[] = [
     {
         name: "Início",
@@ -248,6 +217,37 @@ export function NavBarLoggedComponent() {
         };
         getBooks();
     }, [debouncedSearchName]);
+
+    const profileRoutes: routeProps[] = [
+        {
+            name: "Perfil",
+            path: `/me/${user?.username}`,
+        },
+        {
+            name: "Livros",
+            path: "/home",
+        },
+        {
+            name: "Linha do tempo",
+            path: "/home",
+        },
+        {
+            name: "Minhas listas",
+            path: "/home",
+        },
+        {
+            name: "Separator",
+            path: "",
+        },
+        {
+            name: "Configurações",
+            path: "/config",
+        },
+        {
+            name: "Sair",
+            path: "/home",
+        },
+    ];
 
     function routesTree(routes: routeProps[]) {
         return (

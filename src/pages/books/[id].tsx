@@ -169,8 +169,6 @@ export default function Book() {
                         description,
                     } = data;
 
-                    console.log("data", data);
-
                     // get image from google
                     const googleImageResponse = await axios.get<BookImagesDataFromGoogle>(
                         `https://www.googleapis.com/books/v1/volumes/${router.query.id}?fields=id,volumeInfo(title,imageLinks)`,

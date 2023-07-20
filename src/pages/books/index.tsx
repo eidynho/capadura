@@ -11,7 +11,7 @@ import { Title } from "@/components/Title";
 import { InputTextSearch } from "@/components/InputText";
 import axios from "axios";
 import Image from "next/image";
-import { GoogleAPIData } from "@/components/layout/NavBarLogged";
+import { GoogleAPIData } from "@/components/ApplicationSearch";
 
 export default function Books() {
     const [isLoading, setIsLoading] = useState(true);

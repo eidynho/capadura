@@ -14,7 +14,7 @@ import { Title } from "@/components/Title";
 import { Subtitle } from "@/components/Subtitle";
 import { Separator } from "@/components/Separator";
 import { Button } from "@/components/Button";
-import { BookDataFromGoogle } from "@/components/layout/NavBarLogged";
+import { BookDataFromGoogle } from "@/components/ApplicationSearch";
 import { ReadsProgress } from "@/components/ReadsProgress";
 import { RatingChart } from "@/components/RatingChart";
 import { LinkUnderline } from "@/components/LinkUnderline";

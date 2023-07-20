@@ -3,12 +3,12 @@ import Router from "next/router";
 import { setCookie, parseCookies, destroyCookie } from "nookies";
 import { api } from "@/lib/api";
 
-interface UserProps {
+export interface ProfileData {
     id: string;
     name: string;
     username: string;
     email: string;
-    createdAt: Date;
+    createdAt?: Date;
     description: string | null;
     location: string | null;
     website: string | null;
@@ -16,7 +16,7 @@ interface UserProps {
 }
 
 interface AuthContextType {
-    user: UserProps | null;
+    user: ProfileData | null;
     isAuthenticated: boolean;
     signIn: (data: SignInRequestProps) => Promise<void>;
 }
@@ -40,14 +40,14 @@ export function signOut() {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-    const [user, setUser] = useState<UserProps | null>(null);
+    const [user, setUser] = useState<ProfileData | null>(null);
     const isAuthenticated = !!user;
 
     useEffect(() => {
         const { token } = parseCookies();
 
         if (token) {
-            const getUserData = async () => {
+            const ProfileData = async () => {
                 try {
                     const { data } = await api.get("/me");
 
@@ -78,7 +78,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 }
             };
 
-            getUserData();
+            ProfileData();
         }
     }, []);
 

@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { CircleNotch, User } from "phosphor-react";
 
 import { api } from "@/lib/api";
-import { AuthContext } from "@/contexts/AuthContext";
+import { AuthContext, ProfileData } from "@/contexts/AuthContext";
 
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/Button";
@@ -21,12 +21,21 @@ const configTabs = [
 
 const profileFormSchema = z.object({
     id: z.string(),
-    name: z.string(),
-    username: z.string(),
+    name: z
+        .string()
+        .min(1, { message: "Campo obrigatório." })
+        .max(50, { message: "Máximo 50 caracteres." }),
+    username: z
+        .string()
+        .min(1, { message: "Campo obrigatório." })
+        .max(50, { message: "Minimo 50 caracteres." }),
     email: z.string().email(),
     description: z.string().optional().nullable(),
-    location: z.string().max(40, { message: "Máximo 40 caracteres." }).optional().nullable(),
-    website: z.string().url({ message: "URL inválida." }).optional().nullable(),
+    location: z.string().max(50, { message: "Máximo 50 caracteres." }).optional().nullable(),
+    website: z
+        .union([z.literal(""), z.string().trim().url()])
+        .optional()
+        .nullable(),
     twitter: z.string().optional().nullable(),
 });
 
@@ -34,10 +43,13 @@ type ProfileFormSchema = z.infer<typeof profileFormSchema>;
 
 export default function Config() {
     const { user } = useContext(AuthContext);
+    const [userData, setUserData] = useState<ProfileData | null>(null);
     const [currentTab, setCurrentTab] = useState(0);
 
     useEffect(() => {
         if (!user) return;
+
+        setUserData(user);
 
         setValue("id", user.id);
         setValue("name", user.name);
@@ -61,23 +73,38 @@ export default function Config() {
     async function submitProfile(data: ProfileFormSchema) {
         const { id, name, username, email, description, location, website, twitter } = data;
 
-        if (lodash.isEqual(user, { ...data, createdAt: user?.createdAt })) {
+        if (lodash.isEqual(userData, { ...data, createdAt: user?.createdAt })) {
             toast.success("O perfil está atualizado.");
             return;
         }
 
         try {
-            await api.put("/me", {
+            // TODO: BE ABLE TO UPDATE USERNAME AND E-MAIL (UNIQUE)
+            const updatedUser = await api.put("/me", {
                 id,
                 name,
-                username,
-                email,
+                username: user?.username,
+                email: user?.email,
                 description: description ?? undefined,
                 location: location ?? undefined,
                 website: website ?? undefined,
                 twitter: twitter ?? undefined,
             });
 
+            if (!description) {
+                setValue("description", "");
+            }
+            if (!location) {
+                setValue("location", "");
+            }
+            if (!website) {
+                setValue("website", "");
+            }
+            if (!twitter) {
+                setValue("twitter", "");
+            }
+
+            setUserData(updatedUser.data.user);
             toast.success("Seu perfil foi atualizado.");
         } catch (err) {
             toast.error("Erro ao atualizar perfil.");
@@ -126,7 +153,7 @@ export default function Config() {
                                     htmlFor="config-profile-name"
                                     className="flex items-center gap-1 text-sm font-semibold text-black"
                                 >
-                                    Nome completo*
+                                    Nome*
                                 </label>
                                 <input
                                     {...register("name")}
@@ -139,8 +166,8 @@ export default function Config() {
                                     } mt-1 w-2/3 rounded-lg border px-3 py-2 text-sm outline-none focus:border-yellow-500 focus:ring-yellow-500 lg:w-1/2`}
                                 />
                                 {errors.name && (
-                                    <span className="text-xs font-semibold text-red-500">
-                                        Campo obrigatório
+                                    <span className="mt-1 text-xs font-semibold text-red-500">
+                                        {errors.name.message}
                                     </span>
                                 )}
                             </div>
@@ -167,7 +194,7 @@ export default function Config() {
                                     Não é possível alterar o usuário no momento.
                                 </span>
                                 {errors.username && (
-                                    <span className="text-xs font-semibold text-red-500">
+                                    <span className="mt-1 text-xs font-semibold text-red-500">
                                         Campo obrigatório
                                     </span>
                                 )}
@@ -195,7 +222,7 @@ export default function Config() {
                                     Não é possível alterar o e-mail no momento.
                                 </span>
                                 {errors.email && (
-                                    <span className="text-xs font-semibold text-red-500">
+                                    <span className="mt-1 text-xs font-semibold text-red-500">
                                         Campo obrigatório
                                     </span>
                                 )}
@@ -237,7 +264,7 @@ export default function Config() {
                                         } mt-1 w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-yellow-500 focus:ring-yellow-500`}
                                     />
                                     {errors.location && (
-                                        <span className="text-xs font-semibold text-red-500">
+                                        <span className="mt-1 text-xs font-semibold text-red-500">
                                             Campo obrigatório
                                         </span>
                                     )}
@@ -261,8 +288,8 @@ export default function Config() {
                                         } mt-1 w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-yellow-500 focus:ring-yellow-500`}
                                     />
                                     {errors.website && (
-                                        <span className="text-xs font-semibold text-red-500">
-                                            Campo obrigatório
+                                        <span className="mt-1 text-xs font-semibold text-red-500">
+                                            {errors.website.message}
                                         </span>
                                     )}
                                 </div>
@@ -286,7 +313,7 @@ export default function Config() {
                                     } mt-1 w-2/3 rounded-lg border px-3 py-2 text-sm outline-none focus:border-yellow-500 focus:ring-yellow-500 lg:w-1/4`}
                                 />
                                 {errors.twitter && (
-                                    <span className="text-xs font-semibold text-red-500">
+                                    <span className="mt-1 text-xs font-semibold text-red-500">
                                         Campo obrigatório
                                     </span>
                                 )}

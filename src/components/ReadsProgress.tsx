@@ -209,7 +209,7 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
                             <CreateReadReviewDialog
                                 bookData={bookData}
                                 setUserReads={setUserReads}
-                                isReviewWithoutProgress={true}
+                                isReviewWithoutProgress
                             />
                         )}
                     </div>

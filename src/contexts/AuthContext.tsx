@@ -10,6 +10,7 @@ export interface ProfileData {
     email: string;
     createdAt?: Date;
     description: string | null;
+    favoriteBooks: string[];
     location: string | null;
     website: string | null;
     twitter: string | null;

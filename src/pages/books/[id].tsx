@@ -245,7 +245,7 @@ export default function Book() {
                                             width={312}
                                             height={468}
                                             quality={100}
-                                            priority={true}
+                                            priority
                                             className="mx-auto rounded-lg"
                                         />
                                     ) : (

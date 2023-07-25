@@ -204,9 +204,30 @@ export default function Book() {
         fetchBookFromDatabase();
     }, [router.isReady, router.query.id]);
 
-    function renderLoading() {
+    function bookHeader() {
         return (
-            <>
+            <div className="mb-3 flex flex-col items-center gap-2 md:items-start">
+                {!isMounted ? (
+                    <>
+                        <div className="h-9 w-64 rounded-md bg-gray-200"></div>
+                        <div className="h-6 w-80 rounded-md bg-gray-200"></div>
+                        <div className="my-2 h-6 w-56 rounded-md bg-gray-200"></div>
+                    </>
+                ) : (
+                    <>
+                        <Title>{bookData?.title ?? ""}</Title>
+
+                        {bookData?.subtitle && <Subtitle>{bookData?.subtitle ?? ""}</Subtitle>}
+                    </>
+                )}
+            </div>
+        );
+    }
+
+    // render loading
+    if (!isMounted) {
+        return (
+            <Container>
                 <div className="mt-5 flex animate-pulse flex-col justify-center">
                     <div className="flex flex-col">
                         <div className="flex flex-col items-start justify-center gap-8 md:flex-row">
@@ -332,174 +353,148 @@ export default function Book() {
                         </div>
                     </div>
                 </div>
-            </>
-        );
-    }
-
-    function bookHeader() {
-        return (
-            <div className="mb-3 flex flex-col items-center gap-2 md:items-start">
-                {!isMounted ? (
-                    <>
-                        <div className="h-9 w-64 rounded-md bg-gray-200"></div>
-                        <div className="h-6 w-80 rounded-md bg-gray-200"></div>
-                        <div className="my-2 h-6 w-56 rounded-md bg-gray-200"></div>
-                    </>
-                ) : (
-                    <>
-                        <Title>{bookData?.title ?? ""}</Title>
-
-                        {bookData?.subtitle && <Subtitle>{bookData?.subtitle ?? ""}</Subtitle>}
-                    </>
-                )}
-            </div>
+            </Container>
         );
     }
 
     return (
         <Container>
-            {!isMounted ? (
-                renderLoading()
-            ) : (
-                <div className="mt-5 flex flex-col justify-center">
-                    <div className="flex flex-col">
-                        <div className="flex flex-col items-start justify-center gap-8 md:flex-row">
-                            <div className="w-full md:w-[19.5rem]">
-                                {/* Book header */}
-                                <div className="block md:hidden">{bookHeader()}</div>
+            <div className="mt-5 flex flex-col justify-center">
+                <div className="flex flex-col">
+                    <div className="flex flex-col items-start justify-center gap-8 md:flex-row">
+                        <div className="w-full md:w-[19.5rem]">
+                            {/* Book header */}
+                            <div className="block md:hidden">{bookHeader()}</div>
 
-                                {/* Book image */}
-                                <div className="flex w-full gap-6">
-                                    {bookData?.image ? (
-                                        <Image
-                                            src={bookData.image}
-                                            alt=""
-                                            width={312}
-                                            height={468}
-                                            quality={100}
-                                            priority
-                                            className="mx-auto rounded-lg"
-                                        />
-                                    ) : (
-                                        <div className="flex h-96 w-full flex-col items-center justify-center rounded-md border border-black bg-gray-200 opacity-70">
-                                            <ImageIcon size={40} />
-                                            <span className="text-xs">Sem imagem</span>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Book data */}
-                                <div className="mt-3 rounded-lg border border-black pb-4">
-                                    <div className="mx-4 mt-4 flex justify-between text-sm">
-                                        <span className="font-semibold">Escrito por</span>
-
-                                        <LinkUnderline href="" className="font-semibold">
-                                            {bookData?.authors}
-                                        </LinkUnderline>
+                            {/* Book image */}
+                            <div className="flex w-full gap-6">
+                                {bookData?.image ? (
+                                    <Image
+                                        src={bookData.image}
+                                        alt=""
+                                        width={312}
+                                        height={468}
+                                        quality={100}
+                                        priority
+                                        className="mx-auto rounded-lg"
+                                    />
+                                ) : (
+                                    <div className="flex h-96 w-full flex-col items-center justify-center rounded-md border border-black bg-gray-200 opacity-70">
+                                        <ImageIcon size={40} />
+                                        <span className="text-xs">Sem imagem</span>
                                     </div>
-
-                                    <Separator />
-
-                                    <div className="mx-4 flex justify-between text-sm">
-                                        <span className="font-semibold">Ano de publicação</span>
-                                        <span>
-                                            {bookData?.publishDate
-                                                ? getYear(new Date(bookData.publishDate))
-                                                : "Sem informação"}
-                                        </span>
-                                    </div>
-
-                                    <Separator />
-
-                                    <div className="mx-4 flex justify-between text-sm">
-                                        <span className="font-semibold">Editora</span>
-
-                                        <span>{bookData?.publisher ?? "Sem informação"}</span>
-                                    </div>
-
-                                    <Separator />
-
-                                    <div className="mx-4 flex justify-between text-sm">
-                                        <span className="font-semibold">Idioma</span>
-
-                                        <span>{bookData?.language ?? "Sem informação"}</span>
-                                    </div>
-
-                                    <Separator />
-
-                                    <div className="mx-4 flex justify-between text-sm">
-                                        <span className="font-semibold">Páginas</span>
-
-                                        <span>{bookData?.pageCount ?? "Sem informação"}</span>
-                                    </div>
-                                </div>
-
-                                {/* Community rating */}
-                                {bookData?.id && <RatingChart bookId={bookData.id} />}
+                                )}
                             </div>
 
-                            <div className="flex w-full flex-col md:w-[calc(100%-344px)]">
-                                {/* Book header */}
-                                <div className="hidden md:block">{bookHeader()}</div>
+                            {/* Book data */}
+                            <div className="mt-3 rounded-lg border border-black pb-4">
+                                <div className="mx-4 mt-4 flex justify-between text-sm">
+                                    <span className="font-semibold">Escrito por</span>
 
-                                <div className="flex w-full flex-col gap-8 xl:flex-row">
-                                    <div className="flex w-full flex-col gap-2">
-                                        {/* Book content */}
-                                        <p
-                                            className="text-justify text-sm leading-7"
-                                            dangerouslySetInnerHTML={{
-                                                __html: bookData?.description ?? "",
-                                            }}
-                                        ></p>
+                                    <LinkUnderline href="" className="font-semibold">
+                                        {bookData?.authors}
+                                    </LinkUnderline>
+                                </div>
 
-                                        {/* Book action buttons */}
-                                        <div className="flex w-full items-center gap-2">
-                                            <Button size="sm">
-                                                <Heart size={20} weight="bold" />
-                                                <span className="font-medium">Curtir</span>
-                                            </Button>
-                                            <Button size="sm">
-                                                <Clock size={20} weight="bold" />
-                                                <span className="font-medium">
-                                                    Adicionar a lista
-                                                </span>
-                                            </Button>
-                                        </div>
+                                <Separator />
 
-                                        {/* Book tabs */}
-                                        <div className="border-b-2 border-gray-200">
-                                            <ul className="-mb-px flex flex-wrap text-center text-sm font-medium text-gray-500">
-                                                {bookTabs.map((item, index) => (
-                                                    <li
-                                                        key={item.name}
-                                                        onClick={() => setCurrentTab(index)}
-                                                        className={`${
-                                                            currentTab === index
-                                                                ? "border-yellow-600 p-4 text-yellow-600"
-                                                                : "border-transparent hover:border-gray-300 hover:text-gray-600"
-                                                        } flex cursor-pointer gap-2 border-b-2 p-4 `}
-                                                    >
-                                                        {item.icon}
-                                                        {item.name}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
+                                <div className="mx-4 flex justify-between text-sm">
+                                    <span className="font-semibold">Ano de publicação</span>
+                                    <span>
+                                        {bookData?.publishDate
+                                            ? getYear(new Date(bookData.publishDate))
+                                            : "Sem informação"}
+                                    </span>
+                                </div>
 
-                                        {currentTab === 0 && (
-                                            <ReadsProgress
-                                                bookData={bookData}
-                                                userReads={userReads}
-                                                setUserReads={setUserReads}
-                                            />
-                                        )}
+                                <Separator />
+
+                                <div className="mx-4 flex justify-between text-sm">
+                                    <span className="font-semibold">Editora</span>
+
+                                    <span>{bookData?.publisher ?? "Sem informação"}</span>
+                                </div>
+
+                                <Separator />
+
+                                <div className="mx-4 flex justify-between text-sm">
+                                    <span className="font-semibold">Idioma</span>
+
+                                    <span>{bookData?.language ?? "Sem informação"}</span>
+                                </div>
+
+                                <Separator />
+
+                                <div className="mx-4 flex justify-between text-sm">
+                                    <span className="font-semibold">Páginas</span>
+
+                                    <span>{bookData?.pageCount ?? "Sem informação"}</span>
+                                </div>
+                            </div>
+
+                            {/* Community rating */}
+                            {bookData?.id && <RatingChart bookId={bookData.id} />}
+                        </div>
+
+                        <div className="flex w-full flex-col md:w-[calc(100%-344px)]">
+                            {/* Book header */}
+                            <div className="hidden md:block">{bookHeader()}</div>
+
+                            <div className="flex w-full flex-col gap-8 xl:flex-row">
+                                <div className="flex w-full flex-col gap-2">
+                                    {/* Book content */}
+                                    <p
+                                        className="text-justify text-sm leading-7"
+                                        dangerouslySetInnerHTML={{
+                                            __html: bookData?.description ?? "",
+                                        }}
+                                    ></p>
+
+                                    {/* Book action buttons */}
+                                    <div className="flex w-full items-center gap-2">
+                                        <Button size="sm">
+                                            <Heart size={20} weight="bold" />
+                                            <span className="font-medium">Curtir</span>
+                                        </Button>
+                                        <Button size="sm">
+                                            <Clock size={20} weight="bold" />
+                                            <span className="font-medium">Adicionar a lista</span>
+                                        </Button>
                                     </div>
+
+                                    {/* Book tabs */}
+                                    <div className="border-b-2 border-gray-200">
+                                        <ul className="-mb-px flex flex-wrap text-center text-sm font-medium text-gray-500">
+                                            {bookTabs.map((item, index) => (
+                                                <li
+                                                    key={item.name}
+                                                    onClick={() => setCurrentTab(index)}
+                                                    className={`${
+                                                        currentTab === index
+                                                            ? "border-yellow-600 p-4 text-yellow-600"
+                                                            : "border-transparent hover:border-gray-300 hover:text-gray-600"
+                                                    } flex cursor-pointer gap-2 border-b-2 p-4 `}
+                                                >
+                                                    {item.icon}
+                                                    {item.name}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+
+                                    {currentTab === 0 && (
+                                        <ReadsProgress
+                                            bookData={bookData}
+                                            userReads={userReads}
+                                            setUserReads={setUserReads}
+                                        />
+                                    )}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            )}
+            </div>
         </Container>
     );
 }

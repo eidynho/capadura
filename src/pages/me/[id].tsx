@@ -155,8 +155,13 @@ export default function Me() {
                             {userData.user.twitter && (
                                 <div className="flex items-center gap-1">
                                     <TwitterLogo size={20} />
-                                    <LinkUnderline href="" className="font-semibold">
-                                        {userData.user.twitter}
+                                    <LinkUnderline asChild className="font-semibold">
+                                        <a
+                                            href={`https://twitter.com/${userData.user.twitter}`}
+                                            target="_blank"
+                                        >
+                                            {userData.user.twitter}
+                                        </a>
                                     </LinkUnderline>
                                 </div>
                             )}
@@ -330,9 +335,12 @@ export default function Me() {
                                     <div className="w-full">
                                         <div className="flex items-start justify-between gap-2">
                                             <div className="flex items-center gap-2">
-                                                <h4 className="font-semibold">
+                                                <LinkUnderline
+                                                    href={`/books/${read.bookId}`}
+                                                    className="font-semibold"
+                                                >
                                                     {read.book?.title}
-                                                </h4>
+                                                </LinkUnderline>
                                             </div>
                                         </div>
 
@@ -377,9 +385,12 @@ export default function Me() {
                                     <div className="w-full">
                                         <div className="flex items-start justify-between gap-2">
                                             <div className="flex items-center gap-2">
-                                                <h4 className="font-semibold">
+                                                <LinkUnderline
+                                                    href={`/books/${progress?.read?.bookId}`}
+                                                    className="font-semibold"
+                                                >
                                                     {progress.read?.book?.title}
-                                                </h4>
+                                                </LinkUnderline>
                                                 <span className="mt-[2px] text-xs font-semibold text-gray-500">
                                                     {format(
                                                         parseISO(progress?.createdAt.toString()),

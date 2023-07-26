@@ -1,10 +1,9 @@
 import { Fragment, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import Image from "next/image";
 import axios from "axios";
 import { getYear, isValid, parse } from "date-fns";
-import { Clock, Image as ImageIcon, Heart, BookOpen } from "phosphor-react";
+import { Clock, Image as ImageIcon, Heart } from "phosphor-react";
 import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";

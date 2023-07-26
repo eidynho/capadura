@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Image from "next/image";
@@ -71,29 +71,11 @@ export interface ReadData {
     book?: BookData;
 }
 
-const bookTabs = [
-    {
-        name: "Minha leitura",
-        icon: <BookOpen size={20} />,
-    },
-    {
-        name: "Avaliações",
-        icon: <BookOpen size={20} />,
-    },
-    {
-        name: "Livros recomendados",
-        icon: <BookOpen size={20} />,
-    },
-];
-
 export default function Book() {
     const router = useRouter();
 
     const [bookData, setBookData] = useState<BookData | null>(null);
     const [isMounted, setIsMounted] = useState(false);
-    const [currentTab, setCurrentTab] = useState(0);
-
-    const [userReads, setUserReads] = useState<ReadData[] | null>(null);
 
     async function fetchBookFromGoogle() {
         try {
@@ -189,9 +171,6 @@ export default function Book() {
                             "",
                         ),
                     });
-
-                    const userReadsResponse = await api.get(`/user-reads?bookId=${id}`);
-                    setUserReads(userReadsResponse.data.items);
                 }
             } catch (err) {
                 toast.error("Erro ao carregar os dados do livro.");
@@ -326,8 +305,8 @@ export default function Book() {
 
                                             <div className="mt-6 h-5 w-40 items-center rounded-lg bg-gray-200"></div>
 
-                                            {Array.from({ length: 3 }, () => (
-                                                <>
+                                            {Array.from({ length: 3 }, (_, index) => (
+                                                <Fragment key={index}>
                                                     <Separator className="border-gray-200" />
 
                                                     <div className="flex flex-col px-4">
@@ -344,7 +323,7 @@ export default function Book() {
                                                         <div className="mt-6 h-4 w-2/3 items-center rounded-lg bg-gray-200"></div>
                                                         <div className="mt-4 h-6 w-full items-center rounded-lg bg-gray-200"></div>
                                                     </div>
-                                                </>
+                                                </Fragment>
                                             ))}
                                         </div>
                                     </div>
@@ -462,33 +441,7 @@ export default function Book() {
                                         </Button>
                                     </div>
 
-                                    {/* Book tabs */}
-                                    <div className="border-b-2 border-gray-200">
-                                        <ul className="-mb-px flex flex-wrap text-center text-sm font-medium text-gray-500">
-                                            {bookTabs.map((item, index) => (
-                                                <li
-                                                    key={item.name}
-                                                    onClick={() => setCurrentTab(index)}
-                                                    className={`${
-                                                        currentTab === index
-                                                            ? "border-yellow-600 p-4 text-yellow-600"
-                                                            : "border-transparent hover:border-gray-300 hover:text-gray-600"
-                                                    } flex cursor-pointer gap-2 border-b-2 p-4 `}
-                                                >
-                                                    {item.icon}
-                                                    {item.name}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-
-                                    {currentTab === 0 && (
-                                        <ReadsProgress
-                                            bookData={bookData}
-                                            userReads={userReads}
-                                            setUserReads={setUserReads}
-                                        />
-                                    )}
+                                    <ReadsProgress bookData={bookData} />
                                 </div>
                             </div>
                         </div>

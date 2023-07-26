@@ -197,8 +197,11 @@ export default function Me() {
                             <div className="mb-1 h-6 w-32 items-center rounded-lg bg-gray-200"></div>
 
                             <div className="flex items-center justify-between gap-3">
-                                {Array.from({ length: 4 }, () => (
-                                    <div className="h-64 w-44 items-center rounded-lg bg-gray-200"></div>
+                                {Array.from({ length: 4 }, (_, index) => (
+                                    <div
+                                        key={index}
+                                        className="h-64 w-44 items-center rounded-lg bg-gray-200"
+                                    ></div>
                                 ))}
                             </div>
                         </div>
@@ -206,8 +209,11 @@ export default function Me() {
                         <div className="flex flex-col">
                             <div className="mb-1 h-6 w-40 items-center rounded-lg bg-gray-200"></div>
 
-                            {Array.from({ length: 3 }, () => (
-                                <div className="flex gap-4 border-t border-black/20 py-4 last:border-b">
+                            {Array.from({ length: 3 }, (_, index) => (
+                                <div
+                                    key={index}
+                                    className="flex gap-4 border-t border-black/20 py-4 last:border-b"
+                                >
                                     <div className="h-28 w-20 items-center rounded-lg bg-gray-200"></div>
                                     <div className="w-full">
                                         <div className="flex items-start justify-between gap-2">
@@ -229,8 +235,11 @@ export default function Me() {
                         <div className="flex flex-col">
                             <div className="mb-1 h-6 w-40 items-center rounded-lg bg-gray-200"></div>
 
-                            {Array.from({ length: 3 }, () => (
-                                <div className="flex gap-4 border-t border-black/20 py-4 last:border-b">
+                            {Array.from({ length: 3 }, (_, index) => (
+                                <div
+                                    key={index}
+                                    className="flex gap-4 border-t border-black/20 py-4 last:border-b"
+                                >
                                     <div className="h-28 w-20 items-center rounded-lg bg-gray-200"></div>
 
                                     <div className="w-full">

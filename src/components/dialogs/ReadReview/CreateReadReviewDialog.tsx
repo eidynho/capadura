@@ -31,20 +31,17 @@ export function CreateReadReviewDialog({
         <>
             {isReviewWithoutProgress ? (
                 <Button
-                    size="md"
+                    size="sm"
                     onClick={() => handleToggleDialog(true)}
-                    className="group w-full gap-3 bg-transparent text-black enabled:hover:bg-yellow-500 lg:w-64"
+                    className="group gap-1 bg-transparent px-4 text-black enabled:hover:bg-yellow-500"
                 >
                     <Star
-                        size={28}
+                        size={20}
                         className="text-yellow-500 transition-colors group-hover:text-black"
                     />
 
                     <div className="flex flex-col items-start">
                         <span className="font-medium">Avaliar</span>
-                        <span className="-mt-[2px] text-start text-xs font-semibold text-gray-500 transition-colors group-hover:text-black">
-                            Finalizei a leitura e quero avaliar
-                        </span>
                     </div>
                 </Button>
             ) : (

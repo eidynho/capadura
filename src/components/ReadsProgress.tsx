@@ -1,8 +1,9 @@
-import { Dispatch, Fragment, SetStateAction, useContext, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import { format, parseISO } from "date-fns";
 import { Menu, Transition } from "@headlessui/react";
 import {
     ArrowUUpLeft,
+    BookOpen,
     DotsThreeVertical,
     Lock,
     LockSimpleOpen,
@@ -28,6 +29,24 @@ import { RatingStars } from "./RatingStars";
 import { Button } from "./Button";
 import { Badge } from "./Badge";
 
+const readsTabs = [
+    {
+        name: "Todas",
+        status: null,
+        emptyMessage: "Nenhuma leitura encontrada.",
+    },
+    {
+        name: "Em andamento",
+        status: "ACTIVE",
+        emptyMessage: "Nenhuma leitura em andamento.",
+    },
+    {
+        name: "Finalizadas",
+        status: "FINISHED",
+        emptyMessage: "Nenhuma leitura finalizada.",
+    },
+];
+
 interface EditReadData {
     readId: string;
     id: string;
@@ -39,18 +58,40 @@ interface EditReadData {
 
 interface ReadsProgressProps {
     bookData: BookData | null;
-    userReads: ReadData[] | null;
-    setUserReads: Dispatch<SetStateAction<ReadData[] | null>>;
 }
 
 type ReadStatus = "ACTIVE" | "FINISHED" | "CANCELLED" | "DELETED";
 
-export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgressProps) {
+export function ReadsProgress({ bookData }: ReadsProgressProps) {
     const { user } = useContext(AuthContext);
 
+    const [userReads, setUserReads] = useState<ReadData[] | null>(null);
     const [isFetching, setIsFetching] = useState(false);
     const [isOpenUpdateProgressDialog, setIsOpenUpdateProgressDialog] = useState(false);
     const [progressEditData, setProgressEditData] = useState<EditReadData | null>(null);
+    const [currentTab, setCurrentTab] = useState(0);
+
+    useEffect(() => {
+        async function fetchUserReads() {
+            if (!bookData?.id) return;
+
+            try {
+                const userReadsResponse = await api.get(`/user-reads?bookId=${bookData.id}`);
+                setUserReads(userReadsResponse.data.items);
+            } catch (err) {
+                toast.error("Failed on fetch user reads");
+            }
+        }
+        fetchUserReads();
+    }, [bookData, currentTab]);
+
+    const filteredReads = userReads?.filter((item) => {
+        if (readsTabs[currentTab].status) {
+            return item.status === readsTabs[currentTab].status;
+        }
+
+        return true;
+    });
 
     async function startNewRead() {
         if (userReads && userReads.length > 50) {
@@ -185,39 +226,61 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
 
     return (
         <>
-            {(!userReads?.length || userReads[0].status === "FINISHED") && (
-                <div className="flex flex-col items-center gap-2 py-4">
-                    <div className="flex w-full flex-col items-center justify-center gap-2 px-4 lg:flex-row">
-                        <Button
-                            size="md"
-                            onClick={startNewRead}
-                            className="group w-full gap-3 bg-transparent text-black enabled:hover:bg-pink-500 lg:w-64"
-                        >
-                            <PlusCircle
-                                size={28}
-                                className="text-pink-500 transition-colors group-hover:text-black"
-                            />
-                            <div className="flex flex-col items-start">
-                                <span className="font-medium">Nova leitura</span>
-                                <span className="-mt-[2px] text-start text-xs font-semibold text-gray-500 transition-colors group-hover:text-black">
-                                    Vou começar uma nova leitura
-                                </span>
-                            </div>
-                        </Button>
+            <div className="border-b border-gray-200">
+                <ul className="-mb-px flex flex-wrap items-center justify-between text-center text-sm font-medium text-gray-500">
+                    <div className="flex items-center py-1">
+                        <div className="flex items-center gap-2 pl-2 pr-4 text-black">
+                            <BookOpen size={20} />
+                            <h3 className="font-semibold">Leituras</h3>
+                        </div>
 
-                        {!userReads && (
-                            <CreateReadReviewDialog
-                                bookData={bookData}
-                                setUserReads={setUserReads}
-                                isReviewWithoutProgress
-                            />
-                        )}
+                        {readsTabs.map((item, index) => (
+                            <li
+                                key={item.name}
+                                onClick={() => setCurrentTab(index)}
+                                className={`${
+                                    currentTab === index
+                                        ? "border-yellow-600 p-4 text-yellow-600"
+                                        : "border-transparent hover:border-gray-300 hover:text-gray-600"
+                                } flex cursor-pointer gap-2 border-b-2 p-4 `}
+                            >
+                                {item.name}
+                            </li>
+                        ))}
                     </div>
-                </div>
-            )}
 
-            {userReads?.[0] &&
-                userReads.map((read) => (
+                    {(!userReads?.length || userReads[0].status === "FINISHED") && (
+                        <div className="flex flex-col items-center gap-2">
+                            <div className="flex flex-col items-center justify-center gap-2 lg:flex-row">
+                                <Button
+                                    size="sm"
+                                    onClick={startNewRead}
+                                    className="group gap-1 bg-transparent px-4 text-black enabled:hover:bg-pink-500"
+                                >
+                                    <PlusCircle
+                                        size={20}
+                                        className="text-pink-500 transition-colors group-hover:text-black"
+                                    />
+                                    <div className="flex flex-col items-start">
+                                        <span className="font-medium">Nova leitura</span>
+                                    </div>
+                                </Button>
+
+                                {(!userReads || !userReads.length) && (
+                                    <CreateReadReviewDialog
+                                        bookData={bookData}
+                                        setUserReads={setUserReads}
+                                        isReviewWithoutProgress
+                                    />
+                                )}
+                            </div>
+                        </div>
+                    )}
+                </ul>
+            </div>
+
+            {filteredReads?.[0] ? (
+                filteredReads.map((read) => (
                     <div key={read.id} className="relative rounded-lg border border-black text-sm">
                         {/* read cancelled */}
                         {read.status === "CANCELLED" && (
@@ -502,8 +565,12 @@ export function ReadsProgress({ bookData, userReads, setUserReads }: ReadsProgre
                             </div>
                         </div>
                     </div>
-                ))}
-
+                ))
+            ) : (
+                <span className="mt-1 text-center text-sm">
+                    {readsTabs[currentTab].emptyMessage}
+                </span>
+            )}
             <UpdateReadProgressDialog
                 isOpen={isOpenUpdateProgressDialog}
                 setIsOpen={setIsOpenUpdateProgressDialog}

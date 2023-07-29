@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import axios from "axios";
@@ -7,6 +7,7 @@ import { Clock, Image as ImageIcon, Heart } from "phosphor-react";
 import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";
+import { AuthContext } from "@/contexts/AuthContext";
 
 import { Container } from "@/components/layout/Container";
 import { Title } from "@/components/Title";
@@ -70,11 +71,20 @@ export interface ReadData {
     book?: BookData;
 }
 
+interface LikeBook {
+    id: string;
+    bookId: string;
+    userId: string;
+}
+
 export default function Book() {
     const router = useRouter();
 
-    const [bookData, setBookData] = useState<BookData | null>(null);
+    const { user } = useContext(AuthContext);
+
     const [isMounted, setIsMounted] = useState(false);
+    const [like, setLike] = useState<LikeBook | null>(null);
+    const [bookData, setBookData] = useState<BookData | null>(null);
 
     async function fetchBookFromGoogle() {
         try {
@@ -170,6 +180,10 @@ export default function Book() {
                             "",
                         ),
                     });
+
+                    if (!user) return;
+                    const userLikeResponse = await api.get(`/likes/book/${id}/user/${user.id}`);
+                    setLike(userLikeResponse.data.like);
                 }
             } catch (err) {
                 toast.error("Erro ao carregar os dados do livro.");
@@ -180,7 +194,38 @@ export default function Book() {
         }
 
         fetchBookFromDatabase();
-    }, [router.isReady, router.query.id]);
+    }, [router.isReady, router.query.id, user]);
+
+    async function handleToggleLikeBook() {
+        const isLiked = !!like;
+
+        try {
+            if (isLiked) {
+                await api.delete(`/likes/${like.id}`);
+                setLike(null);
+            } else {
+                if (!bookData?.id) {
+                    throw new Error("Book data not provided.");
+                }
+
+                if (!user?.id) {
+                    throw new Error("User is not logged in.");
+                }
+
+                const { data } = await api.post("/likes", {
+                    bookId: bookData.id,
+                    userId: user.id,
+                });
+
+                setLike(data.like);
+            }
+        } catch (err) {
+            const message = isLiked ? "descurtir" : "curtir";
+
+            toast.error(`Não foi possível ${message} o livro.`);
+            throw err;
+        }
+    }
 
     function bookHeader() {
         return (
@@ -408,6 +453,30 @@ export default function Book() {
 
                                     <span>{bookData?.pageCount ?? "Sem informação"}</span>
                                 </div>
+
+                                <Separator />
+
+                                {/* Book action buttons */}
+                                <div className="flex w-full items-center justify-center gap-2">
+                                    <Button size="sm">
+                                        <Clock size={20} />
+                                        <span className="font-medium">Adicionar a lista</span>
+                                    </Button>
+                                    <Button
+                                        size="sm"
+                                        onClick={handleToggleLikeBook}
+                                        className={`${
+                                            like
+                                                ? "bg-pink-500 text-black enabled:hover:bg-pink-500"
+                                                : ""
+                                        }`}
+                                    >
+                                        <Heart size={20} />
+                                        <span className="font-medium">
+                                            {like ? "Curtido" : "Curtir"}
+                                        </span>
+                                    </Button>
+                                </div>
                             </div>
 
                             {/* Community rating */}
@@ -427,18 +496,6 @@ export default function Book() {
                                             __html: bookData?.description ?? "",
                                         }}
                                     ></p>
-
-                                    {/* Book action buttons */}
-                                    <div className="flex w-full items-center gap-2">
-                                        <Button size="sm">
-                                            <Heart size={20} weight="bold" />
-                                            <span className="font-medium">Curtir</span>
-                                        </Button>
-                                        <Button size="sm">
-                                            <Clock size={20} weight="bold" />
-                                            <span className="font-medium">Adicionar a lista</span>
-                                        </Button>
-                                    </div>
 
                                     <ReadsProgress bookData={bookData} />
                                 </div>

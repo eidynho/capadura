@@ -14,7 +14,7 @@ interface LinkUnderlineProps {
 export function LinkUnderline({
     asChild,
     children,
-    href,
+    href = "",
     target = "_self",
     className,
 }: LinkUnderlineProps) {

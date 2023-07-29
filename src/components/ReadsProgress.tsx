@@ -69,7 +69,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
     const [isFetching, setIsFetching] = useState(false);
     const [isOpenUpdateProgressDialog, setIsOpenUpdateProgressDialog] = useState(false);
     const [progressEditData, setProgressEditData] = useState<EditReadData | null>(null);
-    const [currentTab, setCurrentTab] = useState(0);
+    const [currentTab, setCurrentTab] = useState(1);
 
     useEffect(() => {
         async function fetchUserReads() {
@@ -226,9 +226,9 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
 
     return (
         <>
-            <div className="border-b border-gray-200">
+            <div className="mt-3 border-b border-gray-200">
                 <ul className="-mb-px flex flex-wrap items-center justify-between text-center text-sm font-medium text-gray-500">
-                    <div className="flex items-center py-1">
+                    <div className="flex flex-wrap items-center py-1">
                         <div className="flex items-center gap-2 pl-2 pr-4 text-black">
                             <BookOpen size={20} />
                             <h3 className="font-semibold">Leituras</h3>

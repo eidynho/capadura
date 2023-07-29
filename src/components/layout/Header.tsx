@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 import { NavBarComponent } from "./NavBar";
 import { Button } from "../Button";
@@ -8,6 +9,16 @@ export function Header() {
         <header>
             <NavBarComponent />
             <article className="relative flex w-full flex-col items-center justify-center gap-8 py-5 lg:mx-0 lg:mt-0 lg:flex-row">
+                <div className="absolute w-full opacity-40">
+                    <Image
+                        src={"/grid.svg"}
+                        alt="Grid pattern"
+                        width={600}
+                        height={200}
+                        className="w-full"
+                    />
+                </div>
+
                 <div className="relative isolate px-6 pt-14 lg:px-8">
                     <div
                         className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"

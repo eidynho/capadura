@@ -304,19 +304,17 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                             <div className="flex flex-wrap items-center justify-between gap-3">
                                 <div className="flex items-center gap-2">
                                     <User size={20} />
-                                    <span>{user?.name}</span>
+                                    <span>{user?.username}</span>
 
                                     {/* Rating stars */}
                                     <div className="inline-flex items-center gap-2">
-                                        {read.reviewRating ? (
+                                        {read.reviewRating && (
                                             <>
                                                 <div className="mx-1 h-5 w-px bg-black"></div>
                                                 <div className="inline-flex items-center">
                                                     <RatingStars rating={read.reviewRating} />
                                                 </div>
                                             </>
-                                        ) : (
-                                            <></>
                                         )}
                                     </div>
                                 </div>
@@ -478,7 +476,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                             <div className="flex items-start justify-between gap-2">
                                                 <div className="flex items-center gap-2">
                                                     <User size={20} />
-                                                    <span>{user?.name}</span>
+                                                    <span>{user?.username}</span>
                                                     <span className="mt-[2px] text-xs font-semibold text-gray-500">
                                                         {format(
                                                             parseISO(progress.createdAt.toString()),

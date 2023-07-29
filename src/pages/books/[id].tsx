@@ -147,6 +147,7 @@ export default function Book() {
 
                 if (!data) {
                     await fetchBookFromGoogle();
+                    setLike(null);
                 } else {
                     const {
                         id,

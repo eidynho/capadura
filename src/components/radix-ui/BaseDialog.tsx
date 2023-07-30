@@ -1,8 +1,10 @@
+"use client";
+
 import { ReactNode } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "phosphor-react";
-import { manrope } from "@/pages/_app";
 import { twMerge } from "tailwind-merge";
+import { manrope } from "@/app/layout";
 
 interface BaseDialogProps {
     children: ReactNode;

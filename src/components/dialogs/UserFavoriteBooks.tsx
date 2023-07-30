@@ -1,8 +1,10 @@
+"use client";
+
 import { Dispatch, SetStateAction, useState } from "react";
 import { PlusCircle } from "phosphor-react";
 
 import { ProfileData } from "@/contexts/AuthContext";
-import { UserData } from "@/pages/me/[id]";
+import { UserData } from "@/app/(app)/me/[id]/page";
 
 import { BaseDialog } from "../radix-ui/BaseDialog";
 import { Button } from "../Button";

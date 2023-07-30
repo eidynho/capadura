@@ -1,3 +1,5 @@
+"use client";
+
 import { useContext } from "react";
 import Link from "next/link";
 
@@ -30,7 +32,9 @@ export default function Login() {
                             Criar conta
                         </Link>
                     </div>
-                    <h1 className="mt-20 text-justify text-4xl font-medium leading-snug">Bem-vindo(a) de volta.</h1>
+                    <h1 className="mt-20 text-justify text-4xl font-medium leading-snug">
+                        Bem-vindo(a) de volta.
+                    </h1>
                 </header>
                 <div className="flex w-full flex-col gap-8">
                     <ButtonLink href={getGoogleOAuthURL()} size="md" className="bg-blue-500">

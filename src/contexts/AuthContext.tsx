@@ -1,5 +1,7 @@
+"use client";
+
 import { createContext, ReactNode, useState, useEffect } from "react";
-import Router from "next/router";
+import { useRouter } from "next/navigation";
 import { setCookie, parseCookies, destroyCookie } from "nookies";
 import { api } from "@/lib/api";
 
@@ -37,10 +39,12 @@ export function signOut() {
     destroyCookie(undefined, "token");
     destroyCookie(undefined, "refreshToken");
 
-    Router.push("/login");
+    window.location.pathname = "/login";
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
+    const router = useRouter();
+
     const [user, setUser] = useState<ProfileData | null>(null);
     const isAuthenticated = !!user;
 
@@ -59,6 +63,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                         email,
                         createdAt,
                         description,
+                        favoriteBooks,
                         location,
                         website,
                         twitter,
@@ -70,6 +75,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                         email,
                         createdAt,
                         description,
+                        favoriteBooks,
                         location,
                         website,
                         twitter,
@@ -106,8 +112,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
             api.defaults.headers["Authorization"] = `Bearer ${data.token}`;
 
-            const { id, name, username, createdAt, description, location, website, twitter } =
-                data.user;
+            const {
+                id,
+                name,
+                username,
+                createdAt,
+                description,
+                favoriteBooks,
+                location,
+                website,
+                twitter,
+            } = data.user;
 
             setUser({
                 id,
@@ -116,12 +131,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 email,
                 createdAt,
                 description,
+                favoriteBooks,
                 location,
                 website,
                 twitter,
             });
 
-            Router.push("/books");
+            router.push("/books");
         } catch (err) {
             throw new Error("Failed on trying to sign in: " + err);
         }

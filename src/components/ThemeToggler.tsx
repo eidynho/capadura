@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { Moon, Sun } from "phosphor-react";
 
@@ -24,7 +26,7 @@ export function ThemeToggler() {
     return (
         <button
             onClick={toggleTheme}
-            className="p-1 rounded-md text-black
+            className="rounded-md p-1 text-black
             dark:text-white"
         >
             {theme === "light" ? <Moon size={24} /> : <Sun size={24} />}

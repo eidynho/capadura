@@ -1,6 +1,8 @@
+"use client";
+
 import { Fragment, ReactNode, useContext, useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { Menu, Transition } from "@headlessui/react";
 import {
     CaretDown,
@@ -169,7 +171,7 @@ export function NavBarLoggedComponent() {
                                 key={route.path}
                                 href={route.path}
                                 className={`${
-                                    router.pathname === route.path
+                                    window.location.pathname === route.path
                                         ? activeRouteStyles
                                         : notActiveRouteStyles
                                 } mx-2 mb-1 flex cursor-pointer select-none items-center gap-2 rounded-lg py-2 pl-4`}

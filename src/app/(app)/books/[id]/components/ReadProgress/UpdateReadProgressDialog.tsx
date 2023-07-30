@@ -1,8 +1,10 @@
+"use client";
+
 import { Dispatch, SetStateAction } from "react";
 import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";
-import { ReadData } from "@/pages/books/[id]";
+import { ReadData } from "@/app/(app)/books/[id]/page";
 
 import { FormReadProgress, ProgressFormSchema } from "./FormReadProgress";
 import { BaseDialog } from "@/components/radix-ui/BaseDialog";

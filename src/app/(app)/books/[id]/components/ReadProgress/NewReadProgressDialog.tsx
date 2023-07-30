@@ -1,9 +1,11 @@
+"use client";
+
 import { Dispatch, SetStateAction, useState } from "react";
 import { toast } from "react-toastify";
 import { PlusCircle } from "phosphor-react";
 
 import { api } from "@/lib/api";
-import { ProgressData, ReadData } from "@/pages/books/[id]";
+import { ProgressData, ReadData } from "@/app/(app)/books/[id]/page";
 
 import { FormReadProgress, ProgressFormSchema } from "./FormReadProgress";
 import { Button } from "@/components/Button";

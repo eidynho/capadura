@@ -1,3 +1,5 @@
+"use client";
+
 import { Fragment, useContext, useEffect, useState } from "react";
 import { format, parseISO } from "date-fns";
 import { Menu, Transition } from "@headlessui/react";
@@ -19,12 +21,12 @@ import { pt } from "date-fns/locale";
 import { api } from "@/lib/api";
 import { AuthContext } from "@/contexts/AuthContext";
 
-import { BookData, ReadData } from "@/pages/books/[id]";
+import { BookData, ReadData } from "@/app/(app)/books/[id]/page";
 
-import { NewReadProgressDialog } from "./dialogs/ReadProgress/NewReadProgressDialog";
-import { UpdateReadProgressDialog } from "./dialogs/ReadProgress/UpdateReadProgressDialog";
-import { CreateReadReviewDialog } from "./dialogs/ReadReview/CreateReadReviewDialog";
-import { UpdateReadReviewDialog } from "./dialogs/ReadReview/UpdateReadReviewDialog";
+import { CreateReadReviewDialog } from "@/app/(app)/books/[id]/components/ReadReview/CreateReadReviewDialog";
+import { UpdateReadReviewDialog } from "@/app/(app)/books/[id]/components/ReadReview/UpdateReadReviewDialog";
+import { NewReadProgressDialog } from "@/app/(app)/books/[id]/components/ReadProgress/NewReadProgressDialog";
+import { UpdateReadProgressDialog } from "@/app/(app)/books/[id]/components/ReadProgress/UpdateReadProgressDialog";
 import { RatingStars } from "./RatingStars";
 import { Button } from "./Button";
 import { Badge } from "./Badge";

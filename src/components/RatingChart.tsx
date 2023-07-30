@@ -1,5 +1,7 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import Router from "next/router";
+import { useRouter } from "next/navigation";
 import { Star, StarHalf } from "phosphor-react";
 import { BarChart, Bar, Cell, Tooltip, ResponsiveContainer } from "recharts";
 
@@ -22,6 +24,8 @@ interface RatingChartProps {
     userId?: string;
 }
 export function RatingChart({ bookId, userId }: RatingChartProps) {
+    const router = useRouter();
+
     const [bookRatings, setBookRatings] = useState<ratingsDataChart>({
         data: [],
         total: 0,
@@ -55,7 +59,7 @@ export function RatingChart({ bookId, userId }: RatingChartProps) {
     }, [bookId, userId]);
 
     function handleClickBar({ rating }: { rating: number }) {
-        Router.push(`${bookId}/ratings/${rating}`);
+        router.push(`${bookId}/ratings/${rating}`);
     }
 
     function RenderTooltipContent({ payload }: any) {

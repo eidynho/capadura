@@ -1,5 +1,7 @@
+"use client";
+
 import { useContext } from "react";
-import Router from "next/router";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FieldValues, useForm } from "react-hook-form";
 
@@ -11,6 +13,8 @@ import { Button } from "@/components/Button";
 import { ButtonLink } from "@/components/ButtonLink";
 
 export default function SignUp() {
+    const router = useRouter();
+
     const { register, handleSubmit } = useForm();
     const { signIn } = useContext(AuthContext);
 
@@ -27,7 +31,7 @@ export default function SignUp() {
                 password,
             });
 
-            Router.push("/books");
+            router.push("/books");
         } catch (err) {
             throw new Error("Failed to create account: " + err);
         }

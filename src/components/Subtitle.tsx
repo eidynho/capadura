@@ -6,5 +6,9 @@ interface SubtitleProps extends HTMLAttributes<HTMLHeadingElement> {
 }
 
 export function Subtitle({ className, children }: SubtitleProps) {
-    return <h2 className={`${className ? className : ""} text-sm font-medium uppercase`}>{children}</h2>;
+    return (
+        <h2 className={`${className ? className : ""} text-sm font-medium uppercase`}>
+            {children}
+        </h2>
+    );
 }

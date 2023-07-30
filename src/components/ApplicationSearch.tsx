@@ -1,3 +1,5 @@
+"use client";
+
 import { Dispatch, SetStateAction, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -7,7 +9,7 @@ import { Image as ImageIcon, MagnifyingGlass, User, X } from "phosphor-react";
 
 import { api } from "@/lib/api";
 import { ProfileData } from "@/contexts/AuthContext";
-import { UserData } from "@/pages/me/[id]";
+import { UserData } from "@/app/(app)/me/[id]/page";
 
 import { useDebounce } from "@/hooks/useDebounce";
 import useDidMountEffect from "@/hooks/useDidMountEffect";

@@ -1,8 +1,11 @@
+"use client";
+
 import { Dispatch, SetStateAction, useState } from "react";
-import { PencilSimple } from "phosphor-react";
+import { Star } from "phosphor-react";
 
-import { BookData, ReadData } from "@/pages/books/[id]";
+import { BookData, ReadData } from "@/app/(app)/books/[id]/page";
 
+import { Button } from "@/components/Button";
 import { BaseDialog } from "@/components/radix-ui/BaseDialog";
 import { FormReadReview } from "./FormReadReview";
 
@@ -11,18 +14,14 @@ interface ReadReviewDialogProps {
     bookData: BookData | null;
     setUserReads: Dispatch<SetStateAction<ReadData[] | null>>;
 
-    editData: {
-        reviewContent?: string;
-        reviewRating: number;
-        reviewIsSpoiler: boolean;
-    };
+    isReviewWithoutProgress?: boolean;
 }
 
-export function UpdateReadReviewDialog({
+export function CreateReadReviewDialog({
     readId,
     bookData,
     setUserReads,
-    editData,
+    isReviewWithoutProgress,
 }: ReadReviewDialogProps) {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -32,13 +31,31 @@ export function UpdateReadReviewDialog({
 
     return (
         <>
-            <div
-                onClick={() => handleToggleDialog(true)}
-                tabIndex={0}
-                className="cursor-pointer rounded-lg p-[6px] text-sm hover:bg-gray-400/20"
-            >
-                <PencilSimple size={17} weight="bold" />
-            </div>
+            {isReviewWithoutProgress ? (
+                <Button
+                    size="sm"
+                    onClick={() => handleToggleDialog(true)}
+                    className="group gap-1 bg-transparent px-4 text-black enabled:hover:bg-yellow-500"
+                >
+                    <Star
+                        size={20}
+                        className="text-yellow-500 transition-colors group-hover:text-black"
+                    />
+
+                    <div className="flex flex-col items-start">
+                        <span className="font-medium">Avaliar</span>
+                    </div>
+                </Button>
+            ) : (
+                <Button
+                    size="sm"
+                    className="w-full bg-green-500 enabled:hover:bg-green-500 enabled:hover:text-white"
+                    onClick={() => handleToggleDialog(true)}
+                >
+                    <Star size={18} weight="bold" />
+                    <span className="font-medium">Avaliar</span>
+                </Button>
+            )}
 
             <BaseDialog
                 size="max-w-3xl"
@@ -53,7 +70,7 @@ export function UpdateReadReviewDialog({
                             <FormReadReview
                                 readId={readId}
                                 setUserReads={setUserReads}
-                                editData={editData}
+                                isReviewWithoutProgress={isReviewWithoutProgress}
                                 bookData={bookData}
                                 executeOnSubmit={() => setIsOpen(false)}
                             />

@@ -1,3 +1,5 @@
+"use client";
+
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -5,7 +7,8 @@ import { z } from "zod";
 import { CircleNotch, Star, StarHalf } from "phosphor-react";
 import { toast } from "react-toastify";
 
-import { BookData, ReadData } from "@/pages/books/[id]";
+import { BookData, ReadData } from "@/app/(app)/books/[id]/page";
+
 import { api } from "@/lib/api";
 
 import { Button } from "@/components/Button";

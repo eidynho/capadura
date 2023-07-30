@@ -1,4 +1,6 @@
-import { useState, useEffect, ReactNode, ButtonHTMLAttributes, ElementType } from "react";
+"use client";
+
+import { useState, useEffect, ReactNode, ButtonHTMLAttributes } from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { twMerge } from "tailwind-merge";
 

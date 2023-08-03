@@ -32,7 +32,7 @@ export interface UserData {
 
 interface MeProps {
     params: {
-        id: string;
+        username: string;
     };
 }
 
@@ -65,7 +65,7 @@ export default function Me({ params }: MeProps) {
         async function fetchUserData() {
             try {
                 setIsMounted(false);
-                const userResponse = await api.get(`/users/${params.id}`);
+                const userResponse = await api.get(`/users/${params.username}`);
                 const userId = userResponse.data.user.id;
 
                 const readsPromise = api.get(
@@ -90,7 +90,7 @@ export default function Me({ params }: MeProps) {
             }
         }
         fetchUserData();
-    }, [params.id]);
+    }, [params.username]);
 
     function renderHeaderInfo() {
         return (

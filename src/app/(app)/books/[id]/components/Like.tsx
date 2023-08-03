@@ -1,11 +1,12 @@
 "use client";
 
-import { Button } from "@/components/Button";
-import { AuthContext } from "@/contexts/AuthContext";
-import { api } from "@/lib/api";
-import { Heart } from "phosphor-react";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { Heart } from "phosphor-react";
+
+import { api } from "@/lib/api";
+
+import { Button } from "@/components/Button";
 
 interface LikeBook {
     id: string;
@@ -18,14 +19,12 @@ interface LikeProps {
 }
 
 export function Like({ bookId }: LikeProps) {
-    const { user } = useContext(AuthContext);
-
     const [like, setLike] = useState<LikeBook | null>(null);
 
     useEffect(() => {
         async function getUserLike() {
             try {
-                const userLikeResponse = await api.get(`/likes/book/${bookId}/user/${user?.id}`);
+                const userLikeResponse = await api.get(`/likes/book/${bookId}`);
                 setLike(userLikeResponse.data.like);
             } catch (err) {
                 throw err;
@@ -46,13 +45,8 @@ export function Like({ bookId }: LikeProps) {
                     throw new Error("Book data not provided.");
                 }
 
-                if (!user?.id) {
-                    throw new Error("User is not logged in.");
-                }
-
                 const { data } = await api.post("/likes", {
                     bookId,
-                    userId: user.id,
                 });
 
                 setLike(data.like);

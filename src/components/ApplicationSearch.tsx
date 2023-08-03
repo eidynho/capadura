@@ -9,7 +9,7 @@ import { Image as ImageIcon, MagnifyingGlass, User, X } from "phosphor-react";
 
 import { api } from "@/lib/api";
 import { ProfileData } from "@/contexts/AuthContext";
-import { UserData } from "@/app/(app)/me/[id]/page";
+import { UserData } from "@/app/(app)/me/[username]/page";
 
 import { useDebounce } from "@/hooks/useDebounce";
 import useDidMountEffect from "@/hooks/useDidMountEffect";
@@ -207,6 +207,7 @@ export function ApplicationSearch({
                 id="nav-search"
                 onChange={(e) => setSearchName(e.target.value)}
                 value={searchName}
+                maxLength={240}
                 placeholder="Busque por título, autor, editora, ISBN..."
                 className="block w-[32rem] rounded-lg border border-black py-3 pl-10 pr-10 text-sm outline-none focus:border-yellow-500"
             />

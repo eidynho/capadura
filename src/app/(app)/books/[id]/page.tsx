@@ -20,6 +20,7 @@ import { RatingChart } from "@/components/RatingChart";
 import { LinkUnderline } from "@/components/LinkUnderline";
 import Loading from "./loading";
 import { Like } from "./components/Like";
+import { BookListMenu } from "./components/BookListMenu";
 
 interface BookImagesDataFromGoogle {
     id: string;
@@ -284,10 +285,7 @@ export default function Book({ params }: BookProps) {
 
                                 {/* Book action buttons */}
                                 <div className="flex w-full items-center justify-center gap-2">
-                                    <Button size="sm">
-                                        <Clock size={20} />
-                                        <span className="font-medium">Adicionar a lista</span>
-                                    </Button>
+                                    <BookListMenu bookData={bookData} />
                                     <Like bookId={bookData.id} />
                                 </div>
                             </div>

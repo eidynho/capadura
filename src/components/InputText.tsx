@@ -12,7 +12,7 @@ interface InputTextSearchProps extends HTMLAttributes<HTMLInputElement> {
     id: string;
     label: string;
     placeholder?: string;
-    className: string;
+    className?: string;
     onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 

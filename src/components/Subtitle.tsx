@@ -1,4 +1,5 @@
 import { HTMLAttributes } from "react";
+import { twMerge } from "tailwind-merge";
 
 interface SubtitleProps extends HTMLAttributes<HTMLHeadingElement> {
     className?: string;
@@ -6,9 +7,5 @@ interface SubtitleProps extends HTMLAttributes<HTMLHeadingElement> {
 }
 
 export function Subtitle({ className, children }: SubtitleProps) {
-    return (
-        <h2 className={`${className ? className : ""} text-sm font-medium uppercase`}>
-            {children}
-        </h2>
-    );
+    return <p className={twMerge("text-muted-foreground", className)}>{children}</p>;
 }

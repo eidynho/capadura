@@ -9,8 +9,7 @@ import { api } from "@/lib/api";
 import { AuthContext } from "@/contexts/AuthContext";
 import getGoogleOAuthURL from "@/utils/get-google-url";
 
-import { Button } from "@/components/Button";
-import { ButtonLink } from "@/components/ButtonLink";
+import { Button } from "@/components/ui/Button";
 
 export default function SignUp() {
     const router = useRouter();
@@ -31,7 +30,7 @@ export default function SignUp() {
                 password,
             });
 
-            router.push("/books");
+            router.push("/livros");
         } catch (err) {
             throw new Error("Failed to create account: " + err);
         }
@@ -54,9 +53,9 @@ export default function SignUp() {
                     </h1>
                 </header>
                 <div className="flex w-full flex-col gap-8">
-                    <ButtonLink href={getGoogleOAuthURL()} size="md" className="bg-blue-500">
-                        Conectar com Google
-                    </ButtonLink>
+                    <Button asChild size="md" variant="black">
+                        <Link href={getGoogleOAuthURL()}>Conectar com Google</Link>
+                    </Button>
                     <div
                         className="flex items-center
                             before:mr-4 before:h-[1px] before:flex-1 before:bg-black before:content-['']
@@ -90,7 +89,9 @@ export default function SignUp() {
                                 className="w-full rounded-md border border-black px-4 py-3 font-normal outline-pink-500"
                             />
                         </label>
-                        <Button size="md">Criar conta</Button>
+                        <Button size="md" variant="black">
+                            Criar conta
+                        </Button>
                     </form>
                     <span className="mb-8 block font-medium">
                         Você concorda com nossos{" "}

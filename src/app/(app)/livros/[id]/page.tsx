@@ -21,6 +21,7 @@ import { LinkUnderline } from "@/components/LinkUnderline";
 import Loading from "./loading";
 import { Like } from "./components/Like";
 import { BookListMenu } from "./components/BookListMenu";
+import { publishDateFormat } from "@/utils/publish-date-format";
 
 interface BookImagesDataFromGoogle {
     id: string;
@@ -250,11 +251,7 @@ export default function Book({ params }: BookProps) {
 
                                 <div className="mx-4 flex justify-between text-sm">
                                     <span className="font-semibold">Ano de publicação</span>
-                                    <span>
-                                        {bookData.publishDate
-                                            ? getYear(new Date(bookData.publishDate))
-                                            : "Sem informação"}
-                                    </span>
+                                    <span>{publishDateFormat(bookData.publishDate)}</span>
                                 </div>
 
                                 <Separator />

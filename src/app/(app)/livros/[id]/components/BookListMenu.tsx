@@ -18,23 +18,12 @@ import { BookData } from "../page";
 import { useDebounce } from "@/hooks/useDebounce";
 import { AuthContext } from "@/contexts/AuthContext";
 
+import { BookListData, BookOnBookList } from "@/app/(app)/usuario/[username]/listas/page";
+
 import { Button } from "@/components/Button";
 import { BaseDialog } from "@/components/radix-ui/BaseDialog";
 import { Menu, Transition } from "@headlessui/react";
 import { Separator } from "@/components/Separator";
-
-interface BookOnBookList {
-    id: string;
-    bookId: string;
-    bookListId: string;
-}
-
-interface BookListData {
-    id: string;
-    name: string;
-    description: string;
-    books: BookOnBookList[];
-}
 
 interface BookListMenuProps {
     bookData: BookData;
@@ -62,13 +51,16 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
             setIsFetching(true);
 
             try {
-                let query = "";
+                const query = [];
+
+                query.push("bookId=" + bookData.id);
+
                 if (debouncedSearchName.trim()) {
-                    query = `?q=${debouncedSearchName.trim()}`;
+                    query.push("q=" + debouncedSearchName.trim());
                 }
 
                 const { data } = await api.get<BookListData[]>(
-                    `/booklists/user/${user.id}${query}`,
+                    `/booklists/user/${user.id}?${query.join("&")}`,
                 );
 
                 setBookLists(data);
@@ -102,10 +94,10 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
         }
     }
 
-    async function toggleBookIntoBookList(bookList: BookListData, bookInBookList?: BookOnBookList) {
+    async function toggleBookIntoBookList(bookList: BookListData, bookOnBookList?: BookOnBookList) {
         try {
-            if (!!bookInBookList) {
-                await api.delete(`/books-on-booklists/${bookInBookList.id}`);
+            if (!!bookOnBookList) {
+                await api.delete(`/books-on-booklists/${bookOnBookList.id}`);
 
                 setBookLists((prev) => {
                     if (!prev) return null;
@@ -170,26 +162,23 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
             <>
                 {bookLists?.length ? (
                     bookLists.map((bookList) => {
-                        const bookInBookList = bookList.books?.find(
+                        const bookOnBookList = bookList.books?.find(
                             (bookOnBookList) => bookOnBookList.bookId === bookData.id,
                         );
                         return (
                             <div
                                 key={bookList.id}
-                                onClick={() => toggleBookIntoBookList(bookList, bookInBookList)}
+                                onClick={() => toggleBookIntoBookList(bookList, bookOnBookList)}
                                 className="relative mx-2 mb-1 flex cursor-pointer select-none items-center gap-2 rounded-lg border border-transparent py-2 pl-4 hover:bg-black hover:bg-opacity-10"
                             >
                                 <span className="w-4/5 truncate">{bookList.name}</span>
 
-                                <div className="absolute right-4 top-2">
-                                    {bookInBookList && (
-                                        <span title="O livro está na lista">
-                                            <Check
-                                                size={20}
-                                                className="text-green-500"
-                                                weight="bold"
-                                            />
-                                        </span>
+                                <div
+                                    className="absolute right-4 top-2"
+                                    title="O livro está na lista"
+                                >
+                                    {bookOnBookList && (
+                                        <Check size={20} className="text-green-500" weight="bold" />
                                     )}
                                 </div>
                             </div>

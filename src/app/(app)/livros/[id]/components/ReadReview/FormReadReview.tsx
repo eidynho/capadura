@@ -7,7 +7,7 @@ import { z } from "zod";
 import { CircleNotch, Star, StarHalf } from "phosphor-react";
 import { toast } from "react-toastify";
 
-import { BookData, ReadData } from "@/app/(app)/books/[id]/page";
+import { BookData, ReadData } from "@/app/(app)/livros/[id]/page";
 
 import { api } from "@/lib/api";
 

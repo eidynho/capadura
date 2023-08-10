@@ -3,8 +3,7 @@
 import { useContext } from "react";
 import Link from "next/link";
 
-import { Button } from "@/components/Button";
-import { ButtonLink } from "@/components/ButtonLink";
+import { Button } from "@/components/ui/Button";
 import { AuthContext } from "@/contexts/AuthContext";
 import getGoogleOAuthURL from "@/utils/get-google-url";
 import { FieldValues, useForm } from "react-hook-form";
@@ -37,9 +36,9 @@ export default function Login() {
                     </h1>
                 </header>
                 <div className="flex w-full flex-col gap-8">
-                    <ButtonLink href={getGoogleOAuthURL()} size="md" className="bg-blue-500">
-                        Conectar com Google
-                    </ButtonLink>
+                    <Button asChild size="md" variant="black">
+                        <Link href={getGoogleOAuthURL()}>Conectar com Google</Link>
+                    </Button>
                     <div
                         className="flex items-center
                             before:mr-4 before:h-[1px] before:flex-1 before:bg-black before:content-['']
@@ -71,7 +70,7 @@ export default function Login() {
                             />
                         </label>
 
-                        <Button size="md">Entrar</Button>
+                        <Button variant="black">Entrar</Button>
                     </form>
                     <span className="mb-8 block font-medium">
                         Você concorda com nossos{" "}

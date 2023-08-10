@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/Button";
+import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 
 export function NavBarComponent() {
@@ -17,10 +17,10 @@ export function NavBarComponent() {
                 </ul>
             </nav>
             <div className="flex items-center gap-2">
-                <Button>
+                <Button size="sm" variant="black">
                     <Link href="/">Entrar</Link>
                 </Button>
-                <Button>
+                <Button size="sm" variant="black">
                     <Link href="/">Cadastrar</Link>
                 </Button>
             </div>

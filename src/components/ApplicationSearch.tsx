@@ -9,7 +9,7 @@ import { Image as ImageIcon, MagnifyingGlass, User, X } from "phosphor-react";
 
 import { api } from "@/lib/api";
 import { ProfileData } from "@/contexts/AuthContext";
-import { UserData } from "@/app/(app)/me/[username]/page";
+import { UserData } from "@/app/(app)/usuario/[username]/page";
 
 import { useDebounce } from "@/hooks/useDebounce";
 import useDidMountEffect from "@/hooks/useDidMountEffect";
@@ -242,7 +242,7 @@ export function ApplicationSearch({
                                             <>
                                                 {isLink ? (
                                                     <Link
-                                                        href={`/books/${book.id}`}
+                                                        href={`/livros/${book.id}`}
                                                         onClick={() => setSearchName("")}
                                                         key={book.id}
                                                         className="flex cursor-pointer gap-4 px-4 py-2 hover:bg-black hover:text-white"

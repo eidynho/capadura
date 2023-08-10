@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction } from "react";
 import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";
-import { ReadData } from "@/app/(app)/books/[id]/page";
+import { ReadData } from "@/app/(app)/livros/[id]/page";
 
 import { FormReadProgress, ProgressFormSchema } from "./FormReadProgress";
 import { BaseDialog } from "@/components/radix-ui/BaseDialog";

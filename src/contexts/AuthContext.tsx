@@ -137,7 +137,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 twitter,
             });
 
-            router.push("/books");
+            router.push("/livros");
         } catch (err) {
             throw new Error("Failed on trying to sign in: " + err);
         }

@@ -6,17 +6,19 @@ import { format, parseISO } from "date-fns";
 import { pt } from "date-fns/locale";
 import { Link as LinkIcon, MapPin, TwitterLogo, User } from "phosphor-react";
 import { api } from "@/lib/api";
-import { ProgressData, ReadData } from "../../books/[id]/page";
+import { ProgressData, ReadData } from "../../livros/[id]/page";
 
 import { ProfileData } from "@/contexts/AuthContext";
+import Loading from "./loading";
 
-import { Button } from "@/components/Button";
+import { Button } from "@/components/ui/Button";
+import { Calendar } from "@/components/ui/Calendar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
 import { LinkUnderline } from "@/components/LinkUnderline";
 import { RatingStars } from "@/components/RatingStars";
 import { Container } from "@/components/layout/Container";
 import { RatingChart } from "@/components/RatingChart";
 import { UserFavoriteBooks } from "@/components/dialogs/UserFavoriteBooks";
-import Loading from "./loading";
 
 export interface UserData {
     user: ProfileData;
@@ -60,13 +62,14 @@ export default function Me({ params }: MeProps) {
             total: 0,
         },
     });
+    const [date, setDate] = useState<Date | undefined>(new Date());
 
     useEffect(() => {
         async function fetchUserData() {
             try {
                 setIsMounted(false);
                 const userResponse = await api.get(`/users/${params.username}`);
-                const userId = userResponse.data.user.id;
+                const userId = userResponse.data.id;
 
                 const readsPromise = api.get(
                     `/user-reads?userId=${userId}&status=FINISHED&page=1&perPage=3`,
@@ -79,7 +82,7 @@ export default function Me({ params }: MeProps) {
                 ]);
 
                 setUserData({
-                    user: userResponse.data.user,
+                    user: userResponse.data,
                     reads: readsResponse.data,
                     progress: progressResponse.data,
                 });
@@ -97,18 +100,18 @@ export default function Me({ params }: MeProps) {
             <div className="flex w-full flex-col gap-5 md:w-[28rem]">
                 <div className="mt-1 flex gap-x-8 gap-y-3">
                     <LinkUnderline href="">
-                        <span className="font-semibold">234</span>
-                        <span>livros</span>
+                        <span className="font-medium">234</span>
+                        <span className="text-muted-foreground">livros</span>
                     </LinkUnderline>
 
                     <LinkUnderline href="">
-                        <span className="font-semibold">234</span>
-                        <span>seguidores</span>
+                        <span className="font-medium">234</span>
+                        <span className="text-muted-foreground">seguidores</span>
                     </LinkUnderline>
 
                     <LinkUnderline href="">
-                        <span className="font-semibold">5535</span>
-                        <span>seguindo</span>
+                        <span className="font-medium">5535</span>
+                        <span className="text-muted-foreground">seguindo</span>
                     </LinkUnderline>
                 </div>
 
@@ -162,7 +165,12 @@ export default function Me({ params }: MeProps) {
         <Container>
             <div className="flex flex-col items-start justify-center md:flex-row">
                 <div className="flex items-start gap-8">
-                    <User size={120} />
+                    <Avatar className="h-28 w-28 md:h-40 md:w-40">
+                        <AvatarImage src="https://github.com/eidynho.png" />
+                        <AvatarFallback>
+                            {userData.user.username[0]?.toUpperCase() || ""}
+                        </AvatarFallback>
+                    </Avatar>
                     <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-4 md:flex-row md:items-start">
                             <div>
@@ -171,7 +179,7 @@ export default function Me({ params }: MeProps) {
                                 </h2>
                                 <span className="tracking-wide">@{userData.user.username}</span>
                             </div>
-                            <Button asChild size="sm">
+                            <Button asChild size="sm" variant="black">
                                 <Link href="/config">Editar perfil</Link>
                             </Button>
                         </div>
@@ -211,7 +219,7 @@ export default function Me({ params }: MeProps) {
                                         <div className="flex items-start justify-between gap-2">
                                             <div className="flex items-center gap-2">
                                                 <LinkUnderline
-                                                    href={`/books/${read.bookId}`}
+                                                    href={`/livros/${read.bookId}`}
                                                     className="font-semibold"
                                                 >
                                                     {read.book?.title}
@@ -261,7 +269,7 @@ export default function Me({ params }: MeProps) {
                                         <div className="flex items-start justify-between gap-2">
                                             <div className="flex items-center gap-2">
                                                 <LinkUnderline
-                                                    href={`/books/${progress?.read?.bookId}`}
+                                                    href={`/livros/${progress?.read?.bookId}`}
                                                     className="font-semibold"
                                                 >
                                                     {progress.read?.book?.title}
@@ -310,7 +318,12 @@ export default function Me({ params }: MeProps) {
                 <div className="flex w-full flex-col gap-4 sm:flex-row lg:w-72 lg:flex-col">
                     <div className="w-full sm:w-1/2 lg:w-full">
                         <h3 className="font-semibold">Calendário</h3>
-                        <div className="h-64 w-full rounded-lg border border-black"></div>
+                        <Calendar
+                            mode="single"
+                            selected={date}
+                            onSelect={setDate}
+                            className="rounded-md border"
+                        />
                     </div>
 
                     <div className="w-full sm:w-1/2 lg:w-full">

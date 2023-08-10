@@ -13,7 +13,6 @@ import {
     PlusCircle,
     ProhibitInset,
     Trash,
-    User,
 } from "phosphor-react";
 import { toast } from "react-toastify";
 import { pt } from "date-fns/locale";
@@ -21,15 +20,20 @@ import { pt } from "date-fns/locale";
 import { api } from "@/lib/api";
 import { AuthContext } from "@/contexts/AuthContext";
 
-import { BookData, ReadData } from "@/app/(app)/books/[id]/page";
+import { BookData, ReadData } from "@/app/(app)/livros/[id]/page";
 
-import { CreateReadReviewDialog } from "@/app/(app)/books/[id]/components/ReadReview/CreateReadReviewDialog";
-import { UpdateReadReviewDialog } from "@/app/(app)/books/[id]/components/ReadReview/UpdateReadReviewDialog";
-import { NewReadProgressDialog } from "@/app/(app)/books/[id]/components/ReadProgress/NewReadProgressDialog";
-import { UpdateReadProgressDialog } from "@/app/(app)/books/[id]/components/ReadProgress/UpdateReadProgressDialog";
+import { CreateReadReviewDialog } from "@/app/(app)/livros/[id]/components/ReadReview/CreateReadReviewDialog";
+import { UpdateReadReviewDialog } from "@/app/(app)/livros/[id]/components/ReadReview/UpdateReadReviewDialog";
+import { NewReadProgressDialog } from "@/app/(app)/livros/[id]/components/ReadProgress/NewReadProgressDialog";
+import { UpdateReadProgressDialog } from "@/app/(app)/livros/[id]/components/ReadProgress/UpdateReadProgressDialog";
 import { RatingStars } from "./RatingStars";
 import { Button } from "./Button";
-import { Badge } from "./Badge";
+import { Button as Button2 } from "./ui/Button";
+import { Badge } from "./ui/Badge";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/HoverCard";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/Avatar";
+import { LinkUnderline } from "./LinkUnderline";
+import { UserHoverCard } from "./UserHoverCard";
 
 const readsTabs = [
     {
@@ -206,7 +210,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
 
     function renderReadStatus(status: ReadStatus) {
         let message = "";
-        let variant: "green" | "sky" | "yellow" | "red" | "gray" = "gray";
+        let variant: "green" | "sky" | "yellow" | "red" | "default" = "default";
 
         switch (status) {
             case "ACTIVE":
@@ -305,8 +309,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                             {/* read active */}
                             <div className="flex flex-wrap items-center justify-between gap-3">
                                 <div className="flex items-center gap-2">
-                                    <User size={20} />
-                                    <span>{user?.username}</span>
+                                    {user && <UserHoverCard user={user} />}
 
                                     {/* Rating stars */}
                                     <div className="inline-flex items-center gap-2">
@@ -325,7 +328,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                     {renderReadStatus(read.status as ReadStatus)}
 
                                     {/* Privacy badge */}
-                                    <Badge variant="gray">
+                                    <Badge variant="default">
                                         {read.isPrivate ? (
                                             <Lock size={14} />
                                         ) : (
@@ -477,8 +480,8 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                         >
                                             <div className="flex items-start justify-between gap-2">
                                                 <div className="flex items-center gap-2">
-                                                    <User size={20} />
-                                                    <span>{user?.username}</span>
+                                                    {user && <UserHoverCard user={user} />}
+
                                                     <span className="mt-[2px] text-xs font-semibold text-gray-500">
                                                         {format(
                                                             parseISO(progress.createdAt.toString()),

@@ -2,7 +2,6 @@
 
 import { Fragment, ReactNode, useContext, useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Menu, Transition } from "@headlessui/react";
 import {
     CaretDown,
@@ -70,7 +69,7 @@ const navRoutes: routeProps[] = [
     },
     {
         name: "Livros",
-        path: "/home",
+        path: "/livros",
     },
     {
         name: "Autores",
@@ -103,7 +102,6 @@ export function NavBarLoggedComponent() {
     const [isMounted, setIsMounted] = useState(false);
 
     const { user } = useContext(AuthContext);
-    const router = useRouter();
 
     useEffect(() => {
         let timeoutId: any;
@@ -130,11 +128,11 @@ export function NavBarLoggedComponent() {
     const profileRoutes: routeProps[] = [
         {
             name: "Perfil",
-            path: `/me/${user?.username}`,
+            path: `/usuario/${user?.username}`,
         },
         {
             name: "Livros",
-            path: "/home",
+            path: "/livros",
         },
         {
             name: "Linha do tempo",
@@ -142,7 +140,7 @@ export function NavBarLoggedComponent() {
         },
         {
             name: "Minhas listas",
-            path: "/home",
+            path: `/usuario/${user?.username}/listas`,
         },
         {
             name: "Separator",

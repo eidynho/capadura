@@ -3,25 +3,27 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
-import { getYear, isValid, parse } from "date-fns";
-import { Clock, Image as ImageIcon } from "phosphor-react";
+import { isValid, parse } from "date-fns";
+import { Image as ImageIcon } from "phosphor-react";
 import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";
+import { cloudFrontBaseUrl } from "@/utils/cloudfront-base-url";
+import { publishDateFormat } from "@/utils/publish-date-format";
+
+import Loading from "./loading";
+
+import { Like } from "./components/Like";
+import { BookListMenu } from "./components/BookListMenu";
 
 import { Container } from "@/components/layout/Container";
 import { Title } from "@/components/Title";
 import { Subtitle } from "@/components/Subtitle";
 import { Separator } from "@/components/Separator";
-import { Button } from "@/components/Button";
 import { BookDataFromGoogle } from "@/components/ApplicationSearch";
 import { ReadsProgress } from "@/components/ReadsProgress";
 import { RatingChart } from "@/components/RatingChart";
 import { LinkUnderline } from "@/components/LinkUnderline";
-import Loading from "./loading";
-import { Like } from "./components/Like";
-import { BookListMenu } from "./components/BookListMenu";
-import { publishDateFormat } from "@/utils/publish-date-format";
 
 interface BookImagesDataFromGoogle {
     id: string;
@@ -48,7 +50,7 @@ export interface BookData {
     language?: string | null;
     pageCount?: number | null;
     description?: string | null;
-    image?: string;
+    imageKey?: string | null;
 }
 
 export interface ProgressData {
@@ -121,7 +123,7 @@ export default function Book({ params }: BookProps) {
                 language: language,
                 pageCount: pageCount,
                 description: description,
-                image: imageLinks?.medium?.replace("&edge=curl", ""),
+                imageKey: imageLinks?.medium ? `book-${data.id}` : null,
             });
 
             await api.post("/book", {
@@ -130,10 +132,11 @@ export default function Book({ params }: BookProps) {
                 subtitle,
                 authors,
                 publisher,
-                publishDate: isValid(parsedDate) ? parsedDate : null,
+                publishDate: isValid(parsedDate) ? parsedDate : undefined,
                 language,
                 pageCount,
                 description,
+                imageLink: imageLinks?.medium?.replace("&edge=curl", ""),
             });
         } catch (err) {
             toast.error("Erro ao carregar os dados do livro.");
@@ -161,12 +164,8 @@ export default function Book({ params }: BookProps) {
                         language,
                         pageCount,
                         description,
+                        imageKey,
                     } = data;
-
-                    // get image from google
-                    const googleImageResponse = await axios.get<BookImagesDataFromGoogle>(
-                        `https://www.googleapis.com/books/v1/volumes/${params.id}?fields=id,volumeInfo(title,imageLinks)`,
-                    );
 
                     setBookData({
                         id,
@@ -178,11 +177,35 @@ export default function Book({ params }: BookProps) {
                         language,
                         pageCount,
                         description,
-                        image: googleImageResponse.data.volumeInfo.imageLinks?.medium?.replace(
-                            "&edge=curl",
-                            "",
-                        ),
+                        imageKey,
                     });
+
+                    if (!imageKey) {
+                        // get image from google and update db
+                        const googleImageResponse = await axios.get<BookImagesDataFromGoogle>(
+                            `https://www.googleapis.com/books/v1/volumes/${params.id}?fields=id,volumeInfo(title,imageLinks)`,
+                        );
+
+                        const imageLinkFromGoogle =
+                            googleImageResponse.data.volumeInfo.imageLinks?.medium?.replace(
+                                "&edge=curl",
+                                "",
+                            );
+
+                        await api.put(`/book/${params.id}`, {
+                            id: params.id,
+                            imageLink: imageLinkFromGoogle,
+                        });
+
+                        setBookData((prev) => {
+                            if (!prev) return null;
+
+                            return {
+                                ...prev,
+                                imageKey: `book-${params.id}`,
+                            };
+                        });
+                    }
                 }
             } catch (err) {
                 toast.error("Erro ao carregar os dados do livro.");
@@ -219,9 +242,9 @@ export default function Book({ params }: BookProps) {
 
                             {/* Book image */}
                             <div className="flex w-full gap-6">
-                                {bookData.image ? (
+                                {bookData.imageKey ? (
                                     <Image
-                                        src={bookData.image}
+                                        src={`${cloudFrontBaseUrl()}/book-${bookData.id}`}
                                         alt=""
                                         width={312}
                                         height={468}

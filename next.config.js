@@ -7,6 +7,11 @@ const nextConfig = {
                 hostname: "books.google.com",
                 port: "",
             },
+            {
+                protocol: "https",
+                hostname: "d3pct9qj0imfur.cloudfront.net",
+                port: "",
+            },
         ],
     },
 };

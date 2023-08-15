@@ -8,7 +8,6 @@ import { Image as ImageIcon } from "phosphor-react";
 import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";
-import { cloudFrontBaseUrl } from "@/utils/cloudfront-base-url";
 import { publishDateFormat } from "@/utils/publish-date-format";
 
 import Loading from "./loading";
@@ -51,6 +50,7 @@ export interface BookData {
     pageCount?: number | null;
     description?: string | null;
     imageKey?: string | null;
+    imageUrl?: string;
 }
 
 export interface ProgressData {
@@ -113,20 +113,7 @@ export default function Book({ params }: BookProps) {
 
             const parsedDate = parse(publishedDate, "yyyy-MM-dd", new Date());
 
-            setBookData({
-                id: data.id,
-                title: title,
-                subtitle: subtitle,
-                authors: authors,
-                publisher: publisher,
-                publishDate: isValid(parsedDate) ? parsedDate : null,
-                language: language,
-                pageCount: pageCount,
-                description: description,
-                imageKey: imageLinks?.medium ? `book-${data.id}` : null,
-            });
-
-            await api.post("/book", {
+            const createdBook = await api.post("/book", {
                 id: data.id,
                 title,
                 subtitle,
@@ -138,6 +125,7 @@ export default function Book({ params }: BookProps) {
                 description,
                 imageLink: imageLinks?.medium?.replace("&edge=curl", ""),
             });
+            setBookData(createdBook.data);
         } catch (err) {
             toast.error("Erro ao carregar os dados do livro.");
             throw err;
@@ -154,33 +142,9 @@ export default function Book({ params }: BookProps) {
                 if (!data) {
                     await fetchBookFromGoogle();
                 } else {
-                    const {
-                        id,
-                        title,
-                        subtitle,
-                        authors,
-                        publisher,
-                        publishDate,
-                        language,
-                        pageCount,
-                        description,
-                        imageKey,
-                    } = data;
+                    setBookData(data);
 
-                    setBookData({
-                        id,
-                        title,
-                        subtitle,
-                        authors,
-                        publisher,
-                        publishDate,
-                        language,
-                        pageCount,
-                        description,
-                        imageKey,
-                    });
-
-                    if (!imageKey) {
+                    if (!data.imageKey) {
                         // get image from google and update db
                         const googleImageResponse = await axios.get<BookImagesDataFromGoogle>(
                             `https://www.googleapis.com/books/v1/volumes/${params.id}?fields=id,volumeInfo(title,imageLinks)`,
@@ -242,9 +206,9 @@ export default function Book({ params }: BookProps) {
 
                             {/* Book image */}
                             <div className="flex w-full gap-6">
-                                {bookData.imageKey ? (
+                                {bookData.imageUrl ? (
                                     <Image
-                                        src={`${cloudFrontBaseUrl()}/book-${bookData.id}`}
+                                        src={bookData.imageUrl}
                                         alt=""
                                         width={312}
                                         height={468}

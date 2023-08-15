@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { format, parseISO } from "date-fns";
 import { pt } from "date-fns/locale";
-import { Link as LinkIcon, MapPin, TwitterLogo, User } from "phosphor-react";
+import { Link as LinkIcon, MapPin, TwitterLogo } from "phosphor-react";
 import { api } from "@/lib/api";
 import { ProgressData, ReadData } from "../../livros/[id]/page";
-
 import { ProfileData } from "@/contexts/AuthContext";
+
 import Loading from "./loading";
 
 import { Button } from "@/components/ui/Button";
@@ -47,6 +47,8 @@ export default function Me({ params }: MeProps) {
             username: "",
             email: "",
             createdAt: undefined,
+            imageKey: null,
+            imageUrl: undefined,
             description: null,
             favoriteBooks: [],
             location: null,
@@ -101,17 +103,17 @@ export default function Me({ params }: MeProps) {
                 <div className="mt-1 flex gap-x-8 gap-y-3">
                     <LinkUnderline href="">
                         <span className="font-medium">234</span>
-                        <span className="text-muted-foreground">livros</span>
+                        <span className="text-zinc-500">livros</span>
                     </LinkUnderline>
 
                     <LinkUnderline href="">
                         <span className="font-medium">234</span>
-                        <span className="text-muted-foreground">seguidores</span>
+                        <span className="text-zinc-500">seguidores</span>
                     </LinkUnderline>
 
                     <LinkUnderline href="">
                         <span className="font-medium">5535</span>
-                        <span className="text-muted-foreground">seguindo</span>
+                        <span className="text-zinc-500">seguindo</span>
                     </LinkUnderline>
                 </div>
 
@@ -166,7 +168,7 @@ export default function Me({ params }: MeProps) {
             <div className="flex flex-col items-start justify-center md:flex-row">
                 <div className="flex items-start gap-8">
                     <Avatar className="h-28 w-28 md:h-40 md:w-40">
-                        <AvatarImage src="https://github.com/eidynho.png" />
+                        <AvatarImage src={userData.user.imageUrl} />
                         <AvatarFallback>
                             {userData.user.username[0]?.toUpperCase() || ""}
                         </AvatarFallback>

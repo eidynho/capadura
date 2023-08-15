@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import lodash from "lodash";
@@ -19,12 +19,12 @@ import { Separator } from "@/components/ui/Separator";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Textarea } from "@/components/ui/Textarea";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
 
-const configTabs = [
-    {
-        name: "Perfil",
-    },
-];
+const configTabs = ["Perfil"];
+
+const MAX_FILE_SIZE = 1024 * 1024 * 2; // 2 MB;
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 const profileFormSchema = z.object({
     id: z.string(),
@@ -35,8 +35,24 @@ const profileFormSchema = z.object({
     username: z
         .string()
         .min(1, { message: "Campo obrigatório." })
-        .max(50, { message: "Minimo 50 caracteres." }),
+        .max(50, { message: "Máximo 50 caracteres." }),
     email: z.string().email(),
+    image: z
+        .any()
+        .refine((file) => {
+            if (!file || file.length === 0) {
+                return true;
+            }
+
+            return file[0]?.size <= MAX_FILE_SIZE;
+        }, "O tamanho máximo é 2MB.")
+        .refine((file) => {
+            if (!file || file.length === 0) {
+                return true;
+            }
+
+            return ACCEPTED_IMAGE_TYPES.includes(file[0]?.type);
+        }, "Formatos permitidos: .jpg, .jpeg, .png and .webp."),
     description: z.string().optional().nullable(),
     location: z.string().max(50, { message: "Máximo 50 caracteres." }).optional().nullable(),
     website: z
@@ -73,12 +89,16 @@ export default function Config() {
         handleSubmit,
         formState: { isSubmitting, errors },
         setValue,
+        control,
+        watch,
     } = useForm<ProfileFormSchema>({
         resolver: zodResolver(profileFormSchema),
     });
 
+    const selectedImage = watch("image");
+
     async function submitProfile(data: ProfileFormSchema) {
-        const { id, name, username, email, description, location, website, twitter } = data;
+        const { id, name, username, email, image, description, location, website, twitter } = data;
 
         if (lodash.isEqual(userData, { ...data, createdAt: user?.createdAt })) {
             toast.success("O perfil está atualizado.");
@@ -87,11 +107,12 @@ export default function Config() {
 
         try {
             // TODO: BE ABLE TO UPDATE USERNAME AND E-MAIL (UNIQUE)
-            const updatedUser = await api.put("/me", {
+            const updatedUser = await api.putForm("/me", {
                 id,
                 name,
                 username: user?.username,
                 email: user?.email,
+                image: image[0],
                 description: description ?? undefined,
                 location: location ?? undefined,
                 website: website ?? undefined,
@@ -111,7 +132,7 @@ export default function Config() {
                 setValue("twitter", "");
             }
 
-            setUserData(updatedUser.data.user);
+            setUserData(updatedUser.data);
             toast.success("Seu perfil foi atualizado.");
         } catch (err) {
             toast.error("Erro ao atualizar perfil.");
@@ -132,7 +153,7 @@ export default function Config() {
                             <nav className="flex flex-col gap-1">
                                 {configTabs.map((item, index) => (
                                     <div
-                                        key={item.name}
+                                        key={item}
                                         onClick={() => setCurrentTab(index)}
                                         className={`${
                                             currentTab === index
@@ -140,7 +161,7 @@ export default function Config() {
                                                 : "border border-transparent hover:bg-black hover:bg-opacity-5"
                                         } cursor-pointer rounded-lg px-4 py-2 text-sm`}
                                     >
-                                        <span className="block w-full truncate">{item.name}</span>
+                                        <span className="block w-full truncate">{item}</span>
                                     </div>
                                 ))}
                             </nav>
@@ -166,6 +187,7 @@ export default function Config() {
                                     id="config-profile-name"
                                     name="name"
                                     type="text"
+                                    maxLength={50}
                                     placeholder="Harry J. Potter"
                                     className={`${
                                         errors.name ? "border-red-500" : ""
@@ -185,13 +207,14 @@ export default function Config() {
                                     id="config-profile-username"
                                     name="username"
                                     type="text"
+                                    maxLength={50}
                                     disabled
                                     placeholder="harry"
                                     className={`${
                                         errors.username ? "border-red-500" : ""
                                     } mt-2 w-2/3 lg:w-1/4`}
                                 />
-                                <span className="mt-1 text-xs text-muted-foreground">
+                                <span className="mt-1 text-xs text-zinc-500">
                                     Não é possível alterar o usuário no momento.
                                 </span>
                                 {errors.username && (
@@ -214,7 +237,7 @@ export default function Config() {
                                         errors.email ? "border-red-500" : ""
                                     } mt-2 w-2/3 lg:w-1/3`}
                                 />
-                                <span className="mt-1 text-xs text-muted-foreground">
+                                <span className="mt-1 text-xs text-zinc-500">
                                     Não é possível alterar o e-mail no momento.
                                 </span>
                                 {errors.email && (
@@ -222,6 +245,64 @@ export default function Config() {
                                         Campo obrigatório
                                     </span>
                                 )}
+                            </div>
+
+                            <div className="flex flex-col">
+                                <div className="inline-block">
+                                    <Label htmlFor="config-profile-image">Foto de perfil</Label>
+                                </div>
+                                <div className="mt-2 flex items-center gap-2">
+                                    <Controller
+                                        name="image"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <>
+                                                <Avatar className="h-16 w-16">
+                                                    <AvatarImage
+                                                        src={
+                                                            selectedImage?.[0]
+                                                                ? URL.createObjectURL(
+                                                                      selectedImage[0],
+                                                                  )
+                                                                : user?.imageUrl
+                                                        }
+                                                    />
+                                                    <AvatarFallback>
+                                                        {user?.username[0].toUpperCase() || "-"}
+                                                    </AvatarFallback>
+                                                </Avatar>
+
+                                                <Button
+                                                    asChild
+                                                    size="sm"
+                                                    variant="outline"
+                                                    type="button"
+                                                >
+                                                    <Label
+                                                        htmlFor="config-profile-image"
+                                                        className="cursor-pointer"
+                                                    >
+                                                        Alterar foto
+                                                    </Label>
+                                                </Button>
+
+                                                <Input
+                                                    {...register("image")}
+                                                    id="config-profile-image"
+                                                    name="image"
+                                                    type="file"
+                                                    className="hidden"
+                                                    onChange={(e) => field.onChange(e.target.files)}
+                                                />
+                                            </>
+                                        )}
+                                    ></Controller>
+                                    {errors.image && (
+                                        <span className="mt-1 text-xs font-semibold text-red-500">
+                                            {`${errors.image.message}`}
+                                        </span>
+                                    )}
+                                </div>
                             </div>
 
                             <div className="flex flex-col">
@@ -244,6 +325,7 @@ export default function Config() {
                                         id="config-profile-location"
                                         name="location"
                                         type="text"
+                                        maxLength={50}
                                         placeholder="Hogwarts"
                                         className={`${
                                             errors.location ? "border-red-500" : ""
@@ -295,7 +377,7 @@ export default function Config() {
                                 )}
                             </div>
 
-                            <Button size="lg" variant="black" type="submit" disabled={isSubmitting}>
+                            <Button size="md" variant="black" type="submit" disabled={isSubmitting}>
                                 {isSubmitting ? (
                                     <>
                                         <Loader2 size={22} className="animate-spin" />

@@ -7,5 +7,5 @@ interface SubtitleProps extends HTMLAttributes<HTMLHeadingElement> {
 }
 
 export function Subtitle({ className, children }: SubtitleProps) {
-    return <p className={twMerge("text-muted-foreground", className)}>{children}</p>;
+    return <p className={twMerge("text-zinc-500", className)}>{children}</p>;
 }

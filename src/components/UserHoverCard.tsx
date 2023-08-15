@@ -15,10 +15,10 @@ export function UserHoverCard({ user }: UserHoverCardProps) {
             <HoverCardTrigger asChild>
                 <div className="flex items-center">
                     <Avatar className="h-8 w-8">
-                        <AvatarImage src="https://github.com/eidynho.png" />
-                        <AvatarFallback>{user.username[0].toUpperCase() || ""}</AvatarFallback>
+                        <AvatarImage src={user.imageUrl} />
+                        <AvatarFallback>{user.username[0].toUpperCase() || "-"}</AvatarFallback>
                     </Avatar>
-                    <Button variant="link" size="sm">
+                    <Button variant="link" size="sm" className="px-2">
                         {user.username}
                     </Button>
                 </div>
@@ -26,7 +26,7 @@ export function UserHoverCard({ user }: UserHoverCardProps) {
             <HoverCardContent className="w-80">
                 <div className="flex space-x-4">
                     <Avatar>
-                        <AvatarImage src="https://github.com/eidynho.png" />
+                        <AvatarImage src={user.imageUrl} />
                         <AvatarFallback>{user.username[0]?.toUpperCase() || ""}</AvatarFallback>
                     </Avatar>
                     <div className="space-y-1">

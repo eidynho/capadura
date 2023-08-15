@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { toast } from "react-toastify";
-import { MoreHorizontal, PlusCircle } from "lucide-react";
+import { Library, MoreHorizontal, PencilLine, PlusCircle } from "lucide-react";
 
 import { api } from "@/lib/api";
+import { AuthContext, ProfileData } from "@/contexts/AuthContext";
 import { useDebounce } from "@/hooks/useDebounce";
 import { BookData } from "@/app/(app)/livros/[id]/page";
+
 import Loading from "./loading";
 
 import { Container } from "@/components/layout/Container";
@@ -29,6 +32,9 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/DropdownMenu";
 import { Separator } from "@/components/ui/Separator";
+import { UserHoverCard } from "@/components/UserHoverCard";
+import { UpdateBookListDialog } from "./UpdateBookListDialog";
+import { DeleteBookListDialog } from "./DeleteBookListDialog";
 
 export interface BookOnBookList {
     id: string;
@@ -36,7 +42,7 @@ export interface BookOnBookList {
     bookListId: string;
 }
 
-type BookOnBookListWithBook = BookOnBookList & {
+export type BookOnBookListWithBook = BookOnBookList & {
     book: BookData;
 };
 
@@ -44,6 +50,8 @@ export interface BookListData {
     id: string;
     name: string;
     description: string;
+    imageKey?: string;
+    imageUrl?: string;
     books: { id: string; bookId: string; bookListId: string }[];
 }
 
@@ -53,13 +61,15 @@ export default function UserLists() {
 
     const [isMounted, setIsMounted] = useState(false);
     const [isFetching, setIsFetching] = useState(false);
+    const [user, setUser] = useState<ProfileData | null>(null);
     const [currentList, setCurrentList] = useState(0);
     const [booksOnBookList, setBooksOnBookList] = useState<BookOnBookListWithBook[] | null>(null);
     const [bookLists, setBookLists] = useState<BookListData[] | null>(null);
 
     const [searchName, setSearchName] = useState("");
-
     const debouncedSearchName = useDebounce<string>(searchName, 400);
+
+    const isCurrentUserLists = user?.username === username;
 
     useEffect(() => {
         async function getUserBookList() {
@@ -70,6 +80,7 @@ export default function UserLists() {
             try {
                 const userResponse = await api.get(`/users/${username}`);
                 const userId = userResponse.data.id;
+                setUser(userResponse.data);
 
                 let query = "";
                 if (debouncedSearchName.trim()) {
@@ -85,13 +96,13 @@ export default function UserLists() {
             }
         }
         getUserBookList();
-    }, [debouncedSearchName]);
+    }, [username, debouncedSearchName]);
 
     useEffect(() => {
         async function getBooksOfList() {
             if (!bookLists) return;
 
-            const bookListId = bookLists[currentList].id;
+            const bookListId = bookLists[currentList]?.id;
 
             setIsFetching(true);
 
@@ -108,9 +119,11 @@ export default function UserLists() {
             }
         }
         getBooksOfList();
-    }, [bookLists, currentList]);
+    }, [username, bookLists, currentList]);
 
     async function createBookList() {
+        if (!isCurrentUserLists) return;
+
         try {
             const countBookLists = bookLists?.length || 0;
 
@@ -132,6 +145,8 @@ export default function UserLists() {
     }
 
     async function deleteBookOnBookList(bookOnBookListId: string) {
+        if (!isCurrentUserLists) return;
+
         try {
             await api.delete(`/books-on-booklists/${bookOnBookListId}`);
 
@@ -145,6 +160,11 @@ export default function UserLists() {
             toast.error("Erro ao criar lista.");
         }
     }
+
+    // render loading
+    // if (!isMounted) {
+    //     return <Loading />;
+    // }
 
     function renderBookLists() {
         return (
@@ -183,99 +203,151 @@ export default function UserLists() {
         );
     }
 
-    // render loading
-    // if (!isMounted) {
-    //     return <Loading />;
-    // }
-
     return (
         <Container>
-            <Title>Minhas listas</Title>
-            <Subtitle>Organize sua leitura do jeito que você quiser.</Subtitle>
+            <Title>{isCurrentUserLists ? "Minhas listas" : `${username} - listas`}</Title>
+            {isCurrentUserLists && (
+                <Subtitle>Organize sua leitura do jeito que você quiser.</Subtitle>
+            )}
 
             <Separator className="my-6 bg-gray-300" />
 
             <div className="mt-4 flex flex-col gap-8 md:flex-row lg:gap-6 xl:gap-8">
                 <div className="w-full md:w-1/4">
-                    <Button variant="default" onClick={createBookList}>
-                        <PlusCircle size={18} />
-                        Criar lista
-                    </Button>
+                    {isCurrentUserLists && (
+                        <>
+                            <Button variant="default" onClick={createBookList}>
+                                <PlusCircle size={18} />
+                                Nova lista
+                            </Button>
 
-                    <Separator className="my-6 bg-black" />
+                            <Separator className="my-6 bg-black" />
+                        </>
+                    )}
                     {renderBookLists()}
                 </div>
 
-                <div className="flex w-full flex-col gap-8 md:w-3/4">
-                    <div className="flex gap-4">
-                        <div className="h-44 w-44 rounded-md border border-black"></div>
-                        <div className="flex flex-1 flex-col gap-3">
-                            <h2 className="text-xl font-medium leading-relaxed tracking-tight">
-                                {bookLists?.[currentList].name}
-                            </h2>
-                            <p className="text-muted-foreground">
-                                {bookLists?.[currentList].description}
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo,
-                                provident maxime in a doloremque odit repellat, consectetur
-                                voluptatibus cum repellendus, mollitia accusamus quisquam tenetur!
-                                Delectus laboriosam obcaecati reprehenderit consequuntur illum.
-                            </p>
-                        </div>
-                    </div>
+                {bookLists?.[currentList] ? (
+                    <div className="flex w-full flex-col gap-8 md:w-3/4">
+                        <div className="flex gap-4">
+                            <div className="flex h-56 w-56 rounded-md bg-neutral-800 transition-all">
+                                {bookLists[currentList].imageUrl ? (
+                                    <Image
+                                        src={bookLists[currentList].imageUrl as string}
+                                        alt=""
+                                        width={224}
+                                        height={224}
+                                        className="rounded-md"
+                                    />
+                                ) : (
+                                    <div className="flex h-56 w-56 items-center justify-center rounded-md text-white">
+                                        <Library size={32} />
+                                    </div>
+                                )}
+                            </div>
 
-                    {booksOnBookList?.length ? (
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead className="w-[100px]">#</TableHead>
-                                    <TableHead className="hover:bg-gray-200">Nome</TableHead>
-                                    <TableHead>Autor(a)</TableHead>
-                                    <TableHead>Ano de publicação</TableHead>
-                                    <TableHead>Páginas</TableHead>
-                                    <TableHead className="text-right"></TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {booksOnBookList?.map((bookOnBookList, index) => (
+                            <div className="flex flex-1 flex-col justify-between gap-3">
+                                <div>
+                                    <div className="flex items-center justify-between gap-2">
+                                        <h2 className="flex-1 text-xl font-medium leading-relaxed tracking-tight">
+                                            {bookLists[currentList].name}
+                                        </h2>
+
+                                        {isCurrentUserLists && (
+                                            <>
+                                                <UpdateBookListDialog
+                                                    currentList={currentList}
+                                                    bookLists={bookLists}
+                                                    setBookLists={setBookLists}
+                                                />
+
+                                                <DeleteBookListDialog
+                                                    bookListId={bookLists[currentList].id}
+                                                    setBookLists={setBookLists}
+                                                />
+                                            </>
+                                        )}
+                                    </div>
+                                    <p className="mt-2 text-zinc-500">
+                                        {bookLists[currentList].description}
+                                    </p>
+                                </div>
+                                <div className="flex items-center">
+                                    {user && <UserHoverCard user={user} />}
+                                    <span className="mr-2">•</span>
+                                    <span className="text-sm font-medium">
+                                        {!booksOnBookList?.length
+                                            ? "Nenhum livro"
+                                            : booksOnBookList.length === 1
+                                            ? "1 livro"
+                                            : `${booksOnBookList.length} livros`}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {booksOnBookList?.length ? (
+                            <Table>
+                                <TableHeader>
                                     <TableRow>
-                                        <TableCell className="font-medium">{index + 1}</TableCell>
-                                        <TableCell>{bookOnBookList.book.title}</TableCell>
-                                        <TableCell>{bookOnBookList.book.authors[0]}</TableCell>
-                                        <TableCell>{`${bookOnBookList.book.publishDate}`}</TableCell>
-                                        <TableCell>{bookOnBookList.book.pageCount}</TableCell>
-                                        <TableCell className="text-right">
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button
-                                                        variant="default"
-                                                        className="flex h-8 w-8 p-0 data-[state=open]:bg-gray-200"
-                                                    >
-                                                        <MoreHorizontal className="h-4 w-4" />
-                                                        <span className="sr-only">Abrir menu</span>
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent
-                                                    align="end"
-                                                    className="w-[160px]"
-                                                >
-                                                    <DropdownMenuItem
-                                                        onClick={() =>
-                                                            deleteBookOnBookList(bookOnBookList.id)
-                                                        }
-                                                    >
-                                                        Deletar
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
-                                        </TableCell>
+                                        <TableHead className="w-[100px]">#</TableHead>
+                                        <TableHead className="hover:bg-gray-200">Nome</TableHead>
+                                        <TableHead>Autor(a)</TableHead>
+                                        <TableHead>Ano de publicação</TableHead>
+                                        <TableHead>Páginas</TableHead>
+                                        <TableHead className="text-right"></TableHead>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    ) : (
-                        <span className="font-medium">A lista ainda não possui livros.</span>
-                    )}
-                </div>
+                                </TableHeader>
+                                <TableBody>
+                                    {booksOnBookList?.map((bookOnBookList, index) => (
+                                        <TableRow>
+                                            <TableCell className="font-medium">
+                                                {index + 1}
+                                            </TableCell>
+                                            <TableCell>{bookOnBookList.book.title}</TableCell>
+                                            <TableCell>{bookOnBookList.book.authors[0]}</TableCell>
+                                            <TableCell>{`${bookOnBookList.book.publishDate}`}</TableCell>
+                                            <TableCell>{bookOnBookList.book.pageCount}</TableCell>
+                                            <TableCell className="text-right">
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button
+                                                            variant="default"
+                                                            className="flex h-8 w-8 p-0 data-[state=open]:bg-gray-200"
+                                                        >
+                                                            <MoreHorizontal className="h-4 w-4" />
+                                                            <span className="sr-only">
+                                                                Abrir menu
+                                                            </span>
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent
+                                                        align="end"
+                                                        className="w-[160px]"
+                                                    >
+                                                        <DropdownMenuItem
+                                                            onClick={() =>
+                                                                deleteBookOnBookList(
+                                                                    bookOnBookList.id,
+                                                                )
+                                                            }
+                                                        >
+                                                            Deletar
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        ) : (
+                            <span className="font-medium">A lista ainda não possui livros.</span>
+                        )}
+                    </div>
+                ) : (
+                    <></>
+                )}
             </div>
         </Container>
     );

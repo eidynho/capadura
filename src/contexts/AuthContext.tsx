@@ -16,6 +16,8 @@ export interface ProfileData {
     location: string | null;
     website: string | null;
     twitter: string | null;
+    imageKey: string | null;
+    imageUrl?: string;
 }
 
 interface AuthContextType {
@@ -56,29 +58,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 try {
                     const { data } = await api.get("/me");
 
-                    const {
-                        id,
-                        name,
-                        username,
-                        email,
-                        createdAt,
-                        description,
-                        favoriteBooks,
-                        location,
-                        website,
-                        twitter,
-                    } = data.user;
                     setUser({
-                        id,
-                        name,
-                        username,
-                        email,
-                        createdAt,
-                        description,
-                        favoriteBooks,
-                        location,
-                        website,
-                        twitter,
+                        id: data.id,
+                        name: data.name,
+                        username: data.username,
+                        email: data.email,
+                        createdAt: data.createdAt,
+                        description: data.description,
+                        favoriteBooks: data.favoriteBooks,
+                        location: data.location,
+                        website: data.website,
+                        twitter: data.twitter,
+                        imageKey: data.imageKey,
+                        imageUrl: data.imageUrl,
                     });
                 } catch (err) {
                     signOut();
@@ -112,29 +104,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
             api.defaults.headers["Authorization"] = `Bearer ${data.token}`;
 
-            const {
-                id,
-                name,
-                username,
-                createdAt,
-                description,
-                favoriteBooks,
-                location,
-                website,
-                twitter,
-            } = data.user;
-
             setUser({
-                id,
-                name,
-                username,
+                id: data.user.id,
+                name: data.user.name,
+                username: data.user.username,
                 email,
-                createdAt,
-                description,
-                favoriteBooks,
-                location,
-                website,
-                twitter,
+                createdAt: data.user.createdAt,
+                description: data.user.description,
+                favoriteBooks: data.user.favoriteBooks,
+                location: data.user.location,
+                website: data.user.website,
+                twitter: data.user.twitter,
+                imageKey: data.user.imageKey,
+                imageUrl: data.imageUrl,
             });
 
             router.push("/livros");

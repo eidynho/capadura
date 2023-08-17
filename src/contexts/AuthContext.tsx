@@ -12,7 +12,6 @@ export interface ProfileData {
     email: string;
     createdAt?: Date;
     description: string | null;
-    favoriteBooks: string[];
     location: string | null;
     website: string | null;
     twitter: string | null;
@@ -65,7 +64,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
                         email: data.email,
                         createdAt: data.createdAt,
                         description: data.description,
-                        favoriteBooks: data.favoriteBooks,
                         location: data.location,
                         website: data.website,
                         twitter: data.twitter,
@@ -111,7 +109,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 email,
                 createdAt: data.user.createdAt,
                 description: data.user.description,
-                favoriteBooks: data.user.favoriteBooks,
                 location: data.user.location,
                 website: data.user.website,
                 twitter: data.user.twitter,

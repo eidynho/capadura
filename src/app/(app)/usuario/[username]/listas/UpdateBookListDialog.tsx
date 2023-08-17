@@ -201,11 +201,11 @@ export function UpdateBookListDialog({
                                         type="text"
                                         maxLength={50}
                                         className={`${
-                                            errors.name ? "border-red-500" : ""
+                                            errors.name ? "border-destructive" : ""
                                         } mt-2 w-full`}
                                     />
                                     {errors.name && (
-                                        <span className="mt-1 text-xs font-semibold text-red-500">
+                                        <span className="mt-1 text-xs font-semibold text-destructive">
                                             Campo obrigatório
                                         </span>
                                     )}

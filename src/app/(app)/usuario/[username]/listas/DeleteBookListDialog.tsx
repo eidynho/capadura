@@ -80,7 +80,7 @@ export function DeleteBookListDialog({ bookListId, setBookLists }: DeleteBookLis
                     <DialogHeader>
                         <DialogTitle>Deletar lista</DialogTitle>
                     </DialogHeader>
-                    <DialogDescription className="text-zinc-500">
+                    <DialogDescription>
                         Ao deletar uma lista, todos os livros da lista serão deletados e a ação não
                         poderá ser revertida.
                     </DialogDescription>

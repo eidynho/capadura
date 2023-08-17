@@ -1,16 +1,8 @@
 "use client";
 
-import { Fragment, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-    CaretDown,
-    Check,
-    CheckSquareOffset,
-    ListBullets,
-    MagnifyingGlass,
-    PlusCircle,
-    X,
-} from "phosphor-react";
+import { ChevronDown, Check, List, PlusCircle, CornerDownRight, BadgePlus } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";
@@ -20,10 +12,15 @@ import { AuthContext } from "@/contexts/AuthContext";
 
 import { BookListData, BookOnBookList } from "@/app/(app)/usuario/[username]/listas/page";
 
-import { Button } from "@/components/Button";
-import { BaseDialog } from "@/components/radix-ui/BaseDialog";
-import { Menu, Transition } from "@headlessui/react";
-import { Separator } from "@/components/Separator";
+import { Button } from "@/components/ui/Button";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/DropdownMenu";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/Tooltip";
 
 interface BookListMenuProps {
     bookData: BookData;
@@ -31,7 +28,6 @@ interface BookListMenuProps {
 
 export function BookListMenu({ bookData }: BookListMenuProps) {
     const { user } = useContext(AuthContext);
-    const router = useRouter();
 
     const [isOpen, setIsOpen] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
@@ -39,10 +35,6 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
     const [searchName, setSearchName] = useState("");
 
     const debouncedSearchName = useDebounce<string>(searchName, 400);
-
-    function handleToggleDialog(state = false) {
-        setIsOpen(state);
-    }
 
     useEffect(() => {
         async function getUserBookList() {
@@ -151,12 +143,6 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
         }
     }
 
-    function moveToUserBookLists() {
-        if (!user) return;
-
-        router.push(`/${user.username}/booklists`);
-    }
-
     function renderBookLists() {
         return (
             <>
@@ -166,22 +152,32 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
                             (bookOnBookList) => bookOnBookList.bookId === bookData.id,
                         );
                         return (
-                            <div
+                            <DropdownMenuItem
                                 key={bookList.id}
                                 onClick={() => toggleBookIntoBookList(bookList, bookOnBookList)}
-                                className="relative mx-2 mb-1 flex cursor-pointer select-none items-center gap-2 rounded-lg border border-transparent py-2 pl-4 hover:bg-black hover:bg-opacity-10"
+                                className="relative pl-6"
                             >
-                                <span className="w-4/5 truncate">{bookList.name}</span>
+                                <span className="w-full truncate">{bookList.name}</span>
 
-                                <div
-                                    className="absolute right-4 top-2"
-                                    title="O livro está na lista"
-                                >
-                                    {bookOnBookList && (
-                                        <Check size={20} className="text-green-500" weight="bold" />
-                                    )}
-                                </div>
-                            </div>
+                                <TooltipProvider delayDuration={400} skipDelayDuration={0}>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <div className="absolute left-1 top-2">
+                                                {bookOnBookList && (
+                                                    <Check
+                                                        size={14}
+                                                        className="text-green-500"
+                                                        strokeWidth={3}
+                                                    />
+                                                )}
+                                            </div>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="right">
+                                            <span>Já está na lista</span>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            </DropdownMenuItem>
                         );
                     })
                 ) : (
@@ -201,136 +197,26 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
     }
 
     return (
-        <>
-            <Menu as="div" className="relative z-10 inline-block">
-                <Menu.Button className="flex items-center gap-2 rounded-lg border border-black bg-white px-2 py-2 text-black transition-all hover:shadow-[0.25rem_0.25rem_#000]">
-                    <CheckSquareOffset size={20} />
+        <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+            <DropdownMenuTrigger asChild>
+                <Button size="sm" variant="outline">
+                    <List size={16} />
                     <span className="text-sm font-medium">Adicionar a lista</span>
-                    <CaretDown size={14} />
-                </Menu.Button>
-                <Transition
-                    as={Fragment}
-                    enter="transition ease-out duration-100"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
+                    <ChevronDown size={14} className="text-zinc-500" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="max-h-72 w-52 overflow-auto">
+                <DropdownMenuItem
+                    onClick={createBookList}
+                    className="cursor-pointer focus:bg-green-500/20"
                 >
-                    <Menu.Items className="absolute -right-[7.5rem] mt-1 h-96 w-72 overflow-y-auto rounded-md border border-black bg-white py-2 text-sm shadow-[0.25rem_0.25rem_#000] ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <div className="mx-2 flex flex-col items-center justify-between gap-2">
-                            <div className="relative w-full">
-                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                    <MagnifyingGlass size={18} />
-                                </div>
-                                <input
-                                    type="text"
-                                    onChange={(e) => setSearchName(e.target.value)}
-                                    value={searchName}
-                                    placeholder="Procurar lista"
-                                    maxLength={120}
-                                    className="block w-full rounded-lg border border-black p-2 pl-10 text-sm outline-none focus:border-yellow-500 focus:ring-yellow-500"
-                                />
-                                {searchName && (
-                                    <div
-                                        className="absolute inset-y-0 right-3 flex cursor-pointer items-center"
-                                        onClick={() => setSearchName("")}
-                                    >
-                                        <X size={18} />
-                                    </div>
-                                )}
-                            </div>
+                    Criar lista
+                </DropdownMenuItem>
 
-                            <div className="mb-1 flex w-full items-center justify-center">
-                                <div
-                                    onClick={createBookList}
-                                    className="mr-2 flex cursor-pointer select-none items-center gap-2 rounded-lg border border-transparent px-2 py-2 hover:bg-black hover:bg-opacity-10"
-                                >
-                                    <PlusCircle size={18} />
-                                    Criar lista
-                                </div>
+                <DropdownMenuSeparator />
 
-                                <div className="mx-px h-8 w-px bg-black"></div>
-
-                                <div
-                                    onClick={moveToUserBookLists}
-                                    className="ml-2 flex cursor-pointer select-none items-center gap-2 rounded-lg border border-transparent px-2 py-2 hover:bg-black hover:bg-opacity-10"
-                                >
-                                    <ListBullets size={18} />
-                                    Ver listas
-                                </div>
-                            </div>
-                        </div>
-
-                        <Separator className="mx-5 my-2" />
-
-                        <Menu.Item>{renderBookLists()}</Menu.Item>
-                    </Menu.Items>
-                </Transition>
-            </Menu>
-
-            {/* <Button size="sm" onClick={() => handleToggleDialog(true)}>
-                <CheckSquareOffset size={20} />
-                <span className="font-medium">Adicionar a lista</span>
-            </Button> */}
-
-            <BaseDialog
-                size="max-w-3xl"
-                title="Listas"
-                isOpen={isOpen}
-                closeDialog={() => handleToggleDialog(false)}
-            >
-                {/* Dialog body */}
-                <div className="px-4 py-6">
-                    <div className="mb-4">
-                        <div className="mt-6 flex w-full flex-col items-center">
-                            {isFetching ? (
-                                <>
-                                    {Array.from({ length: 2 }, () => (
-                                        <div className="mb-2 flex w-full animate-pulse gap-4">
-                                            <div className="h-24 w-24 rounded-lg bg-gray-300/80"></div>
-                                            <div className="flex flex-1 flex-col gap-1">
-                                                <div className="h-6 w-1/3 rounded-lg bg-gray-300"></div>
-                                                <div className="h-5 w-2/3 rounded-lg bg-gray-300/80"></div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </>
-                            ) : bookLists?.length ? (
-                                bookLists.map((bookList) => (
-                                    <div className="flex w-full gap-4 rounded-lg border border-black px-3 py-2">
-                                        <div className="h-24 w-24 rounded-lg border border-black"></div>
-                                        <div className="flex flex-1 items-center justify-between gap-2">
-                                            <div className="flex flex-col">
-                                                <span className="font-semibold">
-                                                    {bookList.name}
-                                                </span>
-                                                <span className="text-sm">teste</span>
-                                            </div>
-
-                                            <Button size="sm" onClick={createBookList}>
-                                                <PlusCircle size={18} />
-                                                Adicionar
-                                            </Button>
-                                        </div>
-                                    </div>
-                                ))
-                            ) : (
-                                <>
-                                    {debouncedSearchName ? (
-                                        <span className="break-all">
-                                            Nenhuma lista com a busca "
-                                            <strong>{debouncedSearchName}</strong>" foi encontrada.
-                                        </span>
-                                    ) : (
-                                        <span>Nenhuma lista encontrada.</span>
-                                    )}
-                                </>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </BaseDialog>
-        </>
+                {renderBookLists()}
+            </DropdownMenuContent>
+        </DropdownMenu>
     );
 }

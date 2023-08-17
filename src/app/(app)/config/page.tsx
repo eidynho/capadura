@@ -190,11 +190,11 @@ export default function Config() {
                                     maxLength={50}
                                     placeholder="Harry J. Potter"
                                     className={`${
-                                        errors.name ? "border-red-500" : ""
+                                        errors.name ? "border-destructive" : ""
                                     } mt-2 w-2/3 lg:w-1/2`}
                                 />
                                 {errors.name && (
-                                    <span className="mt-1 text-xs font-semibold text-red-500">
+                                    <span className="mt-1 text-xs font-medium text-destructive">
                                         {errors.name.message}
                                     </span>
                                 )}
@@ -211,14 +211,14 @@ export default function Config() {
                                     disabled
                                     placeholder="harry"
                                     className={`${
-                                        errors.username ? "border-red-500" : ""
+                                        errors.username ? "border-destructive" : ""
                                     } mt-2 w-2/3 lg:w-1/4`}
                                 />
                                 <span className="mt-1 text-xs text-zinc-500">
                                     Não é possível alterar o usuário no momento.
                                 </span>
                                 {errors.username && (
-                                    <span className="mt-1 text-xs font-semibold text-red-500">
+                                    <span className="mt-1 text-xs font-medium text-destructive">
                                         Campo obrigatório
                                     </span>
                                 )}
@@ -234,14 +234,14 @@ export default function Config() {
                                     disabled
                                     placeholder="harry@email.com"
                                     className={`${
-                                        errors.email ? "border-red-500" : ""
+                                        errors.email ? "border-destructive" : ""
                                     } mt-2 w-2/3 lg:w-1/3`}
                                 />
                                 <span className="mt-1 text-xs text-zinc-500">
                                     Não é possível alterar o e-mail no momento.
                                 </span>
                                 {errors.email && (
-                                    <span className="mt-1 text-xs font-semibold text-red-500">
+                                    <span className="mt-1 text-xs font-medium text-destructive">
                                         Campo obrigatório
                                     </span>
                                 )}
@@ -298,7 +298,7 @@ export default function Config() {
                                         )}
                                     ></Controller>
                                     {errors.image && (
-                                        <span className="mt-1 text-xs font-semibold text-red-500">
+                                        <span className="mt-1 text-xs font-medium text-destructive">
                                             {`${errors.image.message}`}
                                         </span>
                                     )}
@@ -328,11 +328,11 @@ export default function Config() {
                                         maxLength={50}
                                         placeholder="Hogwarts"
                                         className={`${
-                                            errors.location ? "border-red-500" : ""
+                                            errors.location ? "border-destructive" : ""
                                         } mt-2 w-full`}
                                     />
                                     {errors.location && (
-                                        <span className="mt-1 text-xs font-semibold text-red-500">
+                                        <span className="mt-1 text-xs font-medium text-destructive">
                                             Campo obrigatório
                                         </span>
                                     )}
@@ -347,11 +347,11 @@ export default function Config() {
                                         type="text"
                                         placeholder="https://www.wizardingworld.com"
                                         className={`${
-                                            errors.website ? "border-red-500" : ""
+                                            errors.website ? "border-destructive" : ""
                                         } mt-2 w-full`}
                                     />
                                     {errors.website && (
-                                        <span className="mt-1 text-xs font-semibold text-red-500">
+                                        <span className="mt-1 text-xs font-medium text-destructive">
                                             {errors.website.message}
                                         </span>
                                     )}
@@ -367,11 +367,11 @@ export default function Config() {
                                     type="text"
                                     placeholder="harrypotter"
                                     className={`${
-                                        errors.twitter ? "border-red-500" : ""
+                                        errors.twitter ? "border-destructive" : ""
                                     } mt-2 w-2/3 lg:w-1/4`}
                                 />
                                 {errors.twitter && (
-                                    <span className="mt-1 text-xs font-semibold text-red-500">
+                                    <span className="mt-1 text-xs font-medium text-destructive">
                                         Campo obrigatório
                                     </span>
                                 )}

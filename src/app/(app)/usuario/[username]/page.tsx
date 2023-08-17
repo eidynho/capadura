@@ -10,6 +10,7 @@ import { ProgressData, ReadData } from "../../livros/[id]/page";
 import { ProfileData } from "@/contexts/AuthContext";
 
 import Loading from "./loading";
+import { FavoriteBooks } from "./favoriteBooks";
 
 import { Button } from "@/components/ui/Button";
 import { Calendar } from "@/components/ui/Calendar";
@@ -18,7 +19,6 @@ import { LinkUnderline } from "@/components/LinkUnderline";
 import { RatingStars } from "@/components/RatingStars";
 import { Container } from "@/components/layout/Container";
 import { RatingChart } from "@/components/RatingChart";
-import { UserFavoriteBooks } from "@/components/dialogs/UserFavoriteBooks";
 
 export interface UserData {
     user: ProfileData;
@@ -50,7 +50,6 @@ export default function Me({ params }: MeProps) {
             imageKey: null,
             imageUrl: undefined,
             description: null,
-            favoriteBooks: [],
             location: null,
             website: null,
             twitter: null,
@@ -195,20 +194,7 @@ export default function Me({ params }: MeProps) {
 
             <div className="mt-8 flex flex-col justify-center gap-12 lg:flex-row">
                 <div className="flex w-full flex-col gap-12 lg:w-3/5">
-                    <div className="flex flex-col">
-                        <h3 className="font-semibold">Livros favoritos</h3>
-
-                        <div className="flex items-center justify-between gap-3">
-                            {Array.from({ length: 4 }, (_, index) => (
-                                <UserFavoriteBooks
-                                    key={index}
-                                    user={userData.user}
-                                    setUserData={setUserData}
-                                    itemId={index}
-                                />
-                            ))}
-                        </div>
-                    </div>
+                    <FavoriteBooks />
 
                     <div className="flex flex-col">
                         <h3 className="font-semibold">Leituras finalizadas</h3>

@@ -4,8 +4,12 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { CircleNotch } from "phosphor-react";
-import { Button } from "@/components/Button";
+import { Loader2 } from "lucide-react";
+
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
+import { Textarea } from "@/components/ui/Textarea";
 
 export const progressFormSchema = z.object({
     description: z.string().optional(),
@@ -59,77 +63,57 @@ export function FormReadProgress({ editData, submitForm }: FormReadProgressProps
     return (
         <form onSubmit={handleSubmit(submitForm)} className="flex w-full flex-col gap-4">
             <div>
-                <label
-                    htmlFor="description-progress"
-                    className="flex items-center gap-1 text-sm font-semibold text-black"
-                >
-                    Comentário
-                </label>
-                <textarea
+                <Label htmlFor="description-progress">Comentário</Label>
+                <Textarea
                     {...register("description")}
                     name="description"
                     id="description-progress"
                     rows={4}
                     placeholder="O que está achando?"
-                    className="mt-1 block w-full rounded-lg border border-black bg-white bg-opacity-60 px-3 py-2 text-sm outline-none focus:border-yellow-500"
-                ></textarea>
+                    className="mt-2 max-h-96 bg-white"
+                />
+            </div>
 
-                <div className="mt-1 flex items-center gap-x-3">
-                    <div className="flex h-6 items-center">
-                        <input
-                            {...register("isSpoiler")}
-                            name="isSpoiler"
-                            id="is-spoiler-checkbox"
-                            type="checkbox"
-                            className="h-4 w-4 rounded-lg accent-yellow-500 outline-yellow-500 focus:ring-yellow-400"
-                        />
-                    </div>
-                    <div className="text-sm leading-6">
-                        <label htmlFor="is-spoiler-checkbox" className="font-medium text-black">
-                            Contém spoiler
-                        </label>
-                    </div>
-                </div>
+            <div className="flex items-center gap-2">
+                <input
+                    {...register("isSpoiler")}
+                    name="isSpoiler"
+                    type="checkbox"
+                    id="is-spoiler-checkbox"
+                    className="h-4 w-4 rounded-lg accent-black outline-black"
+                />
+                <Label htmlFor="is-spoiler-checkbox">Contém spoiler</Label>
             </div>
 
             <div>
-                <label htmlFor="page-read-count" className="flex text-sm font-semibold text-black">
-                    Páginas/porcentagem lidas
-                </label>
+                <Label htmlFor="page-read-count">Páginas/porcentagem lidas</Label>
                 <div className="flex flex-wrap items-center gap-4">
                     <div className="flex flex-col">
-                        <input
+                        <Input
                             {...register("pagesCount")}
                             id="page-read-count"
                             name="pagesCount"
                             type="number"
                             placeholder="0"
-                            className={`${
-                                errors.pagesCount ? "border-red-500" : "border-black"
-                            } mt-1 w-40 rounded-lg border px-3 py-2 text-sm outline-none focus:border-yellow-500 focus:ring-yellow-500`}
+                            className={`${errors.pagesCount ? "border-destructive" : ""} mt-2 w-44`}
                         />
                         {errors.pagesCount && (
-                            <span className="text-xs font-semibold text-red-500">
+                            <span className="mt-1 text-xs font-medium text-destructive">
                                 Campo obrigatório
                             </span>
                         )}
                     </div>
 
-                    <div className="flex gap-6">
+                    <div className="flex flex-col gap-2">
                         <div className="flex items-center gap-2">
                             <input
                                 {...register("countType")}
                                 id="page-count-type"
                                 type="radio"
                                 value="page"
-                                className="h-5 w-5 border-none accent-[#c38a00]"
+                                className="h-4 w-4 border-none accent-[#000]"
                             />
-                            <label
-                                htmlFor="page-count-type"
-                                className="text-sm font-medium text-gray-900 dark:text-gray-300"
-                            >
-                                Páginas
-                            </label>
+                            <Label htmlFor="page-count-type">Páginas</Label>
                         </div>
                         <div className="flex items-center gap-2">
                             <input
@@ -137,32 +121,22 @@ export function FormReadProgress({ editData, submitForm }: FormReadProgressProps
                                 id="percentage-count-type"
                                 type="radio"
                                 value="percentage"
-                                className="h-5 w-5 border-none accent-[#c38a00]"
+                                className="h-4 w-4 border-none accent-[#000]"
                             />
-                            <label
-                                htmlFor="percentage-count-type"
-                                className="text-sm font-medium text-gray-900 dark:text-gray-300"
-                            >
-                                Porcentagem
-                            </label>
+                            <Label htmlFor="percentage-count-type">Porcentagem</Label>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <Button
-                size="md"
-                type="submit"
-                className="w-full bg-black text-white hover:bg-yellow-500"
-                disabled={isSubmitting}
-            >
+            <Button size="sm" variant="success" type="submit" disabled={isSubmitting}>
                 {isSubmitting ? (
                     <>
-                        <CircleNotch size={22} weight="bold" className="animate-spin" />
-                        <span>Enviando...</span>
+                        <Loader2 size={22} className="animate-spin" />
+                        <span>Salvando...</span>
                     </>
                 ) : (
-                    <span>Enviar progresso</span>
+                    <span>Salvar</span>
                 )}
             </Button>
         </form>

@@ -12,6 +12,7 @@ import { publishDateFormat } from "@/utils/publish-date-format";
 
 import Loading from "./loading";
 
+import { ReadsProgress } from "./components/Read";
 import { Like } from "./components/Like";
 import { BookListMenu } from "./components/BookListMenu";
 
@@ -20,7 +21,6 @@ import { Title } from "@/components/Title";
 import { Subtitle } from "@/components/Subtitle";
 import { Separator } from "@/components/Separator";
 import { BookDataFromGoogle } from "@/components/ApplicationSearch";
-import { ReadsProgress } from "@/components/ReadsProgress";
 import { RatingChart } from "@/components/RatingChart";
 import { LinkUnderline } from "@/components/LinkUnderline";
 

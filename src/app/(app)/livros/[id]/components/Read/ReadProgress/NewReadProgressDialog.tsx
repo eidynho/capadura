@@ -1,15 +1,21 @@
 "use client";
 
 import { Dispatch, SetStateAction, useState } from "react";
+import { BadgePlus } from "lucide-react";
 import { toast } from "react-toastify";
-import { PlusCircle } from "phosphor-react";
 
 import { api } from "@/lib/api";
 import { ProgressData, ReadData } from "@/app/(app)/livros/[id]/page";
 
 import { FormReadProgress, ProgressFormSchema } from "./FormReadProgress";
-import { Button } from "@/components/Button";
-import { BaseDialog } from "@/components/radix-ui/BaseDialog";
+import { Button } from "@/components/ui/Button";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/Dialog";
 
 interface NewReadProgressDialogProps {
     readId: string;
@@ -26,10 +32,6 @@ export function NewReadProgressDialog({
     setUserReads,
 }: NewReadProgressDialogProps) {
     const [isOpen, setIsOpen] = useState(false);
-
-    function handleToggleDialog(state = false) {
-        setIsOpen(state);
-    }
 
     async function submitNewProgress({
         description,
@@ -78,30 +80,25 @@ export function NewReadProgressDialog({
 
     return (
         <>
-            <Button
-                size="sm"
-                onClick={() => handleToggleDialog(true)}
-                className="w-full bg-yellow-500 text-black"
-            >
-                <PlusCircle size={20} weight="bold" />
-                <span className="font-medium">Novo progresso</span>
-            </Button>
-
-            <BaseDialog
-                size="max-w-3xl"
-                title={`Progresso de leitura - ${bookTitle}`}
-                isOpen={isOpen}
-                closeDialog={() => handleToggleDialog(false)}
-            >
-                {/* Dialog body */}
-                <div className="px-4 py-6">
-                    <div className="mb-4">
-                        <div className="flex items-start gap-8 rounded-lg px-3 py-2">
-                            <FormReadProgress submitForm={submitNewProgress} />
-                        </div>
+            <Dialog open={isOpen} onOpenChange={setIsOpen}>
+                <DialogTrigger>
+                    <div className="w-full">
+                        <Button size="sm" variant="black" className="w-full">
+                            <BadgePlus size={16} />
+                            Novo progresso
+                        </Button>
                     </div>
-                </div>
-            </BaseDialog>
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Progresso de leitura - {bookTitle}</DialogTitle>
+                    </DialogHeader>
+
+                    <div className="px-3 py-2">
+                        <FormReadProgress submitForm={submitNewProgress} />
+                    </div>
+                </DialogContent>
+            </Dialog>
         </>
     );
 }

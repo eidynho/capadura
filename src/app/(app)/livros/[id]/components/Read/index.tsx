@@ -1,19 +1,9 @@
 "use client";
 
-import { Fragment, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { format, parseISO } from "date-fns";
-import { Menu, Transition } from "@headlessui/react";
-import {
-    ArrowUUpLeft,
-    BookOpen,
-    DotsThreeVertical,
-    Lock,
-    LockSimpleOpen,
-    PencilSimple,
-    PlusCircle,
-    ProhibitInset,
-    Trash,
-} from "phosphor-react";
+import { ArrowUUpLeft, BookOpen, Lock, LockSimpleOpen, PlusCircle } from "phosphor-react";
+import { MoreVertical } from "lucide-react";
 import { toast } from "react-toastify";
 import { pt } from "date-fns/locale";
 
@@ -22,18 +12,22 @@ import { AuthContext } from "@/contexts/AuthContext";
 
 import { BookData, ReadData } from "@/app/(app)/livros/[id]/page";
 
-import { CreateReadReviewDialog } from "@/app/(app)/livros/[id]/components/ReadReview/CreateReadReviewDialog";
-import { UpdateReadReviewDialog } from "@/app/(app)/livros/[id]/components/ReadReview/UpdateReadReviewDialog";
-import { NewReadProgressDialog } from "@/app/(app)/livros/[id]/components/ReadProgress/NewReadProgressDialog";
-import { UpdateReadProgressDialog } from "@/app/(app)/livros/[id]/components/ReadProgress/UpdateReadProgressDialog";
-import { RatingStars } from "./RatingStars";
-import { Button } from "./Button";
-import { Button as Button2 } from "./ui/Button";
-import { Badge } from "./ui/Badge";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/HoverCard";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/Avatar";
-import { LinkUnderline } from "./LinkUnderline";
-import { UserHoverCard } from "./UserHoverCard";
+import { CreateReadReviewDialog } from "./ReadReview/CreateReadReviewDialog";
+import { UpdateReadReviewDialog } from "./ReadReview/UpdateReadReviewDialog";
+import { NewReadProgressDialog } from "./ReadProgress/NewReadProgressDialog";
+import { UpdateReadProgressDialog } from "./ReadProgress/UpdateReadProgressDialog";
+import { RatingStars } from "@/components/RatingStars";
+import { UserHoverCard } from "@/components/UserHoverCard";
+
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
+
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/DropdownMenu";
 
 const readsTabs = [
     {
@@ -295,9 +289,9 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                     Você abandonou a leitura, deseja retomar?
                                 </span>
                                 <Button
-                                    onClick={() => toggleReadStatus(read.id, "ACTIVE")}
                                     size="md"
-                                    className="enabled:hover:bg-pink-500"
+                                    variant="black"
+                                    onClick={() => toggleReadStatus(read.id, "ACTIVE")}
                                 >
                                     <ArrowUUpLeft size={20} weight="bold" />
                                     Retomar leitura
@@ -351,64 +345,38 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                         />
                                     )}
 
-                                    <Menu as="div" className="relative inline-block">
-                                        <Menu.Button className="cursor-pointer rounded-lg p-1 text-sm hover:bg-gray-400/20">
-                                            <DotsThreeVertical size={20} weight="bold" />
-                                        </Menu.Button>
-                                        <Transition
-                                            as={Fragment}
-                                            enter="transition ease-out duration-100"
-                                            enterFrom="transform opacity-0 scale-95"
-                                            enterTo="transform opacity-100 scale-100"
-                                            leave="transition ease-in duration-75"
-                                            leaveFrom="transform opacity-100 scale-100"
-                                            leaveTo="transform opacity-0 scale-95"
-                                        >
-                                            <Menu.Items className="absolute right-0 z-10 mt-1 w-48 rounded-md border border-black bg-white py-2 shadow-[0.25rem_0.25rem_#000] ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                                <Menu.Item
-                                                    as="div"
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button size="icon-sm" variant="default">
+                                                <MoreVertical size={16} />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end" className="w-44">
+                                            <DropdownMenuItem
+                                                onClick={() =>
+                                                    toggleReadPrivacy(read.id, read.isPrivate)
+                                                }
+                                            >
+                                                <span>
+                                                    Tornar {read.isPrivate ? "público" : "privado"}
+                                                </span>
+                                            </DropdownMenuItem>
+
+                                            {read.status !== "FINISHED" && (
+                                                <DropdownMenuItem
                                                     onClick={() =>
-                                                        toggleReadPrivacy(read.id, read.isPrivate)
+                                                        toggleReadStatus(read.id, "CANCELLED")
                                                     }
-                                                    className="mx-2 mb-1 flex cursor-pointer select-none items-center gap-2 rounded-lg border border-transparent py-2 pl-4 hover:bg-black hover:bg-opacity-10"
                                                 >
-                                                    {read.isPrivate ? (
-                                                        <>
-                                                            <LockSimpleOpen
-                                                                size={16}
-                                                                weight="bold"
-                                                            />
-                                                            <span>Tornar público</span>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <Lock size={16} weight="bold" />
-                                                            <span>Tornar privado</span>
-                                                        </>
-                                                    )}
-                                                </Menu.Item>
-                                                {read.status !== "FINISHED" && (
-                                                    <Menu.Item
-                                                        as="div"
-                                                        onClick={() =>
-                                                            toggleReadStatus(read.id, "CANCELLED")
-                                                        }
-                                                        className="mx-2 mb-1 flex cursor-pointer select-none items-center gap-2 rounded-lg border border-transparent py-2 pl-4 hover:bg-black hover:bg-opacity-10"
-                                                    >
-                                                        <ProhibitInset size={18} weight="bold" />
-                                                        <span>Abandonar leitura</span>
-                                                    </Menu.Item>
-                                                )}
-                                                <Menu.Item
-                                                    as="div"
-                                                    className="mx-2 mb-1 flex cursor-pointer select-none items-center gap-2 rounded-lg border border-transparent py-2 pl-4 text-red-900 hover:bg-red-500 hover:bg-opacity-10"
-                                                >
-                                                    <Trash size={18} weight="bold" />
-                                                    <span>Excluir</span>
-                                                </Menu.Item>
-                                            </Menu.Items>
-                                        </Transition>
-                                    </Menu>
+                                                    <span>Abandonar leitura</span>
+                                                </DropdownMenuItem>
+                                            )}
+
+                                            <DropdownMenuItem className="text-destructive focus:bg-destructive/10 focus:text-destructive">
+                                                <span>Excluir</span>
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                 </div>
                             </div>
 
@@ -490,49 +458,29 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                                     </span>
                                                 </div>
 
-                                                <Menu as="div" className="relative inline-block">
-                                                    <Menu.Button className="cursor-pointer rounded-lg p-1 text-sm hover:bg-gray-400/20">
-                                                        <DotsThreeVertical
-                                                            size={20}
-                                                            weight="bold"
-                                                        />
-                                                    </Menu.Button>
-                                                    <Transition
-                                                        as={Fragment}
-                                                        enter="transition ease-out duration-100"
-                                                        enterFrom="transform opacity-0 scale-95"
-                                                        enterTo="transform opacity-100 scale-100"
-                                                        leave="transition ease-in duration-75"
-                                                        leaveFrom="transform opacity-100 scale-100"
-                                                        leaveTo="transform opacity-0 scale-95"
-                                                    >
-                                                        <Menu.Items className="absolute right-0 z-10 mt-1 w-48 rounded-md border border-black bg-white py-2 shadow-[0.25rem_0.25rem_#000] ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                                            <Menu.Item
-                                                                as="div"
-                                                                onClick={() =>
-                                                                    editProgress({
-                                                                        ...progress,
-                                                                        countType: "page",
-                                                                    })
-                                                                }
-                                                                className="mx-2 mb-1 flex cursor-pointer select-none items-center gap-2 rounded-lg border border-transparent py-2 pl-4 hover:bg-black hover:bg-opacity-10"
-                                                            >
-                                                                <PencilSimple
-                                                                    size={18}
-                                                                    weight="bold"
-                                                                />
-                                                                <span>Editar</span>
-                                                            </Menu.Item>
-                                                            <Menu.Item
-                                                                as="div"
-                                                                className="mx-2 mb-1 flex cursor-pointer select-none items-center gap-2 rounded-lg border border-transparent py-2 pl-4 text-red-900 hover:bg-red-500 hover:bg-opacity-10"
-                                                            >
-                                                                <Trash size={18} weight="bold" />
-                                                                <span>Excluir</span>
-                                                            </Menu.Item>
-                                                        </Menu.Items>
-                                                    </Transition>
-                                                </Menu>
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button size="icon-sm" variant="default">
+                                                            <MoreVertical size={16} />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end">
+                                                        <DropdownMenuItem
+                                                            onClick={() =>
+                                                                editProgress({
+                                                                    ...progress,
+                                                                    countType: "page",
+                                                                })
+                                                            }
+                                                        >
+                                                            <span>Editar</span>
+                                                        </DropdownMenuItem>
+
+                                                        <DropdownMenuItem className="text-destructive focus:bg-destructive/10 focus:text-destructive">
+                                                            <span>Excluir</span>
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
                                             </div>
 
                                             {progress.description && (

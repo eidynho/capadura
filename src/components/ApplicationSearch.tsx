@@ -1,18 +1,24 @@
 "use client";
 
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import axios from "axios";
+import { Search } from "lucide-react";
 import { toast } from "react-toastify";
-import { Image as ImageIcon, MagnifyingGlass, User, X } from "phosphor-react";
-
-import { api } from "@/lib/api";
-import { ProfileData } from "@/contexts/AuthContext";
-import { UserData } from "@/app/(app)/usuario/[username]/page";
 
 import { useDebounce } from "@/hooks/useDebounce";
 import useDidMountEffect from "@/hooks/useDidMountEffect";
+
+import { BookSearchItem } from "./BookSearchItem";
+import { Button } from "./ui/Button";
+import {
+    Command,
+    CommandEmpty,
+    CommandDialog,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from "@/components/ui/Command";
 
 export interface BookDataFromGoogle {
     kind: string;
@@ -55,34 +61,25 @@ export interface GoogleAPIData {
     totalItems: number;
 }
 
-interface ApplicationSearchProps {
-    isLink: boolean;
-    user?: ProfileData;
-    setUserData?: Dispatch<SetStateAction<UserData>>;
-    itemId?: number;
-    executeOnSelect?: () => void;
-}
-
-export function ApplicationSearch({
-    isLink,
-    user,
-    setUserData,
-    itemId,
-    executeOnSelect,
-}: ApplicationSearchProps) {
+export function ApplicationSearch() {
     const [books, setBooks] = useState<GoogleAPIData>({
         items: [],
         totalItems: 0,
     });
+    const [isFetchingBooks, setIsFetchingBooks] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
     const [searchName, setSearchName] = useState("");
-    const [isLoadingBooks, setIsLoadingBooks] = useState(false);
-    const debouncedSearchName = useDebounce<string>(searchName, 500);
+    const debouncedSearchName = useDebounce<string>(searchName, 200);
 
     useDidMountEffect(() => {
-        if (!debouncedSearchName) return;
+        if (!debouncedSearchName) {
+            setIsOpen(false);
+            return;
+        }
 
         const getBooks = async () => {
-            setIsLoadingBooks(true);
+            setIsOpen(true);
+            setIsFetchingBooks(true);
             try {
                 const query = [];
 
@@ -109,170 +106,150 @@ export function ApplicationSearch({
                 toast.error("Erro ao carregar livros.");
                 throw err;
             } finally {
-                setIsLoadingBooks(false);
+                setIsFetchingBooks(false);
             }
         };
         getBooks();
     }, [debouncedSearchName]);
 
-    async function handleAddUserFavoriteBook(book: BookDataFromGoogle) {
-        if (!user || !setUserData || typeof itemId !== "number") return;
-
-        try {
-            const userCopy = { ...user };
-
-            for (let i = 0; i <= 3; i++) {
-                if (!userCopy.favoriteBooks[i]) {
-                    userCopy.favoriteBooks[i] = "";
-                }
-            }
-
-            userCopy.favoriteBooks[itemId] = book.id;
-            const favoriteBooksRequestData = userCopy.favoriteBooks;
-
-            await api.put("/me", {
-                id: user.id,
-                name: user.name,
-                username: user.username,
-                email: user.email,
-                favoriteBooks: favoriteBooksRequestData,
-            });
-
-            setUserData((prev) => {
-                const updatedUserData = { ...prev };
-                const updatedUser = { ...prev.user };
-
-                updatedUser.favoriteBooks[itemId] = book.id;
-                updatedUserData.user = updatedUser;
-
-                return updatedUserData;
-            });
-
-            toast.success("Seus livros favoritos foram atualizados.");
-        } catch (err) {
-            toast.error("Erro ao adicionar livro favorito.");
-        }
-
-        if (executeOnSelect) {
-            executeOnSelect();
-        }
-    }
-
-    function renderBookSearchItem(book: BookDataFromGoogle) {
-        return (
-            <>
-                <div className="h-16 w-12 overflow-hidden rounded-lg border border-black">
-                    {book.volumeInfo.imageLinks?.thumbnail ? (
-                        <Image
-                            src={book.volumeInfo.imageLinks?.thumbnail?.replace("edge=curl", "")}
-                            alt=""
-                            width={48}
-                            height={64}
-                            quality={75}
-                            className="w-full overflow-hidden"
-                        />
-                    ) : (
-                        <div className="flex h-full items-center justify-center">
-                            <ImageIcon size={42} weight="bold" className="text-gray-500" />
-                        </div>
-                    )}
-                </div>
-
-                <div>
-                    <div className="flex items-center gap-2">
-                        <h2 className="line-clamp-1" title={book.volumeInfo.title}>
-                            {book.volumeInfo.title}
-                        </h2>
-                        <span className="text-xs text-gray-500">
-                            {book.volumeInfo.publishedDate &&
-                                book.volumeInfo.publishedDate.split("-")[0]}
-                        </span>
-                    </div>
-                    <span className="flex items-center gap-2 text-sm">
-                        <User size={18} />
-                        {book.volumeInfo.authors?.[0]}
-                    </span>
-                </div>
-            </>
-        );
-    }
-
     return (
-        <div className="relative">
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <MagnifyingGlass size={18} />
-            </div>
-            <input
-                type="text"
-                id="nav-search"
-                onChange={(e) => setSearchName(e.target.value)}
-                value={searchName}
-                maxLength={240}
-                placeholder="Busque por título, autor, editora, ISBN..."
-                className="block w-[32rem] rounded-lg border border-black py-3 pl-10 pr-10 text-sm outline-none focus:border-yellow-500"
-            />
-            {searchName && (
-                <div
-                    className="absolute inset-y-0 right-3 flex cursor-pointer items-center"
-                    onClick={() => setSearchName("")}
-                >
-                    <X size={18} />
-                </div>
-            )}
+        <>
+            <Button size="icon" variant="default" onClick={() => setIsOpen(true)}>
+                <Search size={18} />
+            </Button>
 
-            {debouncedSearchName && (
-                <div className="absolute left-0 top-10 z-10 w-[32rem] rounded-b-lg border border-black bg-white pb-2 pt-3 text-black">
-                    {isLoadingBooks ? (
-                        [...Array(3)].map((_, index) => (
-                            <div key={index} className="mb-3 flex animate-pulse items-center gap-4">
-                                <div className="mx-3 h-16 w-12 rounded-lg bg-gray-200"></div>
-                                <div className="flex flex-col gap-2">
-                                    <div className="h-4 w-32 rounded-lg bg-gray-200"></div>
-                                    <div className="h-4 w-48 rounded-lg bg-gray-200"></div>
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <>
-                            {books.items && books.items.length ? (
-                                <>
-                                    <h2 className="mb-2 px-4 text-xl font-medium">Livros</h2>
-                                    <div className="flex flex-col">
-                                        {books.items.map((book) => (
-                                            <>
-                                                {isLink ? (
-                                                    <Link
-                                                        href={`/livros/${book.id}`}
-                                                        onClick={() => setSearchName("")}
-                                                        key={book.id}
-                                                        className="flex cursor-pointer gap-4 px-4 py-2 hover:bg-black hover:text-white"
-                                                    >
-                                                        {renderBookSearchItem(book)}
-                                                    </Link>
-                                                ) : (
-                                                    <div
-                                                        onClick={() =>
-                                                            handleAddUserFavoriteBook(book)
-                                                        }
-                                                        key={book.id}
-                                                        className="flex cursor-pointer gap-4 px-4 py-2 hover:bg-black hover:text-white"
-                                                    >
-                                                        {renderBookSearchItem(book)}
-                                                    </div>
-                                                )}
-                                            </>
-                                        ))}
+            <CommandDialog open={isOpen} onOpenChange={setIsOpen}>
+                <Command shouldFilter={false}>
+                    <CommandInput
+                        placeholder="Busque por título, autor, editora, ISBN..."
+                        onValueChange={(value) => setSearchName(value)}
+                        value={searchName}
+                    />
+                    {!!searchName && (
+                        <CommandList>
+                            {isFetchingBooks ? (
+                                <div className="flex h-28 w-full animate-pulse items-start gap-4 rounded-md border bg-white/80 px-4 py-3">
+                                    <div className="h-[5.6rem] w-16 rounded-sm bg-gray-200"></div>
+
+                                    <div className="flex h-full w-full flex-1 flex-col justify-between gap-2">
+                                        <div className="flex w-full items-start justify-between gap-2">
+                                            <div>
+                                                <div className="mb-1 h-6 w-24 rounded-sm bg-gray-200 font-semibold"></div>
+                                                <div className="h-5 w-36 rounded-sm bg-gray-200"></div>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-6">
+                                            <div className="h-5 w-24 rounded-sm bg-gray-200"></div>
+
+                                            <div className="flex h-5 w-32 items-center gap-1 rounded-sm bg-gray-200"></div>
+                                        </div>
                                     </div>
-                                </>
+                                </div>
                             ) : (
-                                <span className="inline-block px-4 pb-2">
-                                    Nenhum resultado encontrado.
-                                </span>
+                                <>
+                                    {books?.items?.length ? (
+                                        books.items.map((book) => (
+                                            <CommandItem>
+                                                <Link
+                                                    href={`/livros/${book.id}`}
+                                                    onClick={() => setSearchName("")}
+                                                    key={book.id}
+                                                    className="flex cursor-pointer gap-4 px-4 py-2 hover:bg-black hover:text-white"
+                                                >
+                                                    <BookSearchItem book={book} />
+                                                </Link>
+                                            </CommandItem>
+                                        ))
+                                    ) : (
+                                        <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>
+                                    )}
+                                </>
                             )}
-                        </>
+                        </CommandList>
                     )}
+                </Command>
+            </CommandDialog>
+
+            {/* <div className="relative">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <Search size={18} />
                 </div>
-            )}
-        </div>
+
+                <Input
+                    type="text"
+                    id="nav-search"
+                    onChange={(e) => setSearchName(e.target.value)}
+                    value={searchName}
+                    maxLength={240}
+                    placeholder="Busque por título, autor, editora, ISBN..."
+                    className="w-full pl-10 pr-10"
+                />
+                {searchName && (
+                    <div
+                        className="absolute inset-y-0 right-3 flex cursor-pointer items-center"
+                        onClick={() => setSearchName("")}
+                    >
+                        <X size={18} />
+                    </div>
+                )}
+
+                {debouncedSearchName && (
+                    <div className="absolute left-0 top-10 z-10 w-[32rem] rounded-b-lg border border-black bg-white pb-2 pt-3 text-black">
+                        {isLoadingBooks ? (
+                            [...Array(3)].map((_, index) => (
+                                <div
+                                    key={index}
+                                    className="mb-3 flex animate-pulse items-center gap-4"
+                                >
+                                    <div className="mx-3 h-16 w-12 rounded-lg bg-gray-200"></div>
+                                    <div className="flex flex-col gap-2">
+                                        <div className="h-4 w-32 rounded-lg bg-gray-200"></div>
+                                        <div className="h-4 w-48 rounded-lg bg-gray-200"></div>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <>
+                                {books.items && books.items.length ? (
+                                    <>
+                                        <h2 className="mb-2 px-4 text-xl font-medium">Livros</h2>
+                                        <div className="flex flex-col">
+                                            {books.items.map((book) => (
+                                                <>
+                                                    {isLink ? (
+                                                        <Link
+                                                            href={`/livros/${book.id}`}
+                                                            onClick={() => setSearchName("")}
+                                                            key={book.id}
+                                                            className="flex cursor-pointer gap-4 px-4 py-2 hover:bg-black hover:text-white"
+                                                        >
+                                                            <BookSearchItem book={book} />
+                                                        </Link>
+                                                    ) : (
+                                                        <div
+                                                            onClick={() =>
+                                                                handleAddUserFavoriteBook(book)
+                                                            }
+                                                            key={book.id}
+                                                            className="flex cursor-pointer gap-4 px-4 py-2 hover:bg-black hover:text-white"
+                                                        >
+                                                            <BookSearchItem book={book} />
+                                                        </div>
+                                                    )}
+                                                </>
+                                            ))}
+                                        </div>
+                                    </>
+                                ) : (
+                                    <span className="inline-block px-4 pb-2">
+                                        Nenhum resultado encontrado.
+                                    </span>
+                                )}
+                            </>
+                        )}
+                    </div>
+                )}
+            </div> */}
+        </>
     );
 }

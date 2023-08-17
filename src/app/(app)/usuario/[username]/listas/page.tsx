@@ -1,15 +1,16 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { toast } from "react-toastify";
-import { Library, MoreHorizontal, PencilLine, PlusCircle } from "lucide-react";
+import { Library, MoreHorizontal, PlusCircle } from "lucide-react";
 
 import { api } from "@/lib/api";
-import { AuthContext, ProfileData } from "@/contexts/AuthContext";
+import { ProfileData } from "@/contexts/AuthContext";
 import { useDebounce } from "@/hooks/useDebounce";
 import { BookData } from "@/app/(app)/livros/[id]/page";
+import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";
 
 import Loading from "./loading";
 
@@ -69,7 +70,7 @@ export default function UserLists() {
     const [searchName, setSearchName] = useState("");
     const debouncedSearchName = useDebounce<string>(searchName, 400);
 
-    const isCurrentUserLists = user?.username === username;
+    const isCurrentUser = isPageUserSameCurrentUser(username);
 
     useEffect(() => {
         async function getUserBookList() {
@@ -122,7 +123,7 @@ export default function UserLists() {
     }, [username, bookLists, currentList]);
 
     async function createBookList() {
-        if (!isCurrentUserLists) return;
+        if (!isCurrentUser) return;
 
         try {
             const countBookLists = bookLists?.length || 0;
@@ -145,7 +146,7 @@ export default function UserLists() {
     }
 
     async function deleteBookOnBookList(bookOnBookListId: string) {
-        if (!isCurrentUserLists) return;
+        if (!isCurrentUser) return;
 
         try {
             await api.delete(`/books-on-booklists/${bookOnBookListId}`);
@@ -205,16 +206,14 @@ export default function UserLists() {
 
     return (
         <Container>
-            <Title>{isCurrentUserLists ? "Minhas listas" : `${username} - listas`}</Title>
-            {isCurrentUserLists && (
-                <Subtitle>Organize sua leitura do jeito que você quiser.</Subtitle>
-            )}
+            <Title>{isCurrentUser ? "Minhas listas" : `${username} - listas`}</Title>
+            {isCurrentUser && <Subtitle>Organize sua leitura do jeito que você quiser.</Subtitle>}
 
             <Separator className="my-6 bg-gray-300" />
 
             <div className="mt-4 flex flex-col gap-8 md:flex-row lg:gap-6 xl:gap-8">
                 <div className="w-full md:w-1/4">
-                    {isCurrentUserLists && (
+                    {isCurrentUser && (
                         <>
                             <Button variant="default" onClick={createBookList}>
                                 <PlusCircle size={18} />
@@ -253,7 +252,7 @@ export default function UserLists() {
                                             {bookLists[currentList].name}
                                         </h2>
 
-                                        {isCurrentUserLists && (
+                                        {isCurrentUser && (
                                             <>
                                                 <UpdateBookListDialog
                                                     currentList={currentList}

@@ -219,7 +219,9 @@ export function NavBarLoggedComponent() {
                                 <div className="flex w-full items-center justify-between gap-4">
                                     <span className="inline-block">Contopia</span>
 
-                                    <ApplicationSearch isLink />
+                                    <div className="w-96">
+                                        <ApplicationSearch />
+                                    </div>
 
                                     <Menu as="div" className="relative z-10 inline-block">
                                         <Menu.Button className="flex items-center gap-2 rounded-lg border border-black bg-white px-4 py-3 text-black transition-all hover:shadow-[0.25rem_0.25rem_#000]">

@@ -7,7 +7,7 @@ import { api } from "@/lib/api";
 import { ReadData } from "@/app/(app)/livros/[id]/page";
 
 import { FormReadProgress, ProgressFormSchema } from "./FormReadProgress";
-import { BaseDialog } from "@/components/radix-ui/BaseDialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/Dialog";
 
 interface ReadProgressDialogProps {
     isOpen: boolean;
@@ -97,20 +97,16 @@ export function UpdateReadProgressDialog({
     }
 
     return (
-        <BaseDialog
-            size="max-w-3xl"
-            title={`Progresso de leitura - ${bookTitle}`}
-            isOpen={isOpen}
-            closeDialog={() => setIsOpen(false)}
-        >
-            {/* Dialog body */}
-            <div className="px-4 py-6">
-                <div className="mb-4">
-                    <div className="flex items-start gap-8 rounded-lg px-3 py-2">
-                        <FormReadProgress editData={editData} submitForm={updateProgress} />
-                    </div>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Progresso de leitura - {bookTitle}</DialogTitle>
+                </DialogHeader>
+
+                <div className="px-3 py-2">
+                    <FormReadProgress editData={editData} submitForm={updateProgress} />
                 </div>
-            </div>
-        </BaseDialog>
+            </DialogContent>
+        </Dialog>
     );
 }

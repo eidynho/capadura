@@ -12,7 +12,7 @@ const badgeVariants = cva(
                 green: "border-green-500 bg-green-500/10",
                 sky: "border-sky-500 bg-sky-500/10",
                 yellow: "border-yellow-500 bg-yellow-500/10",
-                red: "border-red-500 bg-red-500/10",
+                red: "border-destructive bg-destructive/10",
             },
         },
         defaultVariants: {

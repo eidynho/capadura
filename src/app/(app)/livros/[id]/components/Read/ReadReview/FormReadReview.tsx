@@ -4,15 +4,18 @@ import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "reac
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { CircleNotch, Star, StarHalf } from "phosphor-react";
+import { Star, StarHalf } from "phosphor-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { BookData, ReadData } from "@/app/(app)/livros/[id]/page";
 
 import { api } from "@/lib/api";
-
-import { Button } from "@/components/Button";
 import { ratingFormat } from "@/utils/rating-format";
+
+import { Button } from "@/components/ui/Button";
+import { Label } from "@/components/ui/Label";
+import { Textarea } from "@/components/ui/Textarea";
 
 const readReviewFormSchema = z.object({
     content: z.string().optional(),
@@ -179,34 +182,25 @@ export function FormReadReview({
                 >
                     Avaliação
                 </label>
-                <textarea
+                <Textarea
                     {...register("content")}
                     name="content"
                     id="content-read-review"
                     onClick={() => setContentHeight("h-80")}
                     placeholder="Escreva sua avaliação..."
-                    className={`${contentHeight} mt-1 block w-full rounded-lg border border-black bg-white bg-opacity-60 px-3 py-2 text-sm outline-none transition-all focus:border-yellow-500`}
-                ></textarea>
+                    className={`${contentHeight} mt-1 bg-white transition-all`}
+                ></Textarea>
 
                 <div className="mt-2 flex items-start justify-between">
-                    <div className="mt-1 flex items-center gap-x-3">
-                        <div className="flex h-6 items-center">
-                            <input
-                                {...register("isSpoiler")}
-                                name="isSpoiler"
-                                id="is-spoiler-read-review"
-                                type="checkbox"
-                                className="h-4 w-4 rounded-lg accent-yellow-500 outline-yellow-500 focus:ring-yellow-400"
-                            />
-                        </div>
-                        <div className="text-sm leading-6">
-                            <label
-                                htmlFor="is-spoiler-read-review"
-                                className="font-medium text-black"
-                            >
-                                Contém spoiler
-                            </label>
-                        </div>
+                    <div className="flex h-6 items-center gap-2">
+                        <input
+                            {...register("isSpoiler")}
+                            name="isSpoiler"
+                            type="checkbox"
+                            id="is-spoiler-read-review"
+                            className="h-4 w-4 rounded-lg accent-black outline-black"
+                        />
+                        <Label htmlFor="is-spoiler-read-review">Contém spoiler</Label>
                     </div>
 
                     <div className="flex flex-col items-center">
@@ -249,7 +243,7 @@ export function FormReadReview({
                             </div>
                         </div>
                         {errors.rating && (
-                            <span className="text-xs font-semibold text-red-500">
+                            <span className="mt-1 text-xs font-medium text-destructive">
                                 Preencha a nota
                             </span>
                         )}
@@ -257,19 +251,14 @@ export function FormReadReview({
                 </div>
             </div>
 
-            <Button
-                size="md"
-                type="submit"
-                className="w-full bg-black text-white enabled:hover:bg-green-500 enabled:hover:text-white"
-                disabled={isSubmitting}
-            >
+            <Button size="sm" variant="success" type="submit" disabled={isSubmitting}>
                 {isSubmitting ? (
                     <>
-                        <CircleNotch size={22} weight="bold" className="animate-spin" />
-                        <span>Enviando...</span>
+                        <Loader2 size={22} className="animate-spin" />
+                        <span>Avaliando...</span>
                     </>
                 ) : (
-                    <span>Enviar avaliação</span>
+                    <span>Avaliar</span>
                 )}
             </Button>
         </form>

@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { Heart } from "phosphor-react";
+import { Heart } from "lucide-react";
 
 import { api } from "@/lib/api";
 
-import { Button } from "@/components/Button";
+import { Button } from "@/components/ui/Button";
 
 interface LikeBook {
     id: string;
@@ -62,10 +62,11 @@ export function Like({ bookId }: LikeProps) {
     return (
         <Button
             size="sm"
+            variant="neobrutalism"
             onClick={handleToggleLikeBook}
             className={`${like ? "bg-pink-500 text-black enabled:hover:bg-pink-500" : ""}`}
         >
-            <Heart size={20} />
+            <Heart size={16} />
             <span className="font-medium">{like ? "Curtido" : "Curtir"}</span>
         </Button>
     );

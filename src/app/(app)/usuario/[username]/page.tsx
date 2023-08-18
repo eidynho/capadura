@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { format, parseISO } from "date-fns";
 import { pt } from "date-fns/locale";
-import { Link as LinkIcon, MapPin, TwitterLogo } from "phosphor-react";
+import { Link as LinkIcon, MapPin, Twitter } from "lucide-react";
+
 import { api } from "@/lib/api";
 import { ProgressData, ReadData } from "../../livros/[id]/page";
 import { ProfileData } from "@/contexts/AuthContext";
@@ -123,7 +124,7 @@ export default function Me({ params }: MeProps) {
                 <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
                     {userData.user.location && (
                         <div className="flex items-center gap-1">
-                            <MapPin size={20} />
+                            <MapPin size={16} />
 
                             <span>{userData.user.location}</span>
                         </div>
@@ -131,7 +132,7 @@ export default function Me({ params }: MeProps) {
 
                     {userData.user.website && (
                         <div className="flex items-center gap-1">
-                            <LinkIcon size={20} />
+                            <LinkIcon size={15} />
 
                             <LinkUnderline href="" className="font-semibold">
                                 {userData.user.website}
@@ -141,7 +142,7 @@ export default function Me({ params }: MeProps) {
 
                     {userData.user.twitter && (
                         <div className="flex items-center gap-1">
-                            <TwitterLogo size={20} />
+                            <Twitter size={16} />
                             <LinkUnderline asChild className="font-semibold">
                                 <a
                                     href={`https://twitter.com/${userData.user.twitter}`}
@@ -175,13 +176,15 @@ export default function Me({ params }: MeProps) {
                     <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-4 md:flex-row md:items-start">
                             <div>
-                                <h2 className="text-xl font-bold leading-6">
+                                <h2 className="text-xl font-bold leading-relaxed tracking-tight">
                                     {userData.user.name}
                                 </h2>
-                                <span className="tracking-wide">@{userData.user.username}</span>
+                                <span className="font-medium">@{userData.user.username}</span>
                             </div>
                             <Button asChild size="sm" variant="black">
-                                <Link href="/config">Editar perfil</Link>
+                                <Link href={`/usuario/${userData.user?.username}/config`}>
+                                    Editar perfil
+                                </Link>
                             </Button>
                         </div>
 
@@ -202,7 +205,7 @@ export default function Me({ params }: MeProps) {
                         {userData.reads?.items?.length &&
                             userData.reads.items.map((read) => (
                                 <div className="flex gap-4 border-t border-black/20 py-4 last:border-b">
-                                    <div className="h-28 w-20 rounded-lg border border-black"></div>
+                                    <div className="h-28 w-20 rounded-md border border-black"></div>
                                     <div className="w-full">
                                         <div className="flex items-start justify-between gap-2">
                                             <div className="flex items-center gap-2">
@@ -252,7 +255,7 @@ export default function Me({ params }: MeProps) {
                         {userData.progress?.items?.length &&
                             userData.progress.items.map((progress) => (
                                 <div className="flex gap-4 border-t border-black/20 py-4 last:border-b">
-                                    <div className="h-28 w-20 rounded-lg border border-black"></div>
+                                    <div className="h-28 w-20 rounded-md border border-black"></div>
                                     <div className="w-full">
                                         <div className="flex items-start justify-between gap-2">
                                             <div className="flex items-center gap-2">

@@ -1,8 +1,7 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import axios from "axios";
 import { Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 
@@ -10,19 +9,13 @@ import { api } from "@/lib/api";
 import { BookDataFromGoogle, GoogleAPIData } from "@/components/ApplicationSearch";
 import { BookData } from "@/app/(app)/livros/[id]/page";
 import { useDebounce } from "@/hooks/useDebounce";
-import useDidMountEffect from "@/hooks/useDidMountEffect";
-import { publishDateFormat } from "@/utils/publish-date-format";
+import { useDidMountEffect } from "@/hooks/useDidMountEffect";
 import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";
+import { fetchGoogleBooks } from "@/utils/fetch-google-books";
 
 import { CardFavoriteBook } from "./CardFavoriteBook";
 import { Button } from "@/components/ui/Button";
-import {
-    Command,
-    CommandEmpty,
-    CommandInput,
-    CommandItem,
-    CommandList,
-} from "@/components/ui/Command";
+import { Command, CommandInput, CommandItem, CommandList } from "@/components/ui/Command";
 import {
     Dialog,
     DialogContent,
@@ -65,7 +58,7 @@ export function FavoriteBooks() {
     ]);
 
     const [searchName, setSearchName] = useState("");
-    const debouncedSearchName = useDebounce<string>(searchName, 50);
+    const debouncedSearchName = useDebounce<string>(searchName, 400);
 
     const isCurrentUser = isPageUserSameCurrentUser(username);
 
@@ -93,6 +86,12 @@ export function FavoriteBooks() {
     }, [isOpen]);
 
     useDidMountEffect(() => {
+        if (!searchName) return;
+
+        setIsFetchingBooks(true);
+    }, [searchName]);
+
+    useDidMountEffect(() => {
         if (!debouncedSearchName) {
             return;
         }
@@ -100,18 +99,7 @@ export function FavoriteBooks() {
         const getBooks = async () => {
             setIsFetchingBooks(true);
             try {
-                const query = [];
-
-                query.push("q=" + `"${debouncedSearchName}"`);
-                query.push("langRestrict=" + "pt-BR");
-                query.push("maxResults=" + 8);
-                query.push("startIndex=" + 0);
-                query.push("orderBy=" + "relevance");
-                query.push("printType=" + "books");
-
-                const { data } = await axios.get<GoogleAPIData>(
-                    `https://www.googleapis.com/books/v1/volumes?${query.join("&")}`,
-                );
+                const { data } = await fetchGoogleBooks(debouncedSearchName);
 
                 const filteredItems = data.items?.filter(
                     (item) => item.volumeInfo.description && item.volumeInfo.imageLinks,
@@ -317,9 +305,16 @@ export function FavoriteBooks() {
                                                             </CommandItem>
                                                         ))
                                                     ) : (
-                                                        <CommandEmpty>
-                                                            Nenhum resultado encontrado.
-                                                        </CommandEmpty>
+                                                        <div className="flex h-36 flex-col items-center justify-center text-center">
+                                                            <h2 className="text-base font-semibold">
+                                                                Nenhum resultado encontrado.
+                                                            </h2>
+                                                            <p className="mt-2 w-[26rem] text-sm leading-6 text-slate-600">
+                                                                Não encontramos nenhum item com esse
+                                                                termo, tente procurar algo
+                                                                diferente.
+                                                            </p>
+                                                        </div>
                                                     )}
                                                 </>
                                             )}

@@ -1,99 +1,52 @@
 "use client";
 
-import { Fragment, ReactNode, useContext, useEffect, useState } from "react";
+import { ElementType, Fragment, useContext, useEffect, useState } from "react";
 import Link from "next/link";
-import { Menu, Transition } from "@headlessui/react";
 import {
-    CaretDown,
-    ClosedCaptioning,
-    FolderUser,
-    Gear,
+    BookOpen,
+    CalendarClock,
+    ChevronDown,
+    Hexagon,
     List,
-    SignOut,
+    LogOut,
+    Settings,
     User,
     UserPlus,
-} from "phosphor-react";
+} from "lucide-react";
 
-import { AuthContext, signOut } from "@/contexts/AuthContext";
+import { AuthContext } from "@/contexts/AuthContext";
 
-import { Separator } from "../Separator";
-import { LinkUnderline } from "../LinkUnderline";
 import { ApplicationSearch } from "../ApplicationSearch";
+import { LinkUnderline } from "../LinkUnderline";
 
-const activeRouteStyles = "bg-black text-white border border-black";
-const notActiveRouteStyles = "border border-transparent hover:bg-black hover:bg-opacity-10";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
+import { Button } from "@/components/ui/Button";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/DropdownMenu";
 
 interface routeProps {
     name: string;
-    icon?: ReactNode;
     path: string;
-    executeOnClick?: () => void;
+    icon?: ElementType;
 }
-
-const transcriptionRoutes: routeProps[] = [
-    {
-        name: "Transcrever",
-        icon: <ClosedCaptioning size={20} />,
-        path: "/me",
-    },
-    {
-        name: "Minhas transcrições",
-        icon: <FolderUser size={20} />,
-        path: "/my-transcriptions",
-    },
-];
-
-const settingsRoutes: routeProps[] = [
-    {
-        name: "Convidar amigos",
-        icon: <UserPlus size={20} />,
-        path: "/invite-friends",
-    },
-    {
-        name: "Gerenciar conta",
-        icon: <Gear size={20} />,
-        path: "/settings",
-    },
-    {
-        name: "Sair",
-        icon: <SignOut size={20} />,
-        path: "/login",
-        executeOnClick: signOut,
-    },
-];
 
 const navRoutes: routeProps[] = [
     {
         name: "Início",
-        path: "/home",
+        path: "/inicio",
     },
     {
         name: "Livros",
         path: "/livros",
     },
     {
-        name: "Autores",
-        path: "/home",
-    },
-    {
-        name: "Editoras",
-        path: "/home",
-    },
-    {
-        name: "Trocas",
-        path: "/home",
-    },
-    {
         name: "Blog",
-        path: "/home",
-    },
-    {
-        name: "Convidar amigos",
-        path: "/home",
-    },
-    {
-        name: "Seja membro",
-        path: "/home",
+        path: "/blog",
     },
 ];
 
@@ -123,59 +76,70 @@ export function NavBarLoggedComponent() {
             window.removeEventListener("resize", handleResize);
         };
     }, []);
+
     const isMobile = windowWidth < 1024;
 
     const profileRoutes: routeProps[] = [
         {
             name: "Perfil",
             path: `/usuario/${user?.username}`,
+            icon: User,
         },
         {
-            name: "Livros",
-            path: "/livros",
+            name: "Minhas leituras",
+            path: `/usuario/${user?.username}/leituras`,
+            icon: BookOpen,
         },
         {
             name: "Linha do tempo",
-            path: "/home",
+            path: `/usuario/${user?.username}/linha-do-tempo`,
+            icon: CalendarClock,
         },
         {
             name: "Minhas listas",
             path: `/usuario/${user?.username}/listas`,
+            icon: List,
         },
         {
             name: "Separator",
             path: "",
         },
         {
+            name: "Seja membro",
+            path: "/seja-membro",
+            icon: Hexagon,
+        },
+        {
+            name: "Convidar amigos",
+            path: "/convidar-amigos",
+            icon: UserPlus,
+        },
+        {
             name: "Configurações",
-            path: "/config",
+            path: `/usuario/${user?.username}/config`,
+            icon: Settings,
         },
         {
             name: "Sair",
-            path: "/home",
+            path: "/sair",
+            icon: LogOut,
         },
     ];
 
     function routesTree(routes: routeProps[]) {
         return (
             <>
-                {routes.map((route) => (
-                    <Fragment key={route.name}>
-                        {route.name === "Separator" ? (
-                            <Separator className="mx-5 border-black" />
+                {routes.map(({ name, path, icon: Icon }) => (
+                    <Fragment key={path}>
+                        {name === "Separator" ? (
+                            <DropdownMenuSeparator />
                         ) : (
-                            <Link
-                                onClick={route.executeOnClick}
-                                key={route.path}
-                                href={route.path}
-                                className={`${
-                                    window.location.pathname === route.path
-                                        ? activeRouteStyles
-                                        : notActiveRouteStyles
-                                } mx-2 mb-1 flex cursor-pointer select-none items-center gap-2 rounded-lg py-2 pl-4`}
-                            >
-                                {route.name}
-                            </Link>
+                            <DropdownMenuItem asChild>
+                                <Link href={path} className="flex items-center gap-2">
+                                    {Icon && <Icon size={16} />}
+                                    {name}
+                                </Link>
+                            </DropdownMenuItem>
                         )}
                     </Fragment>
                 ))}
@@ -183,79 +147,63 @@ export function NavBarLoggedComponent() {
         );
     }
 
+    if (!isMounted) return;
+
     return (
         <>
-            {isMounted && (
-                <>
-                    {isMobile ? (
-                        <nav className="top-0 z-10 flex w-full items-center justify-between gap-2 border-b border-black bg-primary py-4 text-sm">
-                            <span className="ml-4 inline-block">Contopia</span>
-                            <Menu as="div" className="relative mr-4 inline-block">
-                                <div>
-                                    <Menu.Button className="inline-flex w-full justify-center rounded-md p-3 text-sm font-medium text-black hover:bg-yellow-600 hover:bg-opacity-20 focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:ring-opacity-75">
-                                        <List size={24} />
-                                    </Menu.Button>
-                                </div>
-                                <Transition
-                                    as={Fragment}
-                                    enter="transition ease-out duration-100"
-                                    enterFrom="transform opacity-0 scale-95"
-                                    enterTo="transform opacity-100 scale-100"
-                                    leave="transition ease-in duration-75"
-                                    leaveFrom="transform opacity-100 scale-100"
-                                    leaveTo="transform opacity-0 scale-95"
-                                >
-                                    <Menu.Items className="absolute -right-5 mt-4 w-80 rounded-md bg-white py-6 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                        <Menu.Item>{routesTree(transcriptionRoutes)}</Menu.Item>
+            {isMobile ? (
+                <nav className="top-0 z-10 flex w-full items-center justify-between gap-2 border-b border-black bg-primary py-4 text-sm">
+                    <span className="ml-4 inline-block">Contopia</span>
+                </nav>
+            ) : (
+                <nav className="flex w-full items-center justify-center gap-2 border-b border-black bg-primary py-4 text-sm">
+                    <div className="max-w-7xl">
+                        <div className="flex w-full items-center justify-between gap-4">
+                            <span className="inline-block">Contopia</span>
 
-                                        <Menu.Item>{routesTree(settingsRoutes)}</Menu.Item>
-                                    </Menu.Items>
-                                </Transition>
-                            </Menu>
-                        </nav>
-                    ) : (
-                        <nav className="flex w-full items-center justify-center gap-2 border-b border-black bg-primary py-4 text-sm">
-                            <div className="max-w-7xl">
-                                <div className="flex w-full items-center justify-between gap-4">
-                                    <span className="inline-block">Contopia</span>
-
-                                    <div className="w-96">
-                                        <ApplicationSearch />
-                                    </div>
-
-                                    <Menu as="div" className="relative z-10 inline-block">
-                                        <Menu.Button className="flex items-center gap-2 rounded-lg border border-black bg-white px-4 py-3 text-black transition-all hover:shadow-[0.25rem_0.25rem_#000]">
-                                            <User size={20} />
-                                            <span className="text-sm">{user?.username}</span>
-                                            <CaretDown size={14} />
-                                        </Menu.Button>
-                                        <Transition
-                                            as={Fragment}
-                                            enter="transition ease-out duration-100"
-                                            enterFrom="transform opacity-0 scale-95"
-                                            enterTo="transform opacity-100 scale-100"
-                                            leave="transition ease-in duration-75"
-                                            leaveFrom="transform opacity-100 scale-100"
-                                            leaveTo="transform opacity-0 scale-95"
-                                        >
-                                            <Menu.Items className="absolute right-0 mt-1 w-48 rounded-md border border-black bg-white py-2 shadow-[0.25rem_0.25rem_#000] ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                                <Menu.Item>{routesTree(profileRoutes)}</Menu.Item>
-                                            </Menu.Items>
-                                        </Transition>
-                                    </Menu>
-                                </div>
-
-                                <div className="text-md mb-1 mt-4 flex items-center justify-between text-sm font-medium">
-                                    {navRoutes.map((item) => (
-                                        <LinkUnderline href={item.path} className="font-medium">
-                                            {item.name}
-                                        </LinkUnderline>
-                                    ))}
-                                </div>
+                            <div className="flex gap-8">
+                                {navRoutes.map((item) => (
+                                    <LinkUnderline href={item.path} className="font-medium">
+                                        {item.name}
+                                    </LinkUnderline>
+                                ))}
                             </div>
-                        </nav>
-                    )}
-                </>
+
+                            <ApplicationSearch />
+
+                            {user ? (
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button size="sm" variant="outline">
+                                            <Avatar className="h-6 w-6">
+                                                <AvatarImage src={user.imageUrl} />
+                                                <AvatarFallback>
+                                                    {user.username[0].toUpperCase() || ""}
+                                                </AvatarFallback>
+                                            </Avatar>
+
+                                            {user.username}
+
+                                            <ChevronDown size={14} className="text-zinc-500" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end" className="w-48">
+                                        {routesTree(profileRoutes)}
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            ) : (
+                                <div className="flex items-center gap-2">
+                                    <Button asChild size="sm" variant="outline">
+                                        <Link href="/entrar">Entrar</Link>
+                                    </Button>
+                                    <Button asChild size="sm" variant="black">
+                                        <Link href="/cadastro">Criar conta</Link>
+                                    </Button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </nav>
             )}
         </>
     );

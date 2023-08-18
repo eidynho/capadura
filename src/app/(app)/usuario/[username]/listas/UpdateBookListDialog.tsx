@@ -30,20 +30,30 @@ const updateBookListFormSchema = z.object({
     description: z.string().optional(),
     image: z
         .any()
-        .refine((file) => {
-            if (!file || file.length === 0) {
-                return true;
-            }
+        .refine(
+            (file) => {
+                if (!file || file.length === 0) {
+                    return true;
+                }
 
-            return file[0]?.size <= MAX_FILE_SIZE;
-        }, "O tamanho máximo é 2MB.")
-        .refine((file) => {
-            if (!file || file.length === 0) {
-                return true;
-            }
+                return file[0]?.size <= MAX_FILE_SIZE;
+            },
+            {
+                message: "O tamanho máximo é 2MB.",
+            },
+        )
+        .refine(
+            (file) => {
+                if (!file || file.length === 0) {
+                    return true;
+                }
 
-            return ACCEPTED_IMAGE_TYPES.includes(file[0]?.type);
-        }, "Formatos permitidos: .jpg, .jpeg, .png and .webp."),
+                return ACCEPTED_IMAGE_TYPES.includes(file[0]?.type);
+            },
+            {
+                message: "Formatos permitidos: .jpg, .jpeg, .png and .webp.",
+            },
+        ),
 });
 
 type UpdateBookListFormSchema = z.infer<typeof updateBookListFormSchema>;

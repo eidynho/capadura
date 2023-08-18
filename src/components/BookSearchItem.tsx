@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Image as ImageIcon, User } from "lucide-react";
+import { ImageOff, User } from "lucide-react";
 
 import { BookDataFromGoogle } from "./ApplicationSearch";
 
@@ -23,13 +23,13 @@ export function BookSearchItem({ book }: BookSearchItemProps) {
                         className="w-full overflow-hidden"
                     />
                 ) : (
-                    <div className="flex h-full items-center justify-center">
-                        <ImageIcon size={42} className="text-gray-500" />
+                    <div className="flex h-full items-center justify-center bg-zinc-500/10">
+                        <ImageOff size={20} className="text-gray-500" />
                     </div>
                 )}
             </div>
 
-            <div>
+            <div className="flex flex-1 flex-col">
                 <div className="flex items-center gap-2">
                     <h2 className="line-clamp-1" title={book.volumeInfo.title}>
                         {book.volumeInfo.title}

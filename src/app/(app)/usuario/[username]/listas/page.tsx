@@ -36,6 +36,7 @@ import { Separator } from "@/components/ui/Separator";
 import { UserHoverCard } from "@/components/UserHoverCard";
 import { UpdateBookListDialog } from "./UpdateBookListDialog";
 import { DeleteBookListDialog } from "./DeleteBookListDialog";
+import { useDidMountEffect } from "@/hooks/useDidMountEffect";
 
 export interface BookOnBookList {
     id: string;
@@ -98,6 +99,12 @@ export default function UserLists() {
         }
         getUserBookList();
     }, [username, debouncedSearchName]);
+
+    useDidMountEffect(() => {
+        if (!searchName) return;
+
+        setIsFetching(true);
+    }, [searchName]);
 
     useEffect(() => {
         async function getBooksOfList() {
@@ -181,7 +188,7 @@ export default function UserLists() {
                                         currentList === index
                                             ? "border border-black bg-black text-white"
                                             : "border border-transparent hover:bg-black hover:bg-opacity-5"
-                                    } cursor-pointer rounded-lg px-4 py-2 text-sm`}
+                                    } cursor-pointer rounded-md px-4 py-2 text-sm`}
                                 >
                                     <span className="block w-full truncate">{bookList.name}</span>
                                 </div>
@@ -206,7 +213,7 @@ export default function UserLists() {
 
     return (
         <Container>
-            <Title>{isCurrentUser ? "Minhas listas" : `${username} - listas`}</Title>
+            <Title>{isCurrentUser ? "Minhas listas" : `Listas do ${username}`}</Title>
             {isCurrentUser && <Subtitle>Organize sua leitura do jeito que você quiser.</Subtitle>}
 
             <Separator className="my-6 bg-gray-300" />

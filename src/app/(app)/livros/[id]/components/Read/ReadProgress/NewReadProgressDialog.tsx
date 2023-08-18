@@ -82,12 +82,10 @@ export function NewReadProgressDialog({
         <>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger>
-                    <div className="w-full">
-                        <Button size="sm" variant="black" className="w-full">
-                            <BadgePlus size={16} />
-                            Novo progresso
-                        </Button>
-                    </div>
+                    <Button size="sm" variant="outline">
+                        <BadgePlus size={16} className="text-pink-500" />
+                        Novo progresso
+                    </Button>
                 </DialogTrigger>
                 <DialogContent>
                     <DialogHeader>

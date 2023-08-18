@@ -2,8 +2,7 @@
 
 import { useContext, useEffect, useState } from "react";
 import { format, parseISO } from "date-fns";
-import { ArrowUUpLeft, BookOpen, Lock, LockSimpleOpen, PlusCircle } from "phosphor-react";
-import { MoreVertical } from "lucide-react";
+import { BookOpen, Lock, MoreVertical, PlusCircle, Undo2, Unlock } from "lucide-react";
 import { toast } from "react-toastify";
 import { pt } from "date-fns/locale";
 
@@ -21,6 +20,7 @@ import { UserHoverCard } from "@/components/UserHoverCard";
 
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 
 import {
     DropdownMenu,
@@ -69,7 +69,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
     const [isFetching, setIsFetching] = useState(false);
     const [isOpenUpdateProgressDialog, setIsOpenUpdateProgressDialog] = useState(false);
     const [progressEditData, setProgressEditData] = useState<EditReadData | null>(null);
-    const [currentTab, setCurrentTab] = useState(1);
+    const [currentTab, setCurrentTab] = useState("all");
 
     useEffect(() => {
         async function fetchUserReads() {
@@ -83,14 +83,17 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
             }
         }
         fetchUserReads();
-    }, [bookData, currentTab]);
+    }, [bookData]);
 
     const filteredReads = userReads?.filter((item) => {
-        if (readsTabs[currentTab].status) {
-            return item.status === readsTabs[currentTab].status;
+        switch (currentTab) {
+            case "all":
+                return true;
+            case "active":
+                return item.status === "ACTIVE";
+            case "finished":
+                return item.status === "FINISHED";
         }
-
-        return true;
     });
 
     async function startNewRead() {
@@ -226,44 +229,33 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
 
     return (
         <>
-            <div className="mt-3 border-b border-gray-200">
-                <ul className="-mb-px flex flex-wrap items-center justify-between text-center text-sm font-medium text-gray-500">
+            <div className="mt-2">
+                <ul className="-mb-px flex flex-wrap items-center justify-between text-center text-sm font-medium">
                     <div className="flex flex-wrap items-center py-1">
                         <div className="flex items-center gap-2 pl-2 pr-4 text-black">
-                            <BookOpen size={20} />
+                            <BookOpen size={16} />
                             <h3 className="font-semibold">Leituras</h3>
                         </div>
 
-                        {readsTabs.map((item, index) => (
-                            <li
-                                key={item.name}
-                                onClick={() => setCurrentTab(index)}
-                                className={`${
-                                    currentTab === index
-                                        ? "border-yellow-600 p-4 text-yellow-600"
-                                        : "border-transparent hover:border-gray-300 hover:text-gray-600"
-                                } flex cursor-pointer gap-2 border-b-2 p-4 `}
-                            >
-                                {item.name}
-                            </li>
-                        ))}
+                        <Tabs
+                            value={currentTab}
+                            onValueChange={setCurrentTab}
+                            defaultValue="account"
+                        >
+                            <TabsList>
+                                <TabsTrigger value="all">Todas</TabsTrigger>
+                                <TabsTrigger value="active">Em andamento</TabsTrigger>
+                                <TabsTrigger value="finished">Finalizadas</TabsTrigger>
+                            </TabsList>
+                        </Tabs>
                     </div>
 
                     {(!userReads?.length || userReads[0].status === "FINISHED") && (
                         <div className="flex flex-col items-center gap-2">
                             <div className="flex flex-col items-center justify-center gap-2 lg:flex-row">
-                                <Button
-                                    size="sm"
-                                    onClick={startNewRead}
-                                    className="group gap-1 bg-transparent px-4 text-black enabled:hover:bg-pink-500"
-                                >
-                                    <PlusCircle
-                                        size={20}
-                                        className="text-pink-500 transition-colors group-hover:text-black"
-                                    />
-                                    <div className="flex flex-col items-start">
-                                        <span className="font-medium">Nova leitura</span>
-                                    </div>
+                                <Button size="sm" variant="outline" onClick={startNewRead}>
+                                    <PlusCircle size={16} className="text-pink-500" />
+                                    Nova leitura
                                 </Button>
 
                                 {(!userReads || !userReads.length) && (
@@ -279,27 +271,27 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                 </ul>
             </div>
 
-            {filteredReads?.[0] ? (
+            {!!filteredReads?.length ? (
                 filteredReads.map((read) => (
-                    <div key={read.id} className="relative rounded-lg border border-black text-sm">
+                    <div key={read.id} className="relative rounded-md border border-black text-sm">
                         {/* read cancelled */}
                         {read.status === "CANCELLED" && (
-                            <div className="absolute z-10 flex h-full w-full flex-col items-center justify-center gap-2 rounded-lg backdrop-blur-sm">
-                                <span className="mx-8 text-center text-lg font-medium">
+                            <div className="absolute z-10 flex h-full w-full flex-col items-center justify-center gap-2 rounded-md bg-white/20 backdrop-blur-sm">
+                                <span className="mx-8 text-center text-base font-medium">
                                     Você abandonou a leitura, deseja retomar?
                                 </span>
                                 <Button
-                                    size="md"
+                                    size="sm"
                                     variant="black"
                                     onClick={() => toggleReadStatus(read.id, "ACTIVE")}
                                 >
-                                    <ArrowUUpLeft size={20} weight="bold" />
+                                    <Undo2 size={18} />
                                     Retomar leitura
                                 </Button>
                             </div>
                         )}
 
-                        <div className="m-6 flex flex-col gap-2 rounded-lg">
+                        <div className="m-6 flex flex-col gap-2 rounded-md">
                             {/* read active */}
                             <div className="flex flex-wrap items-center justify-between gap-3">
                                 <div className="flex items-center gap-2">
@@ -323,11 +315,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
 
                                     {/* Privacy badge */}
                                     <Badge variant="default">
-                                        {read.isPrivate ? (
-                                            <Lock size={14} />
-                                        ) : (
-                                            <LockSimpleOpen size={14} />
-                                        )}
+                                        {read.isPrivate ? <Lock size={12} /> : <Unlock size={12} />}
                                         {read.isPrivate ? "Privado" : "Público"}
                                     </Badge>
 
@@ -381,26 +369,22 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                             </div>
 
                             <div className="my-1 flex flex-wrap items-center justify-between gap-2">
-                                <div className="text-sm">
-                                    <span className="mr-1 font-bold">Início da leitura:</span>
-                                    <span>
+                                <div className="text-sm font-medium text-muted-foreground">
+                                    Início da leitura:{" "}
+                                    {format(
+                                        parseISO(read.startDate.toString()),
+                                        "dd 'de' MMMM 'de' yyyy",
+                                        { locale: pt },
+                                    )}
+                                </div>
+                                {read.endDate && (
+                                    <div className="text-sm font-medium text-muted-foreground">
+                                        Fim da leitura:{" "}
                                         {format(
-                                            parseISO(read.startDate.toString()),
+                                            parseISO(read.endDate.toString()),
                                             "dd 'de' MMMM 'de' yyyy",
                                             { locale: pt },
                                         )}
-                                    </span>
-                                </div>
-                                {read.endDate && (
-                                    <div className="text-sm">
-                                        <span className="mr-1 font-bold">Fim da leitura:</span>
-                                        <span>
-                                            {format(
-                                                parseISO(read?.endDate.toString()),
-                                                "dd 'de' MMMM 'de' yyyy",
-                                                { locale: pt },
-                                            )}
-                                        </span>
                                     </div>
                                 )}
                             </div>
@@ -433,10 +417,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                             <div className="mt-2 flex flex-col gap-3">
                                 <div className="flex items-center justify-between gap-2">
                                     <h4 className="font-bold">Progressos anteriores</h4>
-                                    <Button
-                                        size="xs"
-                                        className="bg-white text-black enabled:hover:bg-white enabled:hover:shadow-[0.125rem_0.125rem_#000]"
-                                    >
+                                    <Button size="sm" variant="outline">
                                         Ver todos
                                     </Button>
                                 </div>
@@ -519,7 +500,13 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                 ))
             ) : (
                 <span className="mt-1 text-center text-sm">
-                    {readsTabs[currentTab].emptyMessage}
+                    Nenhuma leitura
+                    {currentTab === "all"
+                        ? " encontrada"
+                        : currentTab === "active"
+                        ? " em andamento"
+                        : " finalizada"}
+                    .
                 </span>
             )}
             <UpdateReadProgressDialog

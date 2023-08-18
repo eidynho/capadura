@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
 import { isValid, parse } from "date-fns";
-import { Image as ImageIcon } from "phosphor-react";
+import { ImageOff } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";
@@ -214,18 +214,20 @@ export default function Book({ params }: BookProps) {
                                         height={468}
                                         quality={100}
                                         priority
-                                        className="mx-auto rounded-lg"
+                                        className="mx-auto rounded-md"
                                     />
                                 ) : (
-                                    <div className="flex h-96 w-full flex-col items-center justify-center rounded-md border border-black bg-gray-200 opacity-70">
-                                        <ImageIcon size={40} />
-                                        <span className="text-xs">Sem imagem</span>
+                                    <div className="flex h-96 w-full flex-col items-center justify-center rounded-md border border-black bg-zinc-500/10 opacity-75">
+                                        <ImageOff size={36} strokeWidth={1.6} />
+                                        <span className="mt-1 text-sm font-medium text-muted-foreground">
+                                            Sem imagem
+                                        </span>
                                     </div>
                                 )}
                             </div>
 
                             {/* Book data */}
-                            <div className="mt-3 rounded-lg border border-black pb-4">
+                            <div className="mt-3 rounded-md border border-black pb-4">
                                 <div className="mx-4 mt-4 flex justify-between text-sm">
                                     <span className="font-semibold">Escrito por</span>
 

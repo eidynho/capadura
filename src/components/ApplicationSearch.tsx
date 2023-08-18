@@ -1,24 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import axios from "axios";
 import { Search } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { useDebounce } from "@/hooks/useDebounce";
-import useDidMountEffect from "@/hooks/useDidMountEffect";
+import { useDidMountEffect } from "@/hooks/useDidMountEffect";
 
 import { BookSearchItem } from "./BookSearchItem";
 import { Button } from "./ui/Button";
 import {
     Command,
-    CommandEmpty,
     CommandDialog,
     CommandInput,
     CommandItem,
     CommandList,
 } from "@/components/ui/Command";
+import { fetchGoogleBooks } from "@/utils/fetch-google-books";
 
 export interface BookDataFromGoogle {
     kind: string;
@@ -69,34 +68,43 @@ export function ApplicationSearch() {
     const [isFetchingBooks, setIsFetchingBooks] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [searchName, setSearchName] = useState("");
-    const debouncedSearchName = useDebounce<string>(searchName, 200);
+    const debouncedSearchName = useDebounce<string>(searchName, 400);
+
+    useEffect(() => {
+        const ctrlKShortcut = (e: KeyboardEvent) => {
+            if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault();
+                setIsOpen((open) => !open);
+            }
+        };
+
+        document.addEventListener("keydown", ctrlKShortcut);
+        return () => document.removeEventListener("keydown", ctrlKShortcut);
+    }, []);
+
+    useEffect(() => {
+        setSearchName("");
+    }, [isOpen]);
 
     useDidMountEffect(() => {
-        if (!debouncedSearchName) {
-            setIsOpen(false);
-            return;
-        }
+        if (!searchName) return;
+
+        setIsFetchingBooks(true);
+    }, [searchName]);
+
+    useDidMountEffect(() => {
+        if (!debouncedSearchName) return;
 
         const getBooks = async () => {
-            setIsOpen(true);
-            setIsFetchingBooks(true);
             try {
-                const query = [];
+                setIsFetchingBooks(true);
 
-                query.push("q=" + `"${debouncedSearchName}"`);
-                query.push("langRestrict=" + "pt-BR");
-                query.push("maxResults=" + 8);
-                query.push("startIndex=" + 0);
-                query.push("orderBy=" + "relevance");
-                query.push("printType=" + "books");
+                const { data } = await fetchGoogleBooks(debouncedSearchName);
 
-                const { data } = await axios.get<GoogleAPIData>(
-                    `https://www.googleapis.com/books/v1/volumes?${query.join("&")}`,
-                );
-
-                const filteredItems = data.items?.filter(
-                    (item) => item.volumeInfo.description && item.volumeInfo.imageLinks,
-                );
+                const filteredItems = data.items?.filter((item) => {
+                    const { authors, description, imageLinks } = item.volumeInfo;
+                    return authors?.length && description && imageLinks;
+                });
 
                 setBooks({
                     items: filteredItems,
@@ -114,8 +122,18 @@ export function ApplicationSearch() {
 
     return (
         <>
-            <Button size="icon" variant="default" onClick={() => setIsOpen(true)}>
+            <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setIsOpen(true)}
+                className="relative h-[42px] w-56 justify-start pl-2 text-sm text-muted-foreground sm:pr-12"
+            >
                 <Search size={18} />
+                <span>Procurar livro...</span>
+
+                <kbd className="pointer-events-none absolute right-1.5 top-2.5 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-xs font-medium opacity-100 sm:flex">
+                    Ctrl + K
+                </kbd>
             </Button>
 
             <CommandDialog open={isOpen} onOpenChange={setIsOpen}>
@@ -125,131 +143,56 @@ export function ApplicationSearch() {
                         onValueChange={(value) => setSearchName(value)}
                         value={searchName}
                     />
-                    {!!searchName && (
-                        <CommandList>
-                            {isFetchingBooks ? (
-                                <div className="flex h-28 w-full animate-pulse items-start gap-4 rounded-md border bg-white/80 px-4 py-3">
-                                    <div className="h-[5.6rem] w-16 rounded-sm bg-gray-200"></div>
+                    <CommandList>
+                        {isFetchingBooks ? (
+                            <div className="flex h-28 w-full animate-pulse items-start gap-4 rounded-md border bg-white/80 px-4 py-3">
+                                <div className="h-[5.6rem] w-16 rounded-sm bg-gray-200"></div>
 
-                                    <div className="flex h-full w-full flex-1 flex-col justify-between gap-2">
-                                        <div className="flex w-full items-start justify-between gap-2">
-                                            <div>
-                                                <div className="mb-1 h-6 w-24 rounded-sm bg-gray-200 font-semibold"></div>
-                                                <div className="h-5 w-36 rounded-sm bg-gray-200"></div>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center gap-6">
-                                            <div className="h-5 w-24 rounded-sm bg-gray-200"></div>
-
-                                            <div className="flex h-5 w-32 items-center gap-1 rounded-sm bg-gray-200"></div>
+                                <div className="flex h-full w-full flex-1 flex-col justify-between gap-2">
+                                    <div className="flex w-full items-start justify-between gap-2">
+                                        <div>
+                                            <div className="mb-1 h-6 w-24 rounded-sm bg-gray-200 font-semibold"></div>
+                                            <div className="h-5 w-36 rounded-sm bg-gray-200"></div>
                                         </div>
                                     </div>
-                                </div>
-                            ) : (
-                                <>
-                                    {books?.items?.length ? (
-                                        books.items.map((book) => (
-                                            <CommandItem>
-                                                <Link
-                                                    href={`/livros/${book.id}`}
-                                                    onClick={() => setSearchName("")}
-                                                    key={book.id}
-                                                    className="flex cursor-pointer gap-4 px-4 py-2 hover:bg-black hover:text-white"
-                                                >
-                                                    <BookSearchItem book={book} />
-                                                </Link>
-                                            </CommandItem>
-                                        ))
-                                    ) : (
-                                        <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>
-                                    )}
-                                </>
-                            )}
-                        </CommandList>
-                    )}
-                </Command>
-            </CommandDialog>
+                                    <div className="flex items-center gap-6">
+                                        <div className="h-5 w-24 rounded-sm bg-gray-200"></div>
 
-            {/* <div className="relative">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                    <Search size={18} />
-                </div>
-
-                <Input
-                    type="text"
-                    id="nav-search"
-                    onChange={(e) => setSearchName(e.target.value)}
-                    value={searchName}
-                    maxLength={240}
-                    placeholder="Busque por título, autor, editora, ISBN..."
-                    className="w-full pl-10 pr-10"
-                />
-                {searchName && (
-                    <div
-                        className="absolute inset-y-0 right-3 flex cursor-pointer items-center"
-                        onClick={() => setSearchName("")}
-                    >
-                        <X size={18} />
-                    </div>
-                )}
-
-                {debouncedSearchName && (
-                    <div className="absolute left-0 top-10 z-10 w-[32rem] rounded-b-lg border border-black bg-white pb-2 pt-3 text-black">
-                        {isLoadingBooks ? (
-                            [...Array(3)].map((_, index) => (
-                                <div
-                                    key={index}
-                                    className="mb-3 flex animate-pulse items-center gap-4"
-                                >
-                                    <div className="mx-3 h-16 w-12 rounded-lg bg-gray-200"></div>
-                                    <div className="flex flex-col gap-2">
-                                        <div className="h-4 w-32 rounded-lg bg-gray-200"></div>
-                                        <div className="h-4 w-48 rounded-lg bg-gray-200"></div>
+                                        <div className="flex h-5 w-32 items-center gap-1 rounded-sm bg-gray-200"></div>
                                     </div>
                                 </div>
-                            ))
+                            </div>
                         ) : (
                             <>
-                                {books.items && books.items.length ? (
-                                    <>
-                                        <h2 className="mb-2 px-4 text-xl font-medium">Livros</h2>
-                                        <div className="flex flex-col">
-                                            {books.items.map((book) => (
-                                                <>
-                                                    {isLink ? (
-                                                        <Link
-                                                            href={`/livros/${book.id}`}
-                                                            onClick={() => setSearchName("")}
-                                                            key={book.id}
-                                                            className="flex cursor-pointer gap-4 px-4 py-2 hover:bg-black hover:text-white"
-                                                        >
-                                                            <BookSearchItem book={book} />
-                                                        </Link>
-                                                    ) : (
-                                                        <div
-                                                            onClick={() =>
-                                                                handleAddUserFavoriteBook(book)
-                                                            }
-                                                            key={book.id}
-                                                            className="flex cursor-pointer gap-4 px-4 py-2 hover:bg-black hover:text-white"
-                                                        >
-                                                            <BookSearchItem book={book} />
-                                                        </div>
-                                                    )}
-                                                </>
-                                            ))}
-                                        </div>
-                                    </>
-                                ) : (
-                                    <span className="inline-block px-4 pb-2">
-                                        Nenhum resultado encontrado.
-                                    </span>
-                                )}
+                                {!!searchName && !!books?.items?.length
+                                    ? books.items.map((book) => (
+                                          <CommandItem>
+                                              <Link
+                                                  href={`/livros/${book.id}`}
+                                                  onClick={() => setIsOpen(false)}
+                                                  key={book.id}
+                                                  className="flex gap-4"
+                                              >
+                                                  <BookSearchItem book={book} />
+                                              </Link>
+                                          </CommandItem>
+                                      ))
+                                    : !!searchName && (
+                                          <div className="flex h-36 flex-col items-center justify-center text-center">
+                                              <h2 className="text-base font-semibold">
+                                                  Nenhum resultado encontrado.
+                                              </h2>
+                                              <p className="mt-2 w-[26rem] text-sm leading-6 text-slate-600">
+                                                  Não encontramos nenhum item com esse termo, tente
+                                                  procurar algo diferente.
+                                              </p>
+                                          </div>
+                                      )}
                             </>
                         )}
-                    </div>
-                )}
-            </div> */}
+                    </CommandList>
+                </Command>
+            </CommandDialog>
         </>
     );
 }

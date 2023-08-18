@@ -40,7 +40,7 @@ export function signOut() {
     destroyCookie(undefined, "token");
     destroyCookie(undefined, "refreshToken");
 
-    window.location.pathname = "/login";
+    window.location.pathname = "/entrar";
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {

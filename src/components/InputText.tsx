@@ -27,7 +27,7 @@ export function InputText({ htmlFor, label, placeholder, className }: InputTextP
                 name={htmlFor}
                 className={`${
                     className ? className : ""
-                } mt-2 block rounded-lg border border-black py-2 pl-3 text-sm outline-none focus:border-yellow-500 focus:ring-yellow-500`}
+                } mt-2 block rounded-md border border-black py-2 pl-3 text-sm outline-none focus:border-yellow-500 focus:ring-yellow-500`}
                 placeholder={placeholder}
             />
         </div>
@@ -55,7 +55,7 @@ export function InputTextSearch({
                     id={id}
                     onChange={onChange}
                     placeholder={placeholder}
-                    className="block w-80 rounded-lg border border-black p-2 pl-10 text-sm outline-none focus:border-yellow-500 focus:ring-yellow-500"
+                    className="block w-80 rounded-md border border-black p-2 pl-10 text-sm outline-none focus:border-yellow-500 focus:ring-yellow-500"
                 />
             </div>
         </div>

@@ -23,10 +23,10 @@ export default function Loading() {
                             <div className="block md:hidden">{renderBookHeader()}</div>
 
                             {/* Book image */}
-                            <div className="h-96 w-full rounded-lg bg-gray-200 md:w-[19.5rem]"></div>
+                            <div className="h-96 w-full rounded-md bg-gray-200 md:w-[19.5rem]"></div>
 
                             {/* Book data */}
-                            <div className="mt-3 rounded-lg border border-gray-200 pb-4">
+                            <div className="mt-3 rounded-md border border-gray-200 pb-4">
                                 <div className="mx-4 mt-4 flex justify-between text-sm">
                                     <div className="h-5 w-24 rounded-md bg-gray-200"></div>
 
@@ -67,7 +67,7 @@ export default function Loading() {
                             </div>
 
                             {/* Community rating */}
-                            <div className="mt-4 h-40 w-full items-center rounded-lg bg-gray-200"></div>
+                            <div className="mt-4 h-40 w-full items-center rounded-md bg-gray-200"></div>
                         </div>
 
                         <div className="flex w-full flex-col md:w-[calc(100%-344px)]">
@@ -77,41 +77,41 @@ export default function Loading() {
                             <div className="flex w-full flex-col gap-8 xl:flex-row">
                                 <div className="flex w-full flex-col gap-2">
                                     {/* Book content */}
-                                    <div className="h-4 w-full items-center rounded-lg bg-gray-200"></div>
-                                    <div className="h-4 w-2/3 items-center rounded-lg bg-gray-200"></div>
+                                    <div className="h-4 w-full items-center rounded-md bg-gray-200"></div>
+                                    <div className="h-4 w-2/3 items-center rounded-md bg-gray-200"></div>
 
-                                    <div className="mt-2 h-4 w-full items-center rounded-lg bg-gray-200"></div>
-                                    <div className="h-4 w-full items-center rounded-lg bg-gray-200"></div>
-                                    <div className="h-4 w-full items-center rounded-lg bg-gray-200"></div>
-                                    <div className="h-4 w-1/3 items-center rounded-lg bg-gray-200"></div>
+                                    <div className="mt-2 h-4 w-full items-center rounded-md bg-gray-200"></div>
+                                    <div className="h-4 w-full items-center rounded-md bg-gray-200"></div>
+                                    <div className="h-4 w-full items-center rounded-md bg-gray-200"></div>
+                                    <div className="h-4 w-1/3 items-center rounded-md bg-gray-200"></div>
 
-                                    <div className="mt-2 h-4 w-full items-center rounded-lg bg-gray-200"></div>
-                                    <div className="h-4 w-full items-center rounded-lg bg-gray-200"></div>
-                                    <div className="h-4 w-2/5 items-center rounded-lg bg-gray-200"></div>
+                                    <div className="mt-2 h-4 w-full items-center rounded-md bg-gray-200"></div>
+                                    <div className="h-4 w-full items-center rounded-md bg-gray-200"></div>
+                                    <div className="h-4 w-2/5 items-center rounded-md bg-gray-200"></div>
 
                                     {/* Book action buttons */}
                                     <div className="mt-2 flex w-full items-center gap-2">
-                                        <div className="h-9 w-24 items-center rounded-lg bg-gray-200"></div>
-                                        <div className="h-9 w-40 items-center rounded-lg bg-gray-200"></div>
+                                        <div className="h-9 w-24 items-center rounded-md bg-gray-200"></div>
+                                        <div className="h-9 w-40 items-center rounded-md bg-gray-200"></div>
                                     </div>
 
                                     {/* Book tabs */}
-                                    <div className="mt-4 w-full items-center rounded-lg border border-gray-200 p-6">
+                                    <div className="mt-4 w-full items-center rounded-md border border-gray-200 p-6">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-2">
                                                 <div className="h-8 w-8 items-center rounded-full bg-gray-200"></div>
-                                                <div className="h-6 w-40 items-center rounded-lg bg-gray-200"></div>
+                                                <div className="h-6 w-40 items-center rounded-md bg-gray-200"></div>
                                             </div>
 
                                             <div className="flex items-center gap-2">
-                                                <div className="h-6 w-24 items-center rounded-lg bg-gray-200"></div>
-                                                <div className="h-6 w-20 items-center rounded-lg bg-gray-200"></div>
+                                                <div className="h-6 w-24 items-center rounded-md bg-gray-200"></div>
+                                                <div className="h-6 w-20 items-center rounded-md bg-gray-200"></div>
                                             </div>
                                         </div>
 
-                                        <div className="mt-2 h-4 w-48 items-center rounded-lg bg-gray-200"></div>
+                                        <div className="mt-2 h-4 w-48 items-center rounded-md bg-gray-200"></div>
 
-                                        <div className="mt-6 h-5 w-40 items-center rounded-lg bg-gray-200"></div>
+                                        <div className="mt-6 h-5 w-40 items-center rounded-md bg-gray-200"></div>
 
                                         {Array.from({ length: 3 }, (_, index) => (
                                             <Fragment key={index}>
@@ -121,15 +121,15 @@ export default function Loading() {
                                                     <div className="flex items-center justify-between">
                                                         <div className="flex items-center gap-2">
                                                             <div className="h-8 w-8 items-center rounded-full bg-gray-200"></div>
-                                                            <div className="h-6 w-40 items-center rounded-lg bg-gray-200"></div>
+                                                            <div className="h-6 w-40 items-center rounded-md bg-gray-200"></div>
                                                         </div>
 
                                                         <div className="flex items-center gap-2">
-                                                            <div className="h-6 w-6 items-center rounded-lg bg-gray-200"></div>
+                                                            <div className="h-6 w-6 items-center rounded-md bg-gray-200"></div>
                                                         </div>
                                                     </div>
-                                                    <div className="mt-6 h-4 w-2/3 items-center rounded-lg bg-gray-200"></div>
-                                                    <div className="mt-4 h-6 w-full items-center rounded-lg bg-gray-200"></div>
+                                                    <div className="mt-6 h-4 w-2/3 items-center rounded-md bg-gray-200"></div>
+                                                    <div className="mt-4 h-6 w-full items-center rounded-md bg-gray-200"></div>
                                                 </div>
                                             </Fragment>
                                         ))}

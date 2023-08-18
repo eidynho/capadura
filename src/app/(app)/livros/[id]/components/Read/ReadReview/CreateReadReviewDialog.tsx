@@ -1,7 +1,7 @@
 "use client";
 
 import { Dispatch, SetStateAction, useState } from "react";
-import { Star } from "phosphor-react";
+import { Star } from "lucide-react";
 
 import { BookData, ReadData } from "@/app/(app)/livros/[id]/page";
 
@@ -31,39 +31,14 @@ export function CreateReadReviewDialog({
 }: ReadReviewDialogProps) {
     const [isOpen, setIsOpen] = useState(false);
 
-    function handleToggleDialog(state = false) {
-        setIsOpen(state);
-    }
-
     return (
         <>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger>
-                    {isReviewWithoutProgress ? (
-                        <Button
-                            size="sm"
-                            onClick={() => handleToggleDialog(true)}
-                            className="group gap-1 bg-transparent px-4 text-black enabled:hover:bg-yellow-500"
-                        >
-                            <Star
-                                size={20}
-                                className="text-yellow-500 transition-colors group-hover:text-black"
-                            />
-
-                            <div className="flex flex-col items-start">
-                                <span className="font-medium">Avaliar</span>
-                            </div>
-                        </Button>
-                    ) : (
-                        <Button
-                            size="sm"
-                            className="w-full bg-green-500 enabled:hover:bg-green-500 enabled:hover:text-white"
-                            onClick={() => handleToggleDialog(true)}
-                        >
-                            <Star size={18} weight="bold" />
-                            <span className="font-medium">Avaliar</span>
-                        </Button>
-                    )}
+                    <Button size="sm" variant="outline">
+                        <Star size={16} className="text-yellow-500" />
+                        Avaliar
+                    </Button>
                 </DialogTrigger>
                 <DialogContent>
                     <DialogHeader>

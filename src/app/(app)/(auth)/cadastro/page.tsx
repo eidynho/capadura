@@ -44,7 +44,7 @@ export default function SignUp() {
                         <Link href="/" className="font-medium">
                             Contopia
                         </Link>
-                        <Link href="/login" className="font-medium underline">
+                        <Link href="/entrar" className="font-medium underline">
                             Entrar
                         </Link>
                     </div>

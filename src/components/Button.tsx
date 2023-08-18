@@ -52,7 +52,7 @@ export function Button({ children, asChild, size, className, ...props }: ButtonP
     return (
         <Component
             className={twMerge(
-                `flex items-center justify-center gap-2 rounded-lg border border-black bg-black  text-white transition-all duration-300 disabled:cursor-default disabled:border-black disabled:bg-black/80 disabled:bg-opacity-100 disabled:text-white`,
+                `flex items-center justify-center gap-2 rounded-md border border-black bg-black  text-white transition-all duration-300 disabled:cursor-default disabled:border-black disabled:bg-black/80 disabled:bg-opacity-100 disabled:text-white`,
                 hoverClasses,
                 sizeStyles,
                 className,

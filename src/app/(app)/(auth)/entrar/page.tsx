@@ -27,7 +27,7 @@ export default function Login() {
                         <Link href="/" className="font-medium">
                             Contopia
                         </Link>
-                        <Link href="/signup" className="font-medium underline">
+                        <Link href="/cadastro" className="font-medium underline">
                             Criar conta
                         </Link>
                     </div>

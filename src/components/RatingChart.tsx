@@ -67,7 +67,7 @@ export function RatingChart({ bookId, userId }: RatingChartProps) {
         if (!data) return <></>;
 
         return (
-            <div className="flex items-center rounded-lg border border-black bg-primary/95 px-2 py-1 text-xs font-semibold">
+            <div className="flex items-center rounded-md border border-black bg-primary/95 px-2 py-1 text-xs font-semibold">
                 <span className="mr-1">{data.amount}</span>
                 <RatingStars rating={data.rating} size={12} />
                 <span className="ml-1">avaliações ({data.percentage}%)</span>
@@ -76,7 +76,7 @@ export function RatingChart({ bookId, userId }: RatingChartProps) {
     }
 
     return (
-        <div className="mt-3 flex flex-col justify-center rounded-lg border border-black px-4 pb-6 pt-4 text-sm">
+        <div className="mt-3 flex flex-col justify-center rounded-md border border-black px-4 pb-6 pt-4 text-sm">
             <div className="my-1 flex items-center justify-between">
                 <h3 className="font-semibold">Avaliações</h3>
                 <div className="flex items-center gap-1">

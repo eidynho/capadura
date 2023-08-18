@@ -1,13 +1,11 @@
 "use client";
 
 import { useContext, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { ChevronDown, Check, List, PlusCircle, CornerDownRight, BadgePlus } from "lucide-react";
+import { ChevronDown, Check, List } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";
 import { BookData } from "../page";
-import { useDebounce } from "@/hooks/useDebounce";
 import { AuthContext } from "@/contexts/AuthContext";
 
 import { BookListData, BookOnBookList } from "@/app/(app)/usuario/[username]/listas/page";
@@ -30,40 +28,24 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
     const { user } = useContext(AuthContext);
 
     const [isOpen, setIsOpen] = useState(false);
-    const [isFetching, setIsFetching] = useState(true);
     const [bookLists, setBookLists] = useState<BookListData[] | null>(null);
-    const [searchName, setSearchName] = useState("");
-
-    const debouncedSearchName = useDebounce<string>(searchName, 400);
 
     useEffect(() => {
         async function getUserBookList() {
             if (!user) return;
 
-            setIsFetching(true);
-
             try {
-                const query = [];
-
-                query.push("bookId=" + bookData.id);
-
-                if (debouncedSearchName.trim()) {
-                    query.push("q=" + debouncedSearchName.trim());
-                }
-
                 const { data } = await api.get<BookListData[]>(
-                    `/booklists/user/${user.id}?${query.join("&")}`,
+                    `/booklists/user/${user.id}?bookId=${bookData.id}`,
                 );
 
                 setBookLists(data);
             } catch (err) {
                 toast.error("Erro ao buscar listas.");
-            } finally {
-                setIsFetching(false);
             }
         }
         getUserBookList();
-    }, [isOpen, debouncedSearchName]);
+    }, [isOpen]);
 
     async function createBookList() {
         try {
@@ -167,7 +149,7 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
                                                     <Check
                                                         size={14}
                                                         className="text-green-500"
-                                                        strokeWidth={3}
+                                                        strokeWidth={3.2}
                                                     />
                                                 )}
                                             </div>
@@ -182,14 +164,7 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
                     })
                 ) : (
                     <div className="mx-5">
-                        {debouncedSearchName ? (
-                            <span className="break-words">
-                                Nenhuma lista com a busca "<strong>{debouncedSearchName}</strong>"
-                                foi encontrada.
-                            </span>
-                        ) : (
-                            <span>Nenhuma lista encontrada.</span>
-                        )}
+                        <span>Nenhuma lista encontrada.</span>
                     </div>
                 )}
             </>
@@ -205,11 +180,8 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
                     <ChevronDown size={14} className="text-zinc-500" />
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="max-h-72 w-52 overflow-auto">
-                <DropdownMenuItem
-                    onClick={createBookList}
-                    className="cursor-pointer focus:bg-green-500/20"
-                >
+            <DropdownMenuContent align="start" className="max-h-72 w-56 overflow-auto">
+                <DropdownMenuItem onClick={createBookList} className="pl-6 focus:bg-green-500/20">
                     Criar lista
                 </DropdownMenuItem>
 

@@ -80,7 +80,7 @@ export function FormReadProgress({ editData, submitForm }: FormReadProgressProps
                     name="isSpoiler"
                     type="checkbox"
                     id="is-spoiler-checkbox"
-                    className="h-4 w-4 rounded-lg accent-black outline-black"
+                    className="h-4 w-4 accent-black outline-black"
                 />
                 <Label htmlFor="is-spoiler-checkbox">Contém spoiler</Label>
             </div>

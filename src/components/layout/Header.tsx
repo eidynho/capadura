@@ -56,10 +56,10 @@ export function Header() {
                             </p>
                             <div className="mt-10 flex items-center justify-center gap-x-6">
                                 <Button asChild>
-                                    <Link href="/signup">Criar conta</Link>
+                                    <Link href="/cadastro">Criar conta</Link>
                                 </Button>
                                 <Button asChild>
-                                    <Link href="/login">
+                                    <Link href="/entrar">
                                         Fazer login <span aria-hidden="true">→</span>
                                     </Link>
                                 </Button>

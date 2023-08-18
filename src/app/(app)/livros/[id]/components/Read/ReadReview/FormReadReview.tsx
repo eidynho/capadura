@@ -198,7 +198,7 @@ export function FormReadReview({
                             name="isSpoiler"
                             type="checkbox"
                             id="is-spoiler-read-review"
-                            className="h-4 w-4 rounded-lg accent-black outline-black"
+                            className="h-4 w-4 accent-black outline-black"
                         />
                         <Label htmlFor="is-spoiler-read-review">Contém spoiler</Label>
                     </div>

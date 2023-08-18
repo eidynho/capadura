@@ -39,24 +39,34 @@ const profileFormSchema = z.object({
     email: z.string().email(),
     image: z
         .any()
-        .refine((file) => {
-            if (!file || file.length === 0) {
-                return true;
-            }
+        .refine(
+            (file) => {
+                if (!file || file.length === 0) {
+                    return true;
+                }
 
-            return file[0]?.size <= MAX_FILE_SIZE;
-        }, "O tamanho máximo é 2MB.")
-        .refine((file) => {
-            if (!file || file.length === 0) {
-                return true;
-            }
+                return file[0]?.size <= MAX_FILE_SIZE;
+            },
+            {
+                message: "O tamanho máximo é 2MB.",
+            },
+        )
+        .refine(
+            (file) => {
+                if (!file || file.length === 0) {
+                    return true;
+                }
 
-            return ACCEPTED_IMAGE_TYPES.includes(file[0]?.type);
-        }, "Formatos permitidos: .jpg, .jpeg, .png and .webp."),
+                return ACCEPTED_IMAGE_TYPES.includes(file[0]?.type);
+            },
+            {
+                message: "Formatos permitidos: .jpg, .jpeg, .png and .webp.",
+            },
+        ),
     description: z.string().optional().nullable(),
     location: z.string().max(50, { message: "Máximo 50 caracteres." }).optional().nullable(),
     website: z
-        .union([z.literal(""), z.string().trim().url()])
+        .union([z.literal(""), z.string().trim().url({ message: "URL inválida" })])
         .optional()
         .nullable(),
     twitter: z.string().optional().nullable(),
@@ -159,7 +169,7 @@ export default function Config() {
                                             currentTab === index
                                                 ? "border border-black bg-black text-white"
                                                 : "border border-transparent hover:bg-black hover:bg-opacity-5"
-                                        } cursor-pointer rounded-lg px-4 py-2 text-sm`}
+                                        } cursor-pointer rounded-md px-4 py-2 text-sm`}
                                     >
                                         <span className="block w-full truncate">{item}</span>
                                     </div>

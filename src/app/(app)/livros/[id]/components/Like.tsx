@@ -64,7 +64,7 @@ export function Like({ bookId }: LikeProps) {
             size="sm"
             variant="neobrutalism"
             onClick={handleToggleLikeBook}
-            className={`${like ? "bg-pink-500 text-black enabled:hover:bg-pink-500" : ""}`}
+            className={`${like ? "bg-pink-500 text-black" : ""} hover:bg-pink-500`}
         >
             <Heart size={16} />
             <span className="font-medium">{like ? "Curtido" : "Curtir"}</span>

@@ -32,8 +32,8 @@ export function UserHoverCard({ user }: UserHoverCardProps) {
                     <h4 className="text-sm font-semibold">@{user.username}</h4>
                     <p className="text-sm">{user.description}</p>
                     <div className="flex items-center gap-2 pt-2">
-                        <LinkUnderline href="">
-                            <span className="font-semibold">234</span>
+                        <LinkUnderline href="" className="text-sm">
+                            <span className="mr-1 font-semibold">234</span>
                             <span>livros</span>
                         </LinkUnderline>
                     </div>

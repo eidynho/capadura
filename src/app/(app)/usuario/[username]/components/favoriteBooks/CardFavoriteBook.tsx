@@ -55,7 +55,7 @@ export function CardFavoriteBook({
             <div className="flex h-full w-full flex-1 flex-col justify-between gap-2">
                 <div className="flex w-full items-start justify-between gap-2">
                     <div>
-                        <LinkUnderline href={`/livros/${currentBook.id}`}>
+                        <LinkUnderline href={`/livros/${currentBook.id}`} className="table">
                             <h3
                                 className="font-semibold leading-none tracking-tight"
                                 title={currentBook.title}

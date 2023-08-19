@@ -48,7 +48,7 @@ export default function Loading() {
                 <div className="block md:hidden">{renderHeaderInfo()}</div>
             </div>
 
-            <div className="mt-8 flex flex-col justify-center gap-12 lg:flex-row">
+            <div className="mt-8 flex flex-col justify-center gap-8 lg:flex-row">
                 <div className="flex w-full flex-col gap-12 lg:w-3/5">
                     <div className="flex flex-col">
                         <div className="mb-1 h-6 w-32 items-center rounded-md bg-gray-200"></div>

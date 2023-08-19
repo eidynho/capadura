@@ -165,7 +165,12 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
         setIsFetching(true);
 
         try {
+            if (!bookData) {
+                throw new Error("Failed on update read status: book data not provided.");
+            }
+
             await api.put("/read", {
+                bookId: bookData.id,
                 readId,
                 status,
             });
@@ -398,6 +403,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                     {read.progress?.[0]?.percentage !== 100 && (
                                         <NewReadProgressDialog
                                             readId={read.id}
+                                            bookId={bookData?.id}
                                             bookTitle={bookData?.title}
                                             bookPageCount={bookData?.pageCount ?? 0}
                                             setUserReads={setUserReads}

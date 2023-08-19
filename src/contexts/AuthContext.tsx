@@ -113,7 +113,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 website: data.user.website,
                 twitter: data.user.twitter,
                 imageKey: data.user.imageKey,
-                imageUrl: data.imageUrl,
+                imageUrl: data.user.imageUrl,
             });
 
             router.push("/livros");

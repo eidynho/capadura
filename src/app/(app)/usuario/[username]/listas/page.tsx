@@ -59,7 +59,7 @@ export interface BookListData {
 
 export default function UserLists() {
     const routePathname = usePathname();
-    const username = routePathname.split("/")[routePathname.split("/").length - 2];
+    const username = routePathname.split("/")[2];
 
     const [isMounted, setIsMounted] = useState(false);
     const [isFetching, setIsFetching] = useState(false);

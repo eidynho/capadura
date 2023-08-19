@@ -19,6 +19,7 @@ import {
 
 interface NewReadProgressDialogProps {
     readId: string;
+    bookId?: string;
     bookTitle?: string;
     bookPageCount: number;
     setUserReads: Dispatch<SetStateAction<ReadData[] | null>>;
@@ -26,6 +27,7 @@ interface NewReadProgressDialogProps {
 
 export function NewReadProgressDialog({
     readId,
+    bookId,
     bookTitle,
     bookPageCount,
 
@@ -41,6 +43,7 @@ export function NewReadProgressDialog({
     }: ProgressFormSchema) {
         try {
             const { data } = await api.post<ProgressData>("/progress", {
+                bookId,
                 readId,
                 description,
                 isSpoiler,

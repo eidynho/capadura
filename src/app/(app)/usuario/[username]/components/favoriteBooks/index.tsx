@@ -37,7 +37,7 @@ interface favoriteBooksData {
 
 export function FavoriteBooks() {
     const routePathname = usePathname();
-    const username = routePathname.split("/")[routePathname.split("/").length - 1];
+    const username = routePathname.split("/")[2];
 
     const [isOpen, setIsOpen] = useState(false);
 

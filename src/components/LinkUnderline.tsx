@@ -21,12 +21,8 @@ export function LinkUnderline({
     const Component = asChild ? Slot : Link;
 
     return (
-        <div className="group relative">
-            <Component
-                href={href}
-                target={target}
-                className={twMerge("flex items-center gap-1", className)}
-            >
+        <div className={twMerge("group relative inline-block", className)}>
+            <Component href={href} target={target}>
                 {children}
             </Component>
             <div className="absolute bottom-0 left-0 right-auto top-auto h-[1px] w-0 bg-black transition-all duration-200 will-change-auto group-hover:w-full"></div>

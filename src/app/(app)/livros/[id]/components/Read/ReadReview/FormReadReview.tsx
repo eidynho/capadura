@@ -86,11 +86,16 @@ export function FormReadReview({
 
     async function submitReview({ content, rating, isSpoiler }: ReviewReadFormSchema) {
         try {
+            if (!bookData) {
+                toast.error("Ocorreu um erro ao enviar avaliação.");
+                throw new Error("Failed on submit book review: book data not provided.");
+            }
+
             let newlyCreatedRead = "";
-            if (isReviewWithoutProgress && bookData?.id) {
+            if (isReviewWithoutProgress && bookData.id) {
                 try {
                     const readResponse = await api.post("/read", {
-                        bookId: bookData?.id,
+                        bookId: bookData.id,
                     });
 
                     setUserReads([readResponse.data]);
@@ -101,11 +106,12 @@ export function FormReadReview({
 
                 try {
                     const progressResponse = await api.post("/progress", {
+                        bookId: bookData.id,
                         readId: newlyCreatedRead,
                         isSpoiler: false,
                         pagesCount: 100,
                         countType: "percentage",
-                        bookPageCount: bookData?.pageCount,
+                        bookPageCount: bookData.pageCount,
                     });
 
                     setUserReads((prev) => {
@@ -126,6 +132,7 @@ export function FormReadReview({
             }
 
             await api.put("/read", {
+                bookId: bookData.id,
                 readId: readId ?? newlyCreatedRead,
                 status: "FINISHED",
                 reviewContent: content,

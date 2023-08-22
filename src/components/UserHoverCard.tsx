@@ -16,7 +16,7 @@ export function UserHoverCard({ user }: UserHoverCardProps) {
                 <div className="flex items-center">
                     <Avatar className="h-8 w-8">
                         <AvatarImage src={user.imageUrl} />
-                        <AvatarFallback>{user.username[0].toUpperCase() || "-"}</AvatarFallback>
+                        <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <Button variant="link" size="sm" className="px-2">
                         {user.username}
@@ -26,7 +26,7 @@ export function UserHoverCard({ user }: UserHoverCardProps) {
             <HoverCardContent align="start" className="flex w-80 space-x-4">
                 <Avatar>
                     <AvatarImage src={user.imageUrl} />
-                    <AvatarFallback>{user.username[0]?.toUpperCase() || ""}</AvatarFallback>
+                    <AvatarFallback>{user.username[0]?.toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <div className="space-y-1">
                     <h4 className="text-sm font-semibold">@{user.username}</h4>

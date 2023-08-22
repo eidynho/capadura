@@ -1,18 +1,19 @@
-import { FileText, ImageIcon, MoreVertical } from "lucide-react";
+import Link from "next/link";
 import Image from "next/image";
+import { FileText, ImageIcon, MoreVertical } from "lucide-react";
 
 import { BookData } from "@/app/(app)/livros/[id]/page";
 
+import { publishDateFormat } from "@/utils/publish-date-format";
+
+import { Button } from "@/components/ui/Button";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/DropdownMenu";
-import { Button } from "@/components/ui/Button";
 import { LinkUnderline } from "@/components/LinkUnderline";
-import { publishDateFormat } from "@/utils/publish-date-format";
-import Link from "next/link";
 
 interface CardFavoriteBookProps {
     currentBook: BookData;

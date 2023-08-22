@@ -1,9 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { format, parseISO } from "date-fns";
-import { pt } from "date-fns/locale";
 import { Link as LinkIcon, MapPin, Twitter } from "lucide-react";
 
 import { api } from "@/lib/api";
@@ -13,14 +10,18 @@ import { ProfileData } from "@/contexts/AuthContext";
 import Loading from "./loading";
 import { FavoriteBooks } from "./components/favoriteBooks";
 
-import { Button } from "@/components/ui/Button";
 import { Calendar } from "@/components/ui/Calendar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
 import { LinkUnderline } from "@/components/LinkUnderline";
-import { RatingStars } from "@/components/RatingStars";
 import { Container } from "@/components/layout/Container";
 import { RatingChart } from "@/components/RatingChart";
 import { UserActivities } from "./components/userActivities";
+import { EditProfileButton } from "./components/editProfileButton";
+import { FollowUserButton } from "./components/follows/FollowUserButton";
+import { FollowersDialog } from "./components/follows/FollowersDialog";
+import { FollowingDialog } from "./components/follows/FollowingDialog";
+import { FinishedReads } from "./components/finishedReads";
+import { RecentProgress } from "./components/recentProgress";
 
 export interface UserData {
     user: ProfileData;
@@ -32,6 +33,8 @@ export interface UserData {
         items: ProgressData[];
         total: number;
     };
+    followersCount: number;
+    followingCount: number;
 }
 
 interface MeProps {
@@ -64,6 +67,8 @@ export default function Me({ params }: MeProps) {
             items: [],
             total: 0,
         },
+        followersCount: 0,
+        followingCount: 0,
     });
     const [date, setDate] = useState<Date | undefined>(new Date());
 
@@ -71,23 +76,28 @@ export default function Me({ params }: MeProps) {
         async function fetchUserData() {
             try {
                 setIsMounted(false);
-                const userResponse = await api.get(`/users/${params.username}`);
-                const userId = userResponse.data.id;
+                const user = await api.get(`/users/${params.username}`);
+                const userId = user.data.id;
 
                 const readsPromise = api.get(
                     `/user-reads?userId=${userId}&status=FINISHED&page=1&perPage=3`,
                 );
                 const progressPromise = api.get(`/user-progress/${userId}?page=1&perPage=3`);
 
-                const [readsResponse, progressResponse] = await Promise.all([
+                const countUserFollowsPromise = api.get(`/count-user-follows/${userId}`);
+
+                const [reads, progress, countUserFollows] = await Promise.all([
                     readsPromise,
                     progressPromise,
+                    countUserFollowsPromise,
                 ]);
 
                 setUserData({
-                    user: userResponse.data,
-                    reads: readsResponse.data,
-                    progress: progressResponse.data,
+                    user: user.data,
+                    reads: reads.data,
+                    progress: progress.data,
+                    followersCount: countUserFollows.data.followers,
+                    followingCount: countUserFollows.data.following,
                 });
             } catch (err) {
                 throw new Error("Failed on fetch user data: " + err);
@@ -107,15 +117,19 @@ export default function Me({ params }: MeProps) {
                         <span className="text-zinc-500">livros</span>
                     </LinkUnderline>
 
-                    <LinkUnderline href="">
-                        <span className="mr-1 font-medium">234</span>
-                        <span className="text-zinc-500">seguidores</span>
-                    </LinkUnderline>
+                    {!!userData.user.id && (
+                        <>
+                            <FollowersDialog
+                                userId={userData.user.id}
+                                followersCount={userData.followersCount}
+                            />
 
-                    <LinkUnderline href="">
-                        <span className="mr-1 font-medium">5535</span>
-                        <span className="text-zinc-500">seguindo</span>
-                    </LinkUnderline>
+                            <FollowingDialog
+                                userId={userData.user.id}
+                                followingCount={userData.followingCount}
+                            />
+                        </>
+                    )}
                 </div>
 
                 {userData.user.description && (
@@ -161,6 +175,20 @@ export default function Me({ params }: MeProps) {
         );
     }
 
+    function updateCountUserFollowers(isFollow: boolean) {
+        setUserData((prev) => {
+            const updatedUser = { ...prev };
+
+            if (isFollow) {
+                updatedUser.followersCount++;
+            } else {
+                updatedUser.followersCount--;
+            }
+
+            return updatedUser;
+        });
+    }
+
     // render loading
     if (!isMounted) {
         return <Loading />;
@@ -172,9 +200,7 @@ export default function Me({ params }: MeProps) {
                 <div className="flex items-start gap-8">
                     <Avatar className="h-28 w-28 md:h-40 md:w-40">
                         <AvatarImage src={userData.user.imageUrl} />
-                        <AvatarFallback>
-                            {userData.user.username[0]?.toUpperCase() || ""}
-                        </AvatarFallback>
+                        <AvatarFallback>{userData.user.username[0]?.toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-4 md:flex-row md:items-start">
@@ -184,11 +210,12 @@ export default function Me({ params }: MeProps) {
                                 </h2>
                                 <span className="font-medium">@{userData.user.username}</span>
                             </div>
-                            <Button asChild size="sm" variant="black">
-                                <Link href={`/usuario/${userData.user?.username}/config`}>
-                                    Editar perfil
-                                </Link>
-                            </Button>
+
+                            <EditProfileButton />
+                            <FollowUserButton
+                                profileId={userData.user.id}
+                                updateCountUserFollowers={updateCountUserFollowers}
+                            />
                         </div>
 
                         <div className="hidden md:block">{renderHeaderInfo()}</div>
@@ -202,111 +229,9 @@ export default function Me({ params }: MeProps) {
                 <div className="flex w-full flex-col gap-12 lg:w-3/5">
                     <FavoriteBooks />
 
-                    <div className="flex flex-col">
-                        <h3 className="font-semibold">Leituras finalizadas</h3>
+                    <FinishedReads readsData={userData.reads} />
 
-                        {userData.reads?.items?.length &&
-                            userData.reads.items.map((read) => (
-                                <div className="flex gap-4 border-t border-black/20 py-4 last:border-b">
-                                    <div className="h-28 w-20 rounded-md border border-black"></div>
-                                    <div className="w-full">
-                                        <div className="flex items-start justify-between gap-2">
-                                            <div className="flex items-center gap-2">
-                                                <LinkUnderline
-                                                    href={`/livros/${read.bookId}`}
-                                                    className="font-semibold"
-                                                >
-                                                    {read.book?.title}
-                                                </LinkUnderline>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex items-center">
-                                            {!!read.reviewRating && (
-                                                <RatingStars rating={read.reviewRating} />
-                                            )}
-
-                                            {read.endDate && (
-                                                <div className="ml-3 flex items-center gap-1">
-                                                    <span className="text-sm font-medium">
-                                                        Finalizado em
-                                                    </span>
-                                                    <span className="mt-[2px] text-xs font-semibold text-gray-500">
-                                                        {format(
-                                                            parseISO(read?.endDate.toString()),
-                                                            "dd/MM/yyyy",
-                                                            { locale: pt },
-                                                        )}
-                                                    </span>
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        {read?.reviewContent && (
-                                            <p className="mt-2 text-justify text-sm">
-                                                {read?.reviewContent}
-                                            </p>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
-                    </div>
-
-                    <div className="flex flex-col">
-                        <h3 className="font-semibold">Progressos recentes</h3>
-
-                        {userData.progress?.items?.length &&
-                            userData.progress.items.map((progress) => (
-                                <div className="flex gap-4 border-t border-black/20 py-4 last:border-b">
-                                    <div className="h-28 w-20 rounded-md border border-black"></div>
-                                    <div className="w-full">
-                                        <div className="flex items-start justify-between gap-2">
-                                            <div className="flex items-center gap-2">
-                                                <LinkUnderline
-                                                    href={`/livros/${progress?.read?.bookId}`}
-                                                    className="font-semibold"
-                                                >
-                                                    {progress.read?.book?.title}
-                                                </LinkUnderline>
-                                                <span className="mt-[2px] text-xs font-semibold text-gray-500">
-                                                    {format(
-                                                        parseISO(progress?.createdAt.toString()),
-                                                        "dd/MM/yyyy",
-                                                        { locale: pt },
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        {progress.description && (
-                                            <p className="mt-2 text-justify text-sm">
-                                                {progress.description}
-                                            </p>
-                                        )}
-
-                                        <div className="mt-4 flex items-center">
-                                            <div className="flex items-center gap-1 text-sm font-medium">
-                                                <span>{progress.page}</span>
-                                            </div>
-                                            <div className="relative mx-2 h-5 flex-1 overflow-hidden rounded border-black bg-white dark:bg-gray-700">
-                                                <div
-                                                    className="h-5 bg-pink-500"
-                                                    style={{
-                                                        width: `${progress.percentage}%` ?? 0,
-                                                    }}
-                                                ></div>
-                                                <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-semibold">
-                                                    {`${progress.percentage}%`}
-                                                </span>
-                                            </div>
-                                            <span className="w-8 text-sm font-medium">
-                                                {progress.read?.book?.pageCount}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                    </div>
+                    <RecentProgress progressData={userData.progress} />
                 </div>
 
                 <div className="flex w-full flex-col gap-8 sm:flex-row lg:w-72 lg:flex-col">
@@ -327,9 +252,7 @@ export default function Me({ params }: MeProps) {
 
                     <div className="w-full sm:w-1/2 lg:w-full">
                         <h3 className="font-semibold">Atividades</h3>
-                        {userData.user?.id && (
-                            <UserActivities userId={userData.user.id as string} />
-                        )}
+                        {userData.user.id && <UserActivities userId={userData.user.id as string} />}
                     </div>
                 </div>
             </div>

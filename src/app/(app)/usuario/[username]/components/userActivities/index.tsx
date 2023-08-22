@@ -1,13 +1,16 @@
-import { BookData } from "@/app/(app)/livros/[id]/page";
-import { LinkUnderline } from "@/components/LinkUnderline";
-import { RatingStars } from "@/components/RatingStars";
-import { ProfileData } from "@/contexts/AuthContext";
-import { api } from "@/lib/api";
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { formatDistance } from "date-fns";
 import { pt } from "date-fns/locale";
 import { BookOpen, CircleDashed, CircleSlash, Heart, Star, Undo2 } from "lucide-react";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+
+import { api } from "@/lib/api";
+import { BookData } from "@/app/(app)/livros/[id]/page";
+import { ProfileData } from "@/contexts/AuthContext";
+
+import { RatingStars } from "@/components/RatingStars";
 
 interface userActivityData {
     id: string;

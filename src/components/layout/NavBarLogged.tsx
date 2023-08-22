@@ -152,11 +152,11 @@ export function NavBarLoggedComponent() {
     return (
         <>
             {isMobile ? (
-                <nav className="top-0 z-10 flex w-full items-center justify-between gap-2 border-b border-black bg-primary py-4 text-sm">
+                <nav className="top-0 z-10 flex w-full items-center justify-between gap-2 border-b border-zinc-200 bg-primary py-4 text-sm">
                     <span className="ml-4 inline-block">Contopia</span>
                 </nav>
             ) : (
-                <nav className="flex w-full items-center justify-center gap-2 border-b border-black bg-primary py-4 text-sm">
+                <nav className="flex w-full items-center justify-center gap-2 border-b border-zinc-200 bg-primary py-4 text-sm">
                     <div className="max-w-7xl">
                         <div className="flex w-full items-center justify-between gap-4">
                             <span className="inline-block">Contopia</span>

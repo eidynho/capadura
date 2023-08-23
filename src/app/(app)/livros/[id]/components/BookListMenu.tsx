@@ -1,14 +1,18 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { ChevronDown, Check, List } from "lucide-react";
 import { toast } from "react-toastify";
 
-import { api } from "@/lib/api";
 import { BookData } from "../page";
 import { AuthContext } from "@/contexts/AuthContext";
 
-import { BookListData, BookOnBookList } from "@/app/(app)/usuario/[username]/listas/page";
+import { useFetchBookLists } from "@/endpoints/queries/bookListsQueries";
+import {
+    useAddBookToABookListMutation,
+    useCreateBookListMutation,
+    useRemoveBookFromBookListMutation,
+} from "@/endpoints/mutations/bookListsMutations";
 
 import { Button } from "@/components/ui/Button";
 import {
@@ -26,109 +30,71 @@ interface BookListMenuProps {
 
 export function BookListMenu({ bookData }: BookListMenuProps) {
     const { user } = useContext(AuthContext);
+    if (!user) return null;
 
     const [isOpen, setIsOpen] = useState(false);
-    const [bookLists, setBookLists] = useState<BookListData[] | null>(null);
 
-    useEffect(() => {
-        async function getUserBookList() {
-            if (!user) return;
+    const { data: bookLists, isFetching } = useFetchBookLists({
+        userId: user.id,
+        bookId: bookData.id,
+        enabled: isOpen,
+    });
+    const createBookList = useCreateBookListMutation();
+    const addBookToABookList = useAddBookToABookListMutation();
+    const removeBookFromBookList = useRemoveBookFromBookListMutation();
 
-            try {
-                const { data } = await api.get<BookListData[]>(
-                    `/booklists/user/${user.id}?bookId=${bookData.id}`,
-                );
-
-                setBookLists(data);
-            } catch (err) {
-                toast.error("Erro ao buscar listas.");
-            }
+    function handleCreateBookList() {
+        if (!user) {
+            toast.error("Usuário não encontrado.");
+            return;
         }
-        getUserBookList();
-    }, [isOpen]);
 
-    async function createBookList() {
-        try {
-            const countBookLists = bookLists?.length || 0;
-
-            const { data } = await api.post("/booklists", {
-                name: `Lista ${countBookLists + 1}`,
-            });
-
-            setBookLists((prev) => {
-                if (!prev) return null;
-
-                const updatedBookList = [...prev];
-                updatedBookList.unshift(data);
-
-                return updatedBookList;
-            });
-        } catch (err) {
-            toast.error("Erro ao criar lista.");
-        }
+        createBookList.mutate({
+            userId: user.id,
+            bookId: bookData.id,
+            currentBooklistCount: bookLists?.length || 0,
+        });
     }
 
-    async function toggleBookIntoBookList(bookList: BookListData, bookOnBookList?: BookOnBookList) {
-        try {
-            if (!!bookOnBookList) {
-                await api.delete(`/books-on-booklists/${bookOnBookList.id}`);
-
-                setBookLists((prev) => {
-                    if (!prev) return null;
-
-                    const updatedBookList = [...prev];
-                    const bookListToUpdate = updatedBookList.find(
-                        (item) => item.id === bookList.id,
-                    );
-
-                    if (!bookListToUpdate) return updatedBookList;
-
-                    const bookOnBookList = bookListToUpdate.books.find(
-                        (item) => item.bookId === bookData.id,
-                    );
-
-                    if (bookOnBookList) {
-                        bookListToUpdate.books = bookListToUpdate.books.filter(
-                            (item) => item.bookId !== bookData.id,
-                        );
-                    }
-
-                    return updatedBookList;
-                });
-            } else {
-                const { data } = await api.post<BookOnBookList>("/books-on-booklists", {
-                    bookId: bookData.id,
-                    bookListId: bookList.id,
-                });
-
-                setBookLists((prev) => {
-                    if (!prev) return null;
-
-                    const updatedBookList = [...prev];
-                    const bookListToUpdate = updatedBookList.find(
-                        (item) => item.id === bookList.id,
-                    );
-
-                    if (!bookListToUpdate) return updatedBookList;
-
-                    if (!bookListToUpdate.books) {
-                        bookListToUpdate.books = [];
-                    }
-
-                    bookListToUpdate.books.unshift(data);
-
-                    return updatedBookList;
-                });
-            }
-        } catch (err) {
-            toast.error("Erro ao criar lista.");
+    function handleAddBookToABookList(bookListId: string) {
+        if (!user) {
+            toast.error("Usuário não encontrado.");
+            return;
         }
+
+        addBookToABookList.mutate({
+            userId: user.id,
+            bookId: bookData.id,
+            bookListId: bookListId,
+        });
+    }
+
+    function handleRemoveBookFromBookList(bookListId: string, bookOnBookListId: string) {
+        if (!user) {
+            toast.error("Usuário não encontrado.");
+            return;
+        }
+
+        removeBookFromBookList.mutate({
+            userId: user.id,
+            bookId: bookData.id,
+            bookListId: bookListId,
+            bookOnBookListId,
+        });
     }
 
     function renderBookLists() {
         return (
             <>
-                {bookLists?.length ? (
+                {isFetching ? (
+                    <div className="flex flex-col gap-1">
+                        {Array.from({ length: 4 }, (_, index) => (
+                            <div key={index} className="py-1 pl-6">
+                                <div className="h-5 w-32 animate-pulse rounded-md bg-gray-200 pl-6"></div>
+                            </div>
+                        ))}
+                    </div>
+                ) : bookLists?.length ? (
                     bookLists.map((bookList) => {
                         const bookOnBookList = bookList.books?.find(
                             (bookOnBookList) => bookOnBookList.bookId === bookData.id,
@@ -136,7 +102,14 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
                         return (
                             <DropdownMenuItem
                                 key={bookList.id}
-                                onClick={() => toggleBookIntoBookList(bookList, bookOnBookList)}
+                                onClick={() =>
+                                    bookOnBookList
+                                        ? handleRemoveBookFromBookList(
+                                              bookList.id,
+                                              bookOnBookList.id,
+                                          )
+                                        : handleAddBookToABookList(bookList.id)
+                                }
                                 className="relative pl-6"
                             >
                                 <span className="w-full truncate">{bookList.name}</span>
@@ -163,8 +136,8 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
                         );
                     })
                 ) : (
-                    <div className="mx-5">
-                        <span>Nenhuma lista encontrada.</span>
+                    <div className="mx-5 py-4">
+                        <span className="text-sm">Nenhuma lista encontrada.</span>
                     </div>
                 )}
             </>
@@ -181,7 +154,10 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="max-h-72 w-56 overflow-auto">
-                <DropdownMenuItem onClick={createBookList} className="pl-6 focus:bg-green-500/20">
+                <DropdownMenuItem
+                    onClick={handleCreateBookList}
+                    className="pl-6 focus:bg-green-500/20"
+                >
                     Criar lista
                 </DropdownMenuItem>
 

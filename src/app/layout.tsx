@@ -1,11 +1,11 @@
 "use client";
 
+import "@/styles/global.css";
 import { ReactNode } from "react";
 import { Manrope } from "@next/font/google";
 
-import { AuthProvider } from "@/contexts/AuthContext";
+import { Providers } from "@/contexts/Providers";
 
-import "@/styles/global.css";
 import { NavBarLoggedComponent } from "@/components/layout/NavBarLogged";
 import { MainContainer } from "@/components/layout/MainContainer";
 
@@ -33,7 +33,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             </head>
             <body className="bg-white transition-colors dark:bg-black">
                 <div className={`${manrope.variable} mx-auto max-w-[120rem] font-manrope`}>
-                    <AuthProvider>
+                    <Providers>
                         <div className="flex flex-col">
                             <NavBarLoggedComponent />
                             <MainContainer>{children}</MainContainer>
@@ -52,7 +52,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                                 theme="light"
                             />
                         </div>
-                    </AuthProvider>
+                    </Providers>
                 </div>
             </body>
         </html>

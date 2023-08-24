@@ -1,5 +1,5 @@
 import { Star, StarHalf } from "phosphor-react";
-import { twMerge } from "tailwind-merge";
+import { cn } from "@/utils/cn";
 
 interface RatingStarsProps {
     rating: number;
@@ -20,7 +20,7 @@ export function RatingStars({ rating, size = 16, className }: RatingStarsProps) 
     };
 
     return (
-        <div className={twMerge("inline-flex items-center", className)}>
+        <div className={cn("inline-flex items-center", className)}>
             {renderIntegerStars()}
             {!isInteger && <StarHalf size={size} weight="fill" />}
         </div>

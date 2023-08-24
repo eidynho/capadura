@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { isValid, parse } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 
-import { api } from "@/lib/api";
 import { BookDataFromGoogle, GoogleAPIData } from "@/components/ApplicationSearch";
 import { BookData } from "@/app/(app)/livros/[id]/page";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -13,8 +13,16 @@ import { useDidMountEffect } from "@/hooks/useDidMountEffect";
 import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";
 import { fetchGoogleBooks } from "@/utils/fetch-google-books";
 
-import { CardFavoriteBook } from "./CardFavoriteBook";
+import { useFetchUserFavoriteBooks } from "@/endpoints/queries/favoriteBooksQueries";
+import {
+    useCreateFavoriteBook,
+    useRemoveFavoriteBook,
+    useUpdateFavoriteBook,
+} from "@/endpoints/mutations/favoriteBooksMutations";
+
+import { BookSearchItem } from "@/components/BookSearchItem";
 import { Button } from "@/components/ui/Button";
+import { CardFavoriteBook } from "./CardFavoriteBook";
 import { Command, CommandInput, CommandItem, CommandList } from "@/components/ui/Command";
 import {
     Dialog,
@@ -23,17 +31,6 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/Dialog";
-import { BookSearchItem } from "@/components/BookSearchItem";
-import { isValid, parse } from "date-fns";
-
-interface favoriteBooksData {
-    id: string;
-    order: number;
-    bookId: string;
-    book: BookData;
-    updatedAt: Date | string;
-    userId: string;
-}
 
 export function FavoriteBooks() {
     const routePathname = usePathname();
@@ -41,7 +38,7 @@ export function FavoriteBooks() {
 
     const [isOpen, setIsOpen] = useState(false);
 
-    const [isLoading, setIsLoading] = useState(false);
+    // const [isLoading, setIsLoading] = useState(false);
     const [isFetchingBooks, setIsFetchingBooks] = useState(false);
 
     const [currentBook, setCurrentBook] = useState<BookData | null>(null);
@@ -50,35 +47,16 @@ export function FavoriteBooks() {
         items: [],
         totalItems: 0,
     });
-    const [favoriteBooks, setFavoriteBooks] = useState<(favoriteBooksData | null)[]>([
-        null,
-        null,
-        null,
-        null,
-    ]);
 
     const [searchName, setSearchName] = useState("");
     const debouncedSearchName = useDebounce<string>(searchName, 400);
 
     const isCurrentUser = isPageUserSameCurrentUser(username);
-    const noFavoriteBook = favoriteBooks.every((item) => item === null);
 
-    useEffect(() => {
-        async function getUserFavoriteBooks() {
-            const { data } = await api.get<favoriteBooksData[]>(`/favorite-books/user/${username}`);
-            setFavoriteBooks((prev) => {
-                const updatedFavoriteBooks = [...prev];
-
-                data.forEach((item) => {
-                    const index = item.order - 1;
-                    updatedFavoriteBooks[index] = item;
-                });
-
-                return updatedFavoriteBooks;
-            });
-        }
-        getUserFavoriteBooks();
-    }, []);
+    const { data: favoriteBooks, isFetched } = useFetchUserFavoriteBooks({
+        username,
+        enabled: !!username,
+    });
 
     useEffect(() => {
         if (isOpen) return;
@@ -121,7 +99,7 @@ export function FavoriteBooks() {
     }, [debouncedSearchName]);
 
     function openFavoriteBookDialog(order: number, isFavoriteBookFilled = false) {
-        if (!isCurrentUser) return;
+        if (!isCurrentUser || favoriteBooks === undefined) return;
 
         setIsOpen(true);
         setCurrentOrderPosition(order);
@@ -150,70 +128,54 @@ export function FavoriteBooks() {
         setSearchName("");
     }
 
+    const createFavoriteBook = useCreateFavoriteBook();
+    const updateFavoriteBook = useUpdateFavoriteBook();
+    const isLoading = createFavoriteBook.isLoading || updateFavoriteBook.isLoading;
+
     async function saveFavoriteBook() {
-        if (isLoading || !isCurrentUser || !currentBook?.id) return;
+        if (isLoading || !isCurrentUser || !currentBook?.id || favoriteBooks === undefined) return;
 
-        try {
-            setIsLoading(true);
+        const params = {
+            username,
+            order: currentOrderPosition,
+            bookId: currentBook.id,
+        };
 
-            const favoriteBookWithSameOrder = favoriteBooks.find(
-                (item) => item?.order === currentOrderPosition,
-            );
+        const favoriteBookWithSameOrder = favoriteBooks.find(
+            (item) => item?.order === currentOrderPosition,
+        );
 
-            const method = !!favoriteBookWithSameOrder ? "put" : "post";
-
-            const { data } = await api[method]("/favorite-books", {
-                favoriteBookId: method === "put" ? favoriteBookWithSameOrder?.id : undefined,
-                order: currentOrderPosition,
-                bookId: currentBook.id,
+        if (favoriteBookWithSameOrder) {
+            await updateFavoriteBook.mutateAsync({
+                ...params,
+                favoriteBookId: favoriteBookWithSameOrder.id,
             });
-
-            setFavoriteBooks((prev) => {
-                const favoriteBookToUpdate = [...prev];
-
-                const index = currentOrderPosition - 1;
-                favoriteBookToUpdate[index] = data;
-
-                return favoriteBookToUpdate;
-            });
-
-            toast.success("O livro favorito foi atualizado.");
-            setIsOpen(false);
-        } catch (err) {
-            toast.error("Erro ao salvar o livro favorito.");
-            throw new Error("Failed on save favorite book.");
-        } finally {
-            setIsLoading(false);
+        } else {
+            await createFavoriteBook.mutateAsync(params);
         }
+
+        setIsOpen(false);
     }
 
-    async function removeFavoriteBook(order: number) {
+    const removeFavoriteBook = useRemoveFavoriteBook();
+    async function handleRemoveFavoriteBook(order: number) {
+        if (favoriteBooks === undefined) return;
+
         const index = order - 1;
         const bookToRemove = favoriteBooks[index];
 
         if (isLoading || !isCurrentUser || !bookToRemove) return;
 
-        try {
-            setIsLoading(true);
-
-            await api.delete(`/favorite-books/${bookToRemove.id}`);
-
-            setFavoriteBooks((prev) => {
-                const favoriteBookToUpdate = [...prev];
-
-                favoriteBookToUpdate[index] = null;
-
-                return favoriteBookToUpdate;
-            });
-
-            toast.success("O livro favorito foi removido.");
-        } catch (err) {
-            toast.error("Erro ao remover o livro favorito.");
-            throw new Error("Failed on remove favorite book.");
-        } finally {
-            setIsLoading(false);
-        }
+        await removeFavoriteBook.mutateAsync({
+            username,
+            indexToRemove: index,
+            bookIdToRemove: bookToRemove.id,
+        });
     }
+
+    if (!isFetched || favoriteBooks === undefined) return;
+
+    const noFavoriteBook = favoriteBooks.every((item) => item === null);
 
     return (
         <>
@@ -245,7 +207,7 @@ export function FavoriteBooks() {
                                     showMenu={isCurrentUser}
                                     order={index + 1}
                                     openFavoriteBookDialog={openFavoriteBookDialog}
-                                    removeFavoriteBook={removeFavoriteBook}
+                                    removeFavoriteBook={handleRemoveFavoriteBook}
                                 />
                             ) : (
                                 isCurrentUser && (

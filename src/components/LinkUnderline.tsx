@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import Link from "next/link";
 import { Slot } from "@radix-ui/react-slot";
-import { twMerge } from "tailwind-merge";
+import { cn } from "@/utils/cn";
 
 interface LinkUnderlineProps {
     asChild?: boolean;
@@ -21,7 +21,7 @@ export function LinkUnderline({
     const Component = asChild ? Slot : Link;
 
     return (
-        <div className={twMerge("group relative inline-block", className)}>
+        <div className={cn("group relative inline-block", className)}>
             <Component href={href} target={target}>
                 {children}
             </Component>

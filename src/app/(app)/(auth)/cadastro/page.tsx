@@ -9,6 +9,8 @@ import { api } from "@/lib/api";
 import { AuthContext } from "@/contexts/AuthContext";
 import getGoogleOAuthURL from "@/utils/get-google-url";
 
+import { useRegisterUser } from "@/endpoints/mutations/usersMutations";
+
 import { Button } from "@/components/ui/Button";
 
 export default function SignUp() {
@@ -17,9 +19,10 @@ export default function SignUp() {
     const { register, handleSubmit } = useForm();
     const { signIn } = useContext(AuthContext);
 
+    const registerUser = useRegisterUser();
     async function handleSignUp({ username, email, password }: FieldValues) {
         try {
-            await api.post("/users", {
+            await registerUser.mutateAsync({
                 username,
                 email,
                 password,

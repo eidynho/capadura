@@ -1,5 +1,5 @@
 import { HTMLAttributes } from "react";
-import { twMerge } from "tailwind-merge";
+import { cn } from "@/utils/cn";
 
 interface TitleProps extends HTMLAttributes<HTMLHeadingElement> {
     className?: string;
@@ -8,7 +8,7 @@ interface TitleProps extends HTMLAttributes<HTMLHeadingElement> {
 
 export function Title({ className, children }: TitleProps) {
     return (
-        <h1 className={twMerge("text-2xl font-bold leading-relaxed tracking-tight", className)}>
+        <h1 className={cn("text-2xl font-bold leading-relaxed tracking-tight", className)}>
             {children}
         </h1>
     );

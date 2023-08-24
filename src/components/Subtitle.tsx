@@ -1,5 +1,5 @@
 import { HTMLAttributes } from "react";
-import { twMerge } from "tailwind-merge";
+import { cn } from "@/utils/cn";
 
 interface SubtitleProps extends HTMLAttributes<HTMLHeadingElement> {
     className?: string;
@@ -7,5 +7,5 @@ interface SubtitleProps extends HTMLAttributes<HTMLHeadingElement> {
 }
 
 export function Subtitle({ className, children }: SubtitleProps) {
-    return <p className={twMerge("text-zinc-500", className)}>{children}</p>;
+    return <p className={cn("text-zinc-500", className)}>{children}</p>;
 }

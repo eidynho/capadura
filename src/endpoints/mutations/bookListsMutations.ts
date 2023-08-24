@@ -3,28 +3,27 @@ import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";
 
-import { BookListData, BookOnBookList } from "@/app/(app)/usuario/[username]/listas/page";
+import { BookListData } from "@/app/(app)/usuario/[username]/listas/page";
 
-export interface UseCreateBookListMutationProps {
+export interface UseCreateBookListProps {
     userId: string;
-    bookId: string;
     currentBooklistCount: number;
 }
 
-export function useCreateBookListMutation() {
+export function useCreateBookList() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async ({ currentBooklistCount }: UseCreateBookListMutationProps) => {
+        mutationFn: async ({ currentBooklistCount }: UseCreateBookListProps) => {
             const { data } = await api.post("/booklists", {
                 name: `Lista ${currentBooklistCount + 1}`,
             });
 
             return data;
         },
-        onSuccess: (newBookList, { userId, bookId }) => {
+        onSuccess: (newBookList, { userId }) => {
             queryClient.setQueryData<BookListData[]>(
-                ["fetchBookLists", { userId, bookId }],
+                ["fetchUserBookLists", { userId }],
                 (prevData) => {
                     return [newBookList, ...(prevData || [])];
                 },
@@ -36,88 +35,92 @@ export function useCreateBookListMutation() {
     });
 }
 
-export interface UseAddBookToABookListMutationProps {
+interface UseUpdateBookListProps {
     userId: string;
-    bookId: string;
+    activeBookList: number;
     bookListId: string;
+    name: string;
+    description?: string;
+    image?: any;
 }
 
-export function useAddBookToABookListMutation() {
+export function useUpdateBookList() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async ({ bookId, bookListId }: UseAddBookToABookListMutationProps) => {
-            const { data } = await api.post<BookOnBookList>("/books-on-booklists", {
-                bookId,
+        mutationFn: async ({ bookListId, name, description, image }: UseUpdateBookListProps) => {
+            const { data } = await api.putForm("/booklists", {
                 bookListId,
+                name,
+                description,
+                image,
             });
 
             return data;
         },
-        onSuccess: (newBookList, { userId, bookId, bookListId }) => {
+        onSuccess: (newBookList, { userId, activeBookList, name, description, image }) => {
+            // user lists page - booklist details
             queryClient.setQueryData<BookListData[]>(
-                ["fetchBookLists", { userId, bookId }],
+                ["fetchUserBookLists", { userId }],
                 (prevData) => {
-                    const updatedBookList = [...(prevData || [])];
-                    const bookListToUpdate = updatedBookList.find((item) => item.id === bookListId);
+                    const updatedBookLists = [...(prevData || [])];
 
-                    if (!bookListToUpdate) return updatedBookList;
+                    updatedBookLists[activeBookList].name = name;
 
-                    if (!bookListToUpdate.books) {
-                        bookListToUpdate.books = [];
+                    if (description) {
+                        updatedBookLists[activeBookList].description = description;
                     }
 
-                    bookListToUpdate.books.unshift(newBookList);
+                    if (image) {
+                        updatedBookLists[activeBookList].imageUrl = newBookList.imageUrl;
+                    }
 
-                    return updatedBookList;
+                    return updatedBookLists;
                 },
             );
+
+            // booklists dropdown in book page (add check icon)
+            queryClient.invalidateQueries({
+                queryKey: ["fetchUserBookListsIncludeBook", { userId }],
+                refetchType: "none",
+            });
+
+            toast.success("Lista atualizada com sucesso.");
         },
         onError: () => {
-            toast.error("Erro ao adicionar livro na lista.");
+            toast.error("Erro ao atualizar a lista.");
         },
     });
 }
 
-export interface UseRemoveBookFromBookListMutationProps {
+interface UseDeleteBookListProps {
     userId: string;
-    bookId: string;
     bookListId: string;
-    bookOnBookListId: string;
 }
 
-export function useRemoveBookFromBookListMutation() {
+export function useDeleteBookList() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async ({ bookOnBookListId }: UseRemoveBookFromBookListMutationProps) => {
-            await api.delete(`/books-on-booklists/${bookOnBookListId}`);
+        mutationFn: async ({ bookListId }: UseDeleteBookListProps) => {
+            await api.delete(`/booklists/${bookListId}`);
         },
-        onSuccess: (_, { userId, bookId, bookListId }) => {
+        onSuccess: (_, { userId, bookListId }) => {
+            // user lists page
             queryClient.setQueryData<BookListData[]>(
-                ["fetchBookLists", { userId, bookId }],
+                ["fetchUserBookLists", { userId }],
                 (prevData) => {
-                    const updatedBookList = [...(prevData || [])];
-                    const bookListToUpdate = updatedBookList.find((item) => item.id === bookListId);
+                    const updatedBookLists = [...(prevData || [])];
 
-                    if (!bookListToUpdate) return updatedBookList;
-
-                    const bookOnBookList = bookListToUpdate.books.find(
-                        (item) => item.bookId === bookId,
-                    );
-
-                    if (bookOnBookList) {
-                        bookListToUpdate.books = bookListToUpdate.books.filter(
-                            (item) => item.bookId !== bookId,
-                        );
-                    }
-
-                    return updatedBookList;
+                    return updatedBookLists.filter((item) => item.id !== bookListId);
                 },
             );
-        },
-        onError: () => {
-            toast.error("Erro ao adicionar livro na lista.");
+
+            // booklists dropdown in book page
+            queryClient.invalidateQueries({
+                queryKey: ["fetchUserBookListsIncludeBook", { userId }],
+                refetchType: "none",
+            });
         },
     });
 }

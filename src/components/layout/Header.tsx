@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 import { NavBarComponent } from "./NavBar";
-import { Button } from "../Button";
+import { Button } from "@/components/ui/Button";
 
 export function Header() {
     return (
@@ -55,10 +55,10 @@ export function Header() {
                                 Junte-se a nós!
                             </p>
                             <div className="mt-10 flex items-center justify-center gap-x-6">
-                                <Button asChild>
-                                    <Link href="/cadastro">Criar conta</Link>
+                                <Button asChild size="md" variant="black">
+                                    <Link href="/cadastro">Começar agora</Link>
                                 </Button>
-                                <Button asChild>
+                                <Button asChild size="md" variant="outline">
                                     <Link href="/entrar">
                                         Fazer login <span aria-hidden="true">→</span>
                                     </Link>

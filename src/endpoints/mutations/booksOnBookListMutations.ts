@@ -1,0 +1,120 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+
+import { api } from "@/lib/api";
+
+import {
+    BookListData,
+    BookOnBookList,
+    BookOnBookListWithBook,
+} from "@/app/(app)/usuario/[username]/listas/page";
+
+export interface UseAddBookToABookListProps {
+    userId: string;
+    bookId: string;
+    bookListId: string;
+}
+
+export function useAddBookToABookList() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({ bookId, bookListId }: UseAddBookToABookListProps) => {
+            const { data } = await api.post<BookOnBookList>("/books-on-booklists", {
+                bookId,
+                bookListId,
+            });
+
+            return data;
+        },
+        onSuccess: (newBook, { userId, bookId, bookListId }) => {
+            // booklists dropdown in book page (add check icon)
+            queryClient.setQueryData<BookListData[]>(
+                ["fetchUserBookListsIncludeBook", { userId, bookId }],
+                (prevData) => {
+                    const updatedBookList = [...(prevData || [])];
+                    const bookListToUpdate = updatedBookList.find((item) => item.id === bookListId);
+
+                    if (!bookListToUpdate) return updatedBookList;
+
+                    if (!bookListToUpdate.books) {
+                        bookListToUpdate.books = [];
+                    }
+
+                    bookListToUpdate.books.unshift(newBook);
+
+                    return updatedBookList;
+                },
+            );
+
+            // user lists page in books on booklist table
+            queryClient.invalidateQueries({
+                queryKey: ["fetchBooksOnBookList", { bookListId }],
+                refetchType: "none",
+            });
+        },
+        onError: () => {
+            toast.error("Erro ao adicionar livro na lista.");
+        },
+    });
+}
+
+export interface UseRemoveBookFromBookListProps {
+    userId?: string;
+    bookId: string;
+    bookListId?: string;
+    bookOnBookListId: string;
+}
+
+export function useRemoveBookFromBookList() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({ bookOnBookListId }: UseRemoveBookFromBookListProps) => {
+            await api.delete(`/books-on-booklists/${bookOnBookListId}`);
+        },
+        onSuccess: (_, { userId, bookId, bookListId }) => {
+            // booklists dropdown in book page (remove check icon)
+            if (userId) {
+                queryClient.setQueryData<BookListData[]>(
+                    ["fetchUserBookListsIncludeBook", { userId, bookId }],
+                    (prevData) => {
+                        const updatedBookList = [...(prevData || [])];
+                        const bookListToUpdate = updatedBookList.find(
+                            (item) => item.id === bookListId,
+                        );
+
+                        if (!bookListToUpdate) return updatedBookList;
+
+                        const bookOnBookList = bookListToUpdate.books.find(
+                            (item) => item.bookId === bookId,
+                        );
+
+                        if (bookOnBookList) {
+                            bookListToUpdate.books = bookListToUpdate.books.filter(
+                                (item) => item.bookId !== bookId,
+                            );
+                        }
+
+                        return updatedBookList;
+                    },
+                );
+            }
+
+            // user lists page in books on booklist table
+            queryClient.setQueryData<BookOnBookListWithBook[]>(
+                ["fetchBooksOnBookList", { bookListId }],
+                (prevData) => {
+                    const updatedBooksOnBookList = [...(prevData || [])];
+
+                    return updatedBooksOnBookList.filter(
+                        (booksOnBookList) => booksOnBookList.bookId !== bookId,
+                    );
+                },
+            );
+        },
+        onError: () => {
+            toast.error("Erro ao remover livro da lista.");
+        },
+    });
+}

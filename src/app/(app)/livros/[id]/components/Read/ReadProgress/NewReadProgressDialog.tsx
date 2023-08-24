@@ -1,11 +1,9 @@
 "use client";
 
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { BadgePlus } from "lucide-react";
-import { toast } from "react-toastify";
 
-import { api } from "@/lib/api";
-import { ProgressData, ReadData } from "@/app/(app)/livros/[id]/page";
+import { HandleAddNewProgressProps } from "../ReadReview/FormReadReview";
 
 import { FormReadProgress, ProgressFormSchema } from "./FormReadProgress";
 import { Button } from "@/components/ui/Button";
@@ -19,19 +17,16 @@ import {
 
 interface NewReadProgressDialogProps {
     readId: string;
-    bookId?: string;
     bookTitle?: string;
     bookPageCount: number;
-    setUserReads: Dispatch<SetStateAction<ReadData[] | null>>;
+    handleAddNewProgress: (data: HandleAddNewProgressProps) => Promise<void>;
 }
 
 export function NewReadProgressDialog({
     readId,
-    bookId,
     bookTitle,
     bookPageCount,
-
-    setUserReads,
+    handleAddNewProgress,
 }: NewReadProgressDialogProps) {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -42,8 +37,7 @@ export function NewReadProgressDialog({
         countType,
     }: ProgressFormSchema) {
         try {
-            const { data } = await api.post<ProgressData>("/progress", {
-                bookId,
+            await handleAddNewProgress({
                 readId,
                 description,
                 isSpoiler,
@@ -52,31 +46,8 @@ export function NewReadProgressDialog({
                 bookPageCount,
             });
 
-            setUserReads((prev) => {
-                if (!prev) return null;
-
-                const updatedReads = [...prev];
-
-                const read = updatedReads.find((read) => read.id === readId);
-                if (read) {
-                    if (!read.progress) {
-                        read.progress = [];
-                    }
-
-                    if (read.progress.length === 3) {
-                        read.progress.pop();
-                    }
-
-                    read.progress.unshift(data);
-                }
-
-                return updatedReads;
-            });
-
-            toast.success("Progresso adicionado.");
             setIsOpen(false);
         } catch (err) {
-            toast.error("Erro ao adicionar um novo progresso.");
             throw err;
         }
     }

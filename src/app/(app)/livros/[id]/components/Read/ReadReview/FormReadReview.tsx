@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -8,9 +8,8 @@ import { Star, StarHalf } from "phosphor-react";
 import { Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 
-import { BookData, ReadData } from "@/app/(app)/livros/[id]/page";
+import { BookData } from "@/app/(app)/livros/[id]/page";
 
-import { api } from "@/lib/api";
 import { ratingFormat } from "@/utils/rating-format";
 
 import { Button } from "@/components/ui/Button";
@@ -23,11 +22,31 @@ const readReviewFormSchema = z.object({
     isSpoiler: z.boolean().default(false),
 });
 
+export interface HandleAddNewProgressProps {
+    readId: string;
+    description?: string;
+    isSpoiler: boolean;
+    pagesCount: number;
+    countType: "page" | "percentage";
+    bookPageCount: number;
+}
+
+export interface HandleUpdateReadProps {
+    readId: string;
+    status: string;
+    reviewContent?: string;
+    reviewRating: number | null;
+    reviewIsSpoiler: boolean;
+    endRead: boolean;
+}
+
 type ReviewReadFormSchema = z.infer<typeof readReviewFormSchema>;
 
 interface FormReadReviewProps {
     readId?: string;
-    setUserReads: Dispatch<SetStateAction<ReadData[] | null>>;
+    handleStartNewRead: () => Promise<string | undefined>;
+    handleUpdateRead: (data: HandleUpdateReadProps) => Promise<void>;
+    handleAddNewProgress: (data: HandleAddNewProgressProps) => Promise<void>;
     isReviewWithoutProgress?: boolean;
     bookData: BookData | null;
     executeOnSubmit: () => void;
@@ -41,7 +60,9 @@ interface FormReadReviewProps {
 
 export function FormReadReview({
     readId,
-    setUserReads,
+    handleStartNewRead,
+    handleUpdateRead,
+    handleAddNewProgress,
     isReviewWithoutProgress,
     bookData,
     executeOnSubmit,
@@ -86,76 +107,32 @@ export function FormReadReview({
 
     async function submitReview({ content, rating, isSpoiler }: ReviewReadFormSchema) {
         try {
-            if (!bookData) {
+            if (!bookData?.id) {
                 toast.error("Ocorreu um erro ao enviar avaliação.");
                 throw new Error("Failed on submit book review: book data not provided.");
             }
 
-            let newlyCreatedRead = "";
-            if (isReviewWithoutProgress && bookData.id) {
-                try {
-                    const readResponse = await api.post("/read", {
-                        bookId: bookData.id,
-                    });
+            let newlyCreatedRead: string | undefined = "";
+            if (isReviewWithoutProgress) {
+                const createdReadId = await handleStartNewRead();
+                newlyCreatedRead = createdReadId;
 
-                    setUserReads([readResponse.data]);
-                    newlyCreatedRead = readResponse.data.id;
-                } catch (err) {
-                    throw err;
-                }
-
-                try {
-                    const progressResponse = await api.post("/progress", {
-                        bookId: bookData.id,
-                        readId: newlyCreatedRead,
-                        isSpoiler: false,
-                        pagesCount: 100,
-                        countType: "percentage",
-                        bookPageCount: bookData.pageCount,
-                    });
-
-                    setUserReads((prev) => {
-                        if (!prev) return null;
-
-                        const updatedReads = [...prev];
-
-                        const read = updatedReads.find((read) => read.id === newlyCreatedRead);
-                        if (read) {
-                            read.progress = [progressResponse.data];
-                        }
-
-                        return updatedReads;
-                    });
-                } catch (err) {
-                    throw err;
-                }
+                await handleAddNewProgress({
+                    readId: newlyCreatedRead as string,
+                    isSpoiler: false,
+                    pagesCount: 100,
+                    countType: "percentage",
+                    bookPageCount: bookData.pageCount || 0,
+                });
             }
 
-            await api.put("/read", {
-                bookId: bookData.id,
-                readId: readId ?? newlyCreatedRead,
+            await handleUpdateRead({
+                readId: (readId ?? newlyCreatedRead) as string,
                 status: "FINISHED",
                 reviewContent: content,
                 reviewRating: rating,
                 reviewIsSpoiler: isSpoiler,
                 endRead: !editData,
-            });
-
-            setUserReads((prev) => {
-                if (!prev) return null;
-
-                const updatedReads = [...prev];
-
-                const read = updatedReads.find((read) => read.id === (readId ?? newlyCreatedRead));
-                if (read) {
-                    read.status = "FINISHED";
-                    read.reviewContent = content ?? null;
-                    read.reviewRating = rating;
-                    read.reviewIsSpoiler = isSpoiler;
-                    read.endDate = new Date().toISOString();
-                }
-
-                return updatedReads;
             });
 
             toast.success("Avalição adicionada.");

@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import axios from "axios";
-import { ArrowLeft, ArrowRight, BookOpen, ImageOff, User } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, ImageOff, Search, User } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { useDebounce } from "@/hooks/useDebounce";
@@ -14,8 +13,8 @@ import { GoogleAPIData } from "@/components/ApplicationSearch";
 
 import { Container } from "@/components/layout/Container";
 import { Title } from "@/components/Title";
-import { InputTextSearch } from "@/components/InputText";
 import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 
 export default function Books() {
     const [isLoading, setIsFetchingBooks] = useState(true);
@@ -62,14 +61,24 @@ export default function Books() {
             <div className="flex flex-col justify-center">
                 <Title>Biblioteca</Title>
 
-                <div className="relative w-full overflow-x-auto sm:rounded-md">
-                    <InputTextSearch
-                        id="search-books"
-                        label="Procurar livros"
-                        placeholder="Buscar pelo nome"
-                        onChange={(e) => setSearchName(e.target.value)}
-                        className="mb-4"
-                    />
+                <div className="w-full overflow-x-auto sm:rounded-md">
+                    <div className="mb-4">
+                        <label htmlFor="search-books" className="sr-only">
+                            Procurar livros
+                        </label>
+                        <div className="relative">
+                            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                <Search size={18} className="opacity-50" />
+                            </div>
+                            <Input
+                                type="text"
+                                id="search-books"
+                                onChange={(e) => setSearchName(e.target.value)}
+                                placeholder="Procurar livros"
+                                className="w-80 pl-10"
+                            />
+                        </div>
+                    </div>
 
                     <div className="flex w-full flex-wrap justify-center gap-4">
                         {!!books?.items?.length &&

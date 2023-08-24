@@ -1,14 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { toast } from "react-toastify";
 import { Library, MoreHorizontal, PlusCircle } from "lucide-react";
 
-import { api } from "@/lib/api";
-import { ProfileData } from "@/contexts/AuthContext";
-import { useDebounce } from "@/hooks/useDebounce";
 import { BookData } from "@/app/(app)/livros/[id]/page";
 import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";
 
@@ -36,7 +32,16 @@ import { Separator } from "@/components/ui/Separator";
 import { UserHoverCard } from "@/components/UserHoverCard";
 import { UpdateBookListDialog } from "./UpdateBookListDialog";
 import { DeleteBookListDialog } from "./DeleteBookListDialog";
-import { useDidMountEffect } from "@/hooks/useDidMountEffect";
+import { useFetchUserBookLists } from "@/endpoints/queries/bookListsQueries";
+import { useFetchUserByUsername } from "@/endpoints/queries/usersQueries";
+import { useFetchBooksOnBookList } from "@/endpoints/queries/booksOnBookListQueries";
+import {
+    useCreateBookList,
+    useDeleteBookList,
+    useUpdateBookList,
+} from "@/endpoints/mutations/bookListsMutations";
+import { useRemoveBookFromBookList } from "@/endpoints/mutations/booksOnBookListMutations";
+import Link from "next/link";
 
 export interface BookOnBookList {
     id: string;
@@ -62,111 +67,73 @@ export default function UserLists() {
     const username = routePathname.split("/")[2];
 
     const [isMounted, setIsMounted] = useState(false);
-    const [isFetching, setIsFetching] = useState(false);
-    const [user, setUser] = useState<ProfileData | null>(null);
-    const [currentList, setCurrentList] = useState(0);
-    const [booksOnBookList, setBooksOnBookList] = useState<BookOnBookListWithBook[] | null>(null);
-    const [bookLists, setBookLists] = useState<BookListData[] | null>(null);
-
-    const [searchName, setSearchName] = useState("");
-    const debouncedSearchName = useDebounce<string>(searchName, 400);
+    const [activeBookList, setActiveBookList] = useState(0);
 
     const isCurrentUser = isPageUserSameCurrentUser(username);
 
-    useEffect(() => {
-        async function getUserBookList() {
-            if (!username) return;
+    const { data: targetUser, isError } = useFetchUserByUsername({
+        username,
+    });
 
-            setIsFetching(true);
+    const { data: bookLists, isFetching: isFetchingUserBookLists } = useFetchUserBookLists({
+        userId: targetUser?.id || "",
+        enabled: !!targetUser?.id,
+    });
 
-            try {
-                const userResponse = await api.get(`/users/${username}`);
-                const userId = userResponse.data.id;
-                setUser(userResponse.data);
+    const { data: booksOnBookList, isFetching: isFetchingBooksOnBookList } =
+        useFetchBooksOnBookList({
+            bookListId: bookLists?.[activeBookList]?.id || "",
+            enabled: !!bookLists?.[activeBookList]?.id,
+        });
 
-                let query = "";
-                if (debouncedSearchName.trim()) {
-                    query = `?q=${debouncedSearchName.trim()}`;
-                }
-
-                const { data } = await api.get<BookListData[]>(`/booklists/user/${userId}${query}`);
-                setBookLists(data);
-            } catch (err) {
-                toast.error("Não foi possível buscar listas.");
-            } finally {
-                setIsFetching(false);
-            }
-        }
-        getUserBookList();
-    }, [username, debouncedSearchName]);
-
-    useDidMountEffect(() => {
-        if (!searchName) return;
-
-        setIsFetching(true);
-    }, [searchName]);
-
-    useEffect(() => {
-        async function getBooksOfList() {
-            if (!bookLists) return;
-
-            const bookListId = bookLists[currentList]?.id;
-
-            setIsFetching(true);
-
-            try {
-                const { data } = await api.get<BookOnBookListWithBook[]>(
-                    `/books-on-booklists/bookList/${bookListId}`,
-                );
-
-                setBooksOnBookList(data);
-            } catch (err) {
-                toast.error("Não foi possível buscar livros.");
-            } finally {
-                setIsFetching(false);
-            }
-        }
-        getBooksOfList();
-    }, [username, bookLists, currentList]);
-
-    async function createBookList() {
-        if (!isCurrentUser) return;
-
-        try {
-            const countBookLists = bookLists?.length || 0;
-
-            const { data } = await api.post("/booklists", {
-                name: `Lista ${countBookLists + 1}`,
-            });
-
-            setBookLists((prev) => {
-                if (!prev) return null;
-
-                const updatedBookList = [...prev];
-                updatedBookList.unshift(data);
-
-                return updatedBookList;
-            });
-        } catch (err) {
-            toast.error("Erro ao criar lista.");
-        }
+    const createBookList = useCreateBookList();
+    function handleCreateBookList() {
+        createBookList.mutate({
+            userId: targetUser?.id || "",
+            currentBooklistCount: bookLists?.length || 0,
+        });
     }
 
-    async function deleteBookOnBookList(bookOnBookListId: string) {
-        if (!isCurrentUser) return;
+    const updateBookList = useUpdateBookList();
+    async function handleUpdateBookList(name: string, description?: string, image?: any) {
+        if (!targetUser?.id || !bookLists) return;
 
-        try {
-            await api.delete(`/books-on-booklists/${bookOnBookListId}`);
+        await updateBookList.mutateAsync({
+            userId: targetUser.id,
+            activeBookList,
+            bookListId: bookLists[activeBookList].id,
+            name,
+            description,
+            image,
+        });
+    }
 
-            setBooksOnBookList((prev) => {
-                if (!prev) return null;
+    const deleteBookList = useDeleteBookList();
+    async function handleDeleteBookList(bookListId: string) {
+        if (!targetUser?.id) return;
 
-                const updatedBooksOnBookList = [...prev];
-                return updatedBooksOnBookList.filter((books) => books.id !== bookOnBookListId);
-            });
-        } catch (err) {
-            toast.error("Erro ao criar lista.");
-        }
+        await deleteBookList.mutateAsync({
+            userId: targetUser.id,
+            bookListId,
+        });
+    }
+
+    const removeBookFromBookList = useRemoveBookFromBookList();
+    function handleRemoveBookFromBookList(bookOnBookList: BookOnBookList) {
+        if (!targetUser?.id) return;
+
+        const { id, bookId, bookListId } = bookOnBookList;
+
+        removeBookFromBookList.mutate({
+            userId: targetUser.id,
+            bookOnBookListId: id,
+            bookId: bookId,
+            bookListId: bookListId,
+        });
+    }
+
+    async function handleUpdateActiveBookList(index: number) {
+        setActiveBookList(index);
     }
 
     // render loading
@@ -183,9 +150,9 @@ export default function UserLists() {
                             return (
                                 <div
                                     key={bookList.id}
-                                    onClick={() => setCurrentList(index)}
+                                    onClick={() => handleUpdateActiveBookList(index)}
                                     className={`${
-                                        currentList === index
+                                        activeBookList === index
                                             ? "border border-black bg-black text-white"
                                             : "border border-transparent hover:bg-black hover:bg-opacity-5"
                                     } cursor-pointer rounded-md px-4 py-2 text-sm`}
@@ -197,14 +164,7 @@ export default function UserLists() {
                     </nav>
                 ) : (
                     <div className="mx-5">
-                        {debouncedSearchName ? (
-                            <span className="break-words">
-                                Nenhuma lista com a busca "<strong>{debouncedSearchName}</strong>"
-                                foi encontrada.
-                            </span>
-                        ) : (
-                            <span>Nenhuma lista encontrada.</span>
-                        )}
+                        <span>Nenhuma lista encontrada.</span>
                     </div>
                 )}
             </>
@@ -222,7 +182,11 @@ export default function UserLists() {
                 <div className="w-full md:w-1/4">
                     {isCurrentUser && (
                         <>
-                            <Button variant="default" onClick={createBookList}>
+                            <Button
+                                variant="default"
+                                onClick={handleCreateBookList}
+                                disabled={createBookList.isLoading}
+                            >
                                 <PlusCircle size={18} />
                                 Nova lista
                             </Button>
@@ -233,13 +197,13 @@ export default function UserLists() {
                     {renderBookLists()}
                 </div>
 
-                {bookLists?.[currentList] ? (
+                {bookLists?.[activeBookList] ? (
                     <div className="flex w-full flex-col gap-8 md:w-3/4">
                         <div className="flex gap-4">
                             <div className="flex h-56 w-56 rounded-md bg-neutral-800 transition-all">
-                                {bookLists[currentList].imageUrl ? (
+                                {bookLists[activeBookList].imageUrl ? (
                                     <Image
-                                        src={bookLists[currentList].imageUrl as string}
+                                        src={bookLists[activeBookList].imageUrl as string}
                                         alt=""
                                         width={224}
                                         height={224}
@@ -256,30 +220,36 @@ export default function UserLists() {
                                 <div>
                                     <div className="flex items-center justify-between gap-2">
                                         <h2 className="flex-1 text-xl font-medium leading-relaxed tracking-tight">
-                                            {bookLists[currentList].name}
+                                            {bookLists[activeBookList].name}
                                         </h2>
 
                                         {isCurrentUser && (
                                             <>
                                                 <UpdateBookListDialog
-                                                    currentList={currentList}
+                                                    activeBookList={activeBookList}
                                                     bookLists={bookLists}
-                                                    setBookLists={setBookLists}
+                                                    isUpdateBookListLoading={
+                                                        updateBookList.isLoading
+                                                    }
+                                                    handleUpdateBookList={handleUpdateBookList}
                                                 />
 
                                                 <DeleteBookListDialog
-                                                    bookListId={bookLists[currentList].id}
-                                                    setBookLists={setBookLists}
+                                                    bookListId={bookLists[activeBookList].id}
+                                                    isDeleteBookLoading={
+                                                        removeBookFromBookList.isLoading
+                                                    }
+                                                    handleDeleteBookList={handleDeleteBookList}
                                                 />
                                             </>
                                         )}
                                     </div>
                                     <p className="mt-2 text-zinc-500">
-                                        {bookLists[currentList].description}
+                                        {bookLists[activeBookList].description}
                                     </p>
                                 </div>
                                 <div className="flex items-center">
-                                    {user && <UserHoverCard user={user} />}
+                                    {targetUser && <UserHoverCard user={targetUser} />}
                                     <span className="mr-2">•</span>
                                     <span className="text-sm font-medium">
                                         {!booksOnBookList?.length
@@ -310,7 +280,14 @@ export default function UserLists() {
                                             <TableCell className="font-medium">
                                                 {index + 1}
                                             </TableCell>
-                                            <TableCell>{bookOnBookList.book.title}</TableCell>
+                                            <TableCell>
+                                                <Link
+                                                    href={`/livros/${bookOnBookList.bookId}`}
+                                                    className="font-medium hover:underline"
+                                                >
+                                                    {bookOnBookList.book.title}
+                                                </Link>
+                                            </TableCell>
                                             <TableCell>{bookOnBookList.book.authors[0]}</TableCell>
                                             <TableCell>{`${bookOnBookList.book.publishDate}`}</TableCell>
                                             <TableCell>{bookOnBookList.book.pageCount}</TableCell>
@@ -333,8 +310,8 @@ export default function UserLists() {
                                                     >
                                                         <DropdownMenuItem
                                                             onClick={() =>
-                                                                deleteBookOnBookList(
-                                                                    bookOnBookList.id,
+                                                                handleRemoveBookFromBookList(
+                                                                    bookOnBookList,
                                                                 )
                                                             }
                                                         >

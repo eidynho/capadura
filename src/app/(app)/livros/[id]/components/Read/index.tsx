@@ -1,51 +1,44 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { format, parseISO } from "date-fns";
 import { BookOpen, Lock, MoreVertical, PlusCircle, Undo2, Unlock } from "lucide-react";
 import { toast } from "react-toastify";
 import { pt } from "date-fns/locale";
 
-import { api } from "@/lib/api";
 import { AuthContext } from "@/contexts/AuthContext";
+import { BookData } from "@/app/(app)/livros/[id]/page";
+import { HandleAddNewProgressProps, HandleUpdateReadProps } from "./ReadReview/FormReadReview";
 
-import { BookData, ReadData } from "@/app/(app)/livros/[id]/page";
+import { useFetchUserReads } from "@/endpoints/queries/readsQueries";
+import {
+    ReadStatus,
+    useStartNewRead,
+    useToggleReadPrivacy,
+    useToggleReadStatus,
+    useUpdateRead,
+} from "@/endpoints/mutations/readsMutations";
+import { useAddNewProgress, useUpdateProgress } from "@/endpoints/mutations/progressMutations";
 
 import { CreateReadReviewDialog } from "./ReadReview/CreateReadReviewDialog";
 import { UpdateReadReviewDialog } from "./ReadReview/UpdateReadReviewDialog";
 import { NewReadProgressDialog } from "./ReadProgress/NewReadProgressDialog";
-import { UpdateReadProgressDialog } from "./ReadProgress/UpdateReadProgressDialog";
+import {
+    HandleUpdateProgressProps,
+    UpdateReadProgressDialog,
+} from "./ReadProgress/UpdateReadProgressDialog";
 import { RatingStars } from "@/components/RatingStars";
 import { UserHoverCard } from "@/components/UserHoverCard";
 
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
-
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/DropdownMenu";
-
-const readsTabs = [
-    {
-        name: "Todas",
-        status: null,
-        emptyMessage: "Nenhuma leitura encontrada.",
-    },
-    {
-        name: "Em andamento",
-        status: "ACTIVE",
-        emptyMessage: "Nenhuma leitura em andamento.",
-    },
-    {
-        name: "Finalizadas",
-        status: "FINISHED",
-        emptyMessage: "Nenhuma leitura finalizada.",
-    },
-];
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 
 interface EditReadData {
     readId: string;
@@ -60,32 +53,19 @@ interface ReadsProgressProps {
     bookData: BookData | null;
 }
 
-type ReadStatus = "ACTIVE" | "FINISHED" | "CANCELLED" | "DELETED";
-
 export function ReadsProgress({ bookData }: ReadsProgressProps) {
     const { user } = useContext(AuthContext);
 
-    const [userReads, setUserReads] = useState<ReadData[] | null>(null);
-    const [isFetching, setIsFetching] = useState(false);
     const [isOpenUpdateProgressDialog, setIsOpenUpdateProgressDialog] = useState(false);
     const [progressEditData, setProgressEditData] = useState<EditReadData | null>(null);
     const [currentTab, setCurrentTab] = useState("all");
 
-    useEffect(() => {
-        async function fetchUserReads() {
-            if (!bookData?.id) return;
+    const { data: userReads } = useFetchUserReads({
+        bookId: bookData?.id || "",
+        enabled: !!bookData?.id,
+    });
 
-            try {
-                const userReadsResponse = await api.get(`/user-reads?bookId=${bookData.id}`);
-                setUserReads(userReadsResponse.data.items);
-            } catch (err) {
-                toast.error("Failed on fetch user reads");
-            }
-        }
-        fetchUserReads();
-    }, [bookData]);
-
-    const filteredReads = userReads?.filter((item) => {
+    const filteredReads = userReads?.items?.filter((item) => {
         switch (currentTab) {
             case "all":
                 return true;
@@ -96,108 +76,129 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
         }
     });
 
-    async function startNewRead() {
-        if (userReads && userReads.length > 50) {
+    const startNewRead = useStartNewRead();
+    async function handleStartNewRead() {
+        if (!bookData?.id || startNewRead.isLoading) return;
+
+        if (userReads && userReads.items?.length > 50) {
             toast.error("Limite de leitura atingido.");
             return;
         }
 
-        if (isFetching) return;
-        setIsFetching(true);
+        const { id: createdReadId } = await startNewRead.mutateAsync({
+            bookId: bookData.id,
+        });
 
-        try {
-            const { data } = await api.post("/read", {
-                bookId: bookData?.id,
-            });
-
-            setUserReads((prev) => {
-                if (!prev) {
-                    return [{ ...data, progress: [] }];
-                }
-
-                const updatedReads = [...prev];
-
-                updatedReads.unshift(data);
-                return updatedReads;
-            });
-        } catch (err) {
-            toast.error("Erro ao iniciar a leitura.");
-            throw err;
-        } finally {
-            setIsFetching(false);
-        }
+        return createdReadId;
     }
 
-    async function toggleReadPrivacy(readId: string, currentStatus: boolean) {
-        if (isFetching) return;
-        setIsFetching(true);
+    const updateRead = useUpdateRead();
+    async function handleUpdateRead({
+        readId,
+        status,
+        reviewContent,
+        reviewRating,
+        reviewIsSpoiler,
+        endRead,
+    }: HandleUpdateReadProps) {
+        if (!bookData?.id || updateRead.isLoading) return;
 
-        try {
-            await api.put("/read", {
-                readId,
-                isPrivate: !currentStatus,
-            });
-
-            setUserReads((prev) => {
-                if (!prev) return null;
-
-                const updatedReads = [...prev];
-
-                const read = updatedReads.find((read) => read.id === readId);
-                if (read) {
-                    read.isPrivate = !currentStatus;
-                }
-
-                return updatedReads;
-            });
-
-            toast.success("A privacidade da leitura foi alterada.");
-        } catch (err) {
-            toast.error("Erro ao alterar privacidade da leitura.");
-            throw err;
-        } finally {
-            setIsFetching(false);
-        }
+        await updateRead.mutateAsync({
+            bookId: bookData.id,
+            readId,
+            status,
+            reviewContent,
+            reviewRating,
+            reviewIsSpoiler,
+            endRead,
+        });
     }
 
-    async function toggleReadStatus(readId: string, status: ReadStatus) {
-        if (isFetching) return;
-        setIsFetching(true);
-
-        try {
-            if (!bookData) {
-                throw new Error("Failed on update read status: book data not provided.");
-            }
-
-            await api.put("/read", {
-                bookId: bookData.id,
-                readId,
-                status,
-            });
-
-            setUserReads((prev) => {
-                if (!prev) return null;
-
-                const updatedReads = [...prev];
-
-                const read = updatedReads.find((read) => read.id === readId);
-                if (read) {
-                    read.status = status;
-                }
-
-                return updatedReads;
-            });
-
-            toast.success("O status da leitura foi atualizado.");
-        } catch (err) {
-            toast.error("Erro ao alterar o status da leitura.");
-            throw err;
-        } finally {
-            setIsFetching(false);
-        }
+    const toggleReadPrivacy = useToggleReadPrivacy();
+    function handleToggleReadPrivacy(readId: string, currentStatus: boolean) {
+        if (!bookData?.id || toggleReadPrivacy.isLoading) return;
+        toggleReadPrivacy.mutate({
+            bookId: bookData.id,
+            readId,
+            isPrivate: currentStatus,
+        });
     }
 
-    function editProgress({ readId, id, description, isSpoiler, page, countType }: EditReadData) {
+    const toggleReadStatus = useToggleReadStatus();
+    function handleToggleReadStatus(readId: string, status: ReadStatus) {
+        if (toggleReadStatus.isLoading) return;
+
+        if (!bookData?.id) {
+            throw new Error("Failed on update read status: book data not provided.");
+        }
+
+        toggleReadStatus.mutate({
+            bookId: bookData.id,
+            readId,
+            status,
+        });
+    }
+
+    const addNewProgress = useAddNewProgress();
+    async function handleAddNewProgress({
+        readId,
+        isSpoiler,
+        pagesCount,
+        countType,
+        bookPageCount,
+    }: HandleAddNewProgressProps) {
+        if (addNewProgress.isLoading) return;
+
+        if (!bookData?.id) {
+            throw new Error("Failed on add new progress: book data not provided.");
+        }
+
+        await addNewProgress.mutateAsync({
+            bookId: bookData.id,
+            readId,
+            isSpoiler,
+            pagesCount,
+            countType,
+            bookPageCount,
+        });
+    }
+
+    const updateProgress = useUpdateProgress();
+    async function handleUpdateProgress({
+        id,
+        readId,
+        description,
+        isSpoiler,
+        pagesCount,
+        countType,
+        bookPageCount,
+    }: HandleUpdateProgressProps) {
+        if (updateProgress.isLoading) return;
+
+        if (!bookData?.id) {
+            throw new Error("Failed on update read status: book data not provided.");
+        }
+
+        await updateProgress.mutateAsync({
+            bookId: bookData?.id,
+            readId,
+            progressId: id,
+            description,
+            isSpoiler,
+            pagesCount,
+            countType,
+            bookPageCount,
+        });
+    }
+
+    function handleSetProgressEditData({
+        readId,
+        id,
+        description,
+        isSpoiler,
+        page,
+        countType,
+    }: EditReadData) {
         setProgressEditData({
             readId,
             id,
@@ -208,6 +209,10 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
         });
 
         setIsOpenUpdateProgressDialog(true);
+    }
+
+    function handleOpenUpdateProgressDialog(value = false) {
+        setIsOpenUpdateProgressDialog(value);
     }
 
     function renderReadStatus(status: ReadStatus) {
@@ -255,18 +260,20 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                         </Tabs>
                     </div>
 
-                    {(!userReads?.length || userReads[0].status === "FINISHED") && (
+                    {(!userReads?.items?.length || userReads.items[0].status === "FINISHED") && (
                         <div className="flex flex-col items-center gap-2">
                             <div className="flex flex-col items-center justify-center gap-2 lg:flex-row">
-                                <Button size="sm" variant="outline" onClick={startNewRead}>
+                                <Button size="sm" variant="outline" onClick={handleStartNewRead}>
                                     <PlusCircle size={16} className="text-pink-500" />
                                     Nova leitura
                                 </Button>
 
-                                {(!userReads || !userReads.length) && (
+                                {(!userReads || !userReads.items.length) && (
                                     <CreateReadReviewDialog
                                         bookData={bookData}
-                                        setUserReads={setUserReads}
+                                        handleStartNewRead={handleStartNewRead}
+                                        handleUpdateRead={handleUpdateRead}
+                                        handleAddNewProgress={handleAddNewProgress}
                                         isReviewWithoutProgress
                                     />
                                 )}
@@ -288,7 +295,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                 <Button
                                     size="sm"
                                     variant="black"
-                                    onClick={() => toggleReadStatus(read.id, "ACTIVE")}
+                                    onClick={() => handleToggleReadStatus(read.id, "ACTIVE")}
                                 >
                                     <Undo2 size={18} />
                                     Retomar leitura
@@ -329,12 +336,14 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                         <UpdateReadReviewDialog
                                             readId={read.id}
                                             bookData={bookData}
-                                            setUserReads={setUserReads}
                                             editData={{
                                                 reviewContent: read.reviewContent || undefined,
                                                 reviewRating: read.reviewRating ?? 0,
                                                 reviewIsSpoiler: read.reviewIsSpoiler ?? false,
                                             }}
+                                            handleStartNewRead={handleStartNewRead}
+                                            handleUpdateRead={handleUpdateRead}
+                                            handleAddNewProgress={handleAddNewProgress}
                                         />
                                     )}
 
@@ -347,7 +356,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                         <DropdownMenuContent align="end" className="w-44">
                                             <DropdownMenuItem
                                                 onClick={() =>
-                                                    toggleReadPrivacy(read.id, read.isPrivate)
+                                                    handleToggleReadPrivacy(read.id, read.isPrivate)
                                                 }
                                             >
                                                 <span>
@@ -358,7 +367,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                             {read.status !== "FINISHED" && (
                                                 <DropdownMenuItem
                                                     onClick={() =>
-                                                        toggleReadStatus(read.id, "CANCELLED")
+                                                        handleToggleReadStatus(read.id, "CANCELLED")
                                                     }
                                                 >
                                                     <span>Abandonar leitura</span>
@@ -403,10 +412,9 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                     {read.progress?.[0]?.percentage !== 100 && (
                                         <NewReadProgressDialog
                                             readId={read.id}
-                                            bookId={bookData?.id}
                                             bookTitle={bookData?.title}
                                             bookPageCount={bookData?.pageCount ?? 0}
-                                            setUserReads={setUserReads}
+                                            handleAddNewProgress={handleAddNewProgress}
                                         />
                                     )}
 
@@ -415,7 +423,9 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                             <CreateReadReviewDialog
                                                 readId={read.id}
                                                 bookData={bookData}
-                                                setUserReads={setUserReads}
+                                                handleStartNewRead={handleStartNewRead}
+                                                handleUpdateRead={handleUpdateRead}
+                                                handleAddNewProgress={handleAddNewProgress}
                                             />
                                         )}
                                 </div>
@@ -454,7 +464,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                                     <DropdownMenuContent align="end">
                                                         <DropdownMenuItem
                                                             onClick={() =>
-                                                                editProgress({
+                                                                handleSetProgressEditData({
                                                                     ...progress,
                                                                     countType: "page",
                                                                 })
@@ -517,11 +527,11 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
             )}
             <UpdateReadProgressDialog
                 isOpen={isOpenUpdateProgressDialog}
-                setIsOpen={setIsOpenUpdateProgressDialog}
-                setUserReads={setUserReads}
+                handleOpenUpdateProgressDialog={handleOpenUpdateProgressDialog}
                 bookTitle={bookData?.title}
                 bookPageCount={bookData?.pageCount ?? 0}
                 editData={progressEditData}
+                handleUpdateProgress={handleUpdateProgress}
             />
         </>
     );

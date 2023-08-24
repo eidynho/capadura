@@ -1,55 +1,39 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Heart } from "lucide-react";
 
-import { api } from "@/lib/api";
-
 import { Button } from "@/components/ui/Button";
-
-interface LikeBook {
-    id: string;
-    bookId: string;
-    userId: string;
-}
+import { useGetUserLikedBook } from "@/endpoints/queries/likeBookQueries";
+import { useAddLikeBook, useDislikeBook } from "@/endpoints/mutations/likeBookMutation";
 
 interface LikeProps {
     bookId: string;
 }
 
 export function Like({ bookId }: LikeProps) {
-    const [like, setLike] = useState<LikeBook | null>(null);
+    // const [like, setLike] = useState<LikeBook | null>(null);
 
-    useEffect(() => {
-        async function getUserLike() {
-            try {
-                const userLikeResponse = await api.get(`/likes/book/${bookId}`);
-                setLike(userLikeResponse.data.like);
-            } catch (err) {
-                throw err;
-            }
-        }
-        getUserLike();
-    }, [bookId]);
+    const { data: like } = useGetUserLikedBook({
+        bookId,
+    });
+
+    const addLikeBook = useAddLikeBook();
+    const dislikeBook = useDislikeBook();
 
     async function handleToggleLikeBook() {
         const isLiked = !!like;
 
         try {
             if (isLiked) {
-                await api.delete(`/likes/${like.id}`);
-                setLike(null);
+                await dislikeBook.mutateAsync({
+                    bookId,
+                    likeId: like.id,
+                });
             } else {
-                if (!bookId) {
-                    throw new Error("Book data not provided.");
-                }
-
-                const { data } = await api.post("/likes", {
+                await addLikeBook.mutateAsync({
                     bookId,
                 });
-
-                setLike(data.like);
             }
         } catch (err) {
             const message = isLiked ? "descurtir" : "curtir";

@@ -1,9 +1,6 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader2, Trash } from "lucide-react";
 import { toast } from "react-toastify";
-
-import { api } from "@/lib/api";
-import { BookListData } from "./page";
 
 import { Button } from "@/components/ui/Button";
 import {
@@ -12,19 +9,22 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/Dialog";
 import { Input } from "@/components/ui/Input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/Tooltip";
 
 interface DeleteBookListDialogProps {
     bookListId: string;
-    setBookLists: Dispatch<SetStateAction<BookListData[] | null>>;
+    isDeleteBookLoading: boolean;
+    handleDeleteBookList: (bookListId: string) => Promise<void>;
 }
 
-export function DeleteBookListDialog({ bookListId, setBookLists }: DeleteBookListDialogProps) {
+export function DeleteBookListDialog({
+    bookListId,
+    isDeleteBookLoading,
+    handleDeleteBookList,
+}: DeleteBookListDialogProps) {
     const [isOpen, setIsOpen] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
     const [typedName, setTypedName] = useState("");
 
     useEffect(() => {
@@ -34,48 +34,35 @@ export function DeleteBookListDialog({ bookListId, setBookLists }: DeleteBookLis
     const confirmMessage = "deletar permanentemente";
 
     async function confirmDeleteBookList() {
-        if (typedName !== "deletar permanentemente") return;
+        if (typedName !== "deletar permanentemente" || isDeleteBookLoading) return;
 
         try {
-            setIsLoading(true);
-
-            await api.delete(`/booklists/${bookListId}`);
-
-            setBookLists((prev) => {
-                if (!prev) return null;
-
-                const updatedBookLists = [...prev];
-
-                return updatedBookLists.filter((item) => item.id !== bookListId);
-            });
+            handleDeleteBookList(bookListId);
 
             toast.success("Lista removida com sucesso.");
             setIsOpen(false);
         } catch (err) {
             toast.error("Erro ao remover a lista.");
             throw err;
-        } finally {
-            setIsLoading(false);
         }
     }
 
     return (
         <>
+            <TooltipProvider delayDuration={400} skipDelayDuration={0}>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button size="icon" variant="default" onClick={() => setIsOpen(true)}>
+                            <Trash size={18} />
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <span>Deletar</span>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                <DialogTrigger>
-                    <TooltipProvider delayDuration={400} skipDelayDuration={0}>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button size="icon" variant="default">
-                                    <Trash size={18} />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <span>Deletar</span>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-                </DialogTrigger>
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Deletar lista</DialogTitle>
@@ -103,9 +90,9 @@ export function DeleteBookListDialog({ bookListId, setBookLists }: DeleteBookLis
                             variant="destructive"
                             type="submit"
                             onClick={confirmDeleteBookList}
-                            disabled={typedName !== confirmMessage}
+                            disabled={typedName !== confirmMessage || isDeleteBookLoading}
                         >
-                            {isLoading ? (
+                            {isDeleteBookLoading ? (
                                 <>
                                     <Loader2 size={22} className="animate-spin" />
                                     <span>Deletando...</span>

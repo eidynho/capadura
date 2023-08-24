@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 
-import { Separator } from "@/components/Separator";
+import { Separator } from "@/components/ui/Separator";
 import { Container } from "@/components/layout/Container";
 
 function renderBookHeader() {
@@ -33,7 +33,7 @@ export default function Loading() {
                                     <div className="h-5 w-16 rounded-md bg-gray-200"></div>
                                 </div>
 
-                                <Separator className="border-gray-200" />
+                                <Separator className="my-4 bg-gray-300" />
 
                                 <div className="mx-4 flex justify-between text-sm">
                                     <div className="h-5 w-32 rounded-md bg-gray-200"></div>
@@ -41,7 +41,7 @@ export default function Loading() {
                                     <div className="w-16 rounded-md bg-gray-200"></div>
                                 </div>
 
-                                <Separator className="border-gray-200" />
+                                <Separator className="my-4 bg-gray-300" />
 
                                 <div className="mx-4 flex justify-between text-sm">
                                     <div className="h-5 w-20 rounded-md bg-gray-200"></div>
@@ -49,7 +49,7 @@ export default function Loading() {
                                     <div className="w-16 rounded-md bg-gray-200"></div>
                                 </div>
 
-                                <Separator className="border-gray-200" />
+                                <Separator className="my-4 bg-gray-300" />
 
                                 <div className="mx-4 flex justify-between text-sm">
                                     <div className="h-5 w-16 rounded-md bg-gray-200"></div>
@@ -57,7 +57,7 @@ export default function Loading() {
                                     <div className="w-16 rounded-md bg-gray-200"></div>
                                 </div>
 
-                                <Separator className="border-gray-200" />
+                                <Separator className="my-4 bg-gray-300" />
 
                                 <div className="mx-4 flex justify-between text-sm">
                                     <div className="h-5 w-20 rounded-md bg-gray-200"></div>
@@ -115,7 +115,7 @@ export default function Loading() {
 
                                         {Array.from({ length: 3 }, (_, index) => (
                                             <Fragment key={index}>
-                                                <Separator className="border-gray-200" />
+                                                <Separator className="my-4 bg-gray-300" />
 
                                                 <div className="flex flex-col px-4">
                                                     <div className="flex items-center justify-between">

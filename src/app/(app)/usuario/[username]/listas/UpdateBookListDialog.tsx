@@ -1,22 +1,14 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Library, Loader2, PencilLine } from "lucide-react";
-import { toast } from "react-toastify";
 
-import { api } from "@/lib/api";
 import { BookListData } from "./page";
 
 import { Button } from "@/components/ui/Button";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/Dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/Dialog";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Textarea } from "@/components/ui/Textarea";
@@ -59,24 +51,26 @@ const updateBookListFormSchema = z.object({
 type UpdateBookListFormSchema = z.infer<typeof updateBookListFormSchema>;
 
 interface UpdateBookListDialogProps {
-    currentList: number;
+    activeBookList: number;
     bookLists: BookListData[];
-    setBookLists: Dispatch<SetStateAction<BookListData[] | null>>;
+    isUpdateBookListLoading: boolean;
+    handleUpdateBookList: (name: string, description?: string, image?: any) => Promise<void>;
 }
 
 export function UpdateBookListDialog({
-    currentList,
+    activeBookList,
     bookLists,
-    setBookLists,
+    isUpdateBookListLoading,
+    handleUpdateBookList,
 }: UpdateBookListDialogProps) {
-    const bookList = bookLists[currentList];
+    const bookList = bookLists[activeBookList];
 
     const [isOpen, setIsOpen] = useState(false);
 
     const {
         register,
         handleSubmit,
-        formState: { isSubmitting, errors },
+        formState: { errors },
         setValue,
         control,
         watch,
@@ -92,57 +86,29 @@ export function UpdateBookListDialog({
     const selectedImage = watch("image");
 
     async function submitUpdate({ name, description, image }: UpdateBookListFormSchema) {
-        try {
-            const { data } = await api.putForm("/booklists", {
-                bookListId: bookList.id,
-                name,
-                description,
-                image: image[0],
-            });
+        if (isUpdateBookListLoading) return;
 
-            setBookLists((prev) => {
-                if (!prev) return null;
+        await handleUpdateBookList(name, description, image[0]);
 
-                const updatedBookLists = [...prev];
-
-                updatedBookLists[currentList].name = name;
-
-                if (description) {
-                    updatedBookLists[currentList].description = description;
-                }
-
-                if (image) {
-                    updatedBookLists[currentList].imageUrl = data.imageUrl;
-                }
-
-                return updatedBookLists;
-            });
-
-            toast.success("Lista atualizada com sucesso.");
-            setIsOpen(false);
-        } catch (err) {
-            toast.error("Erro ao atualizar a lista.");
-            throw err;
-        }
+        setIsOpen(false);
     }
 
     return (
         <>
+            <TooltipProvider delayDuration={400} skipDelayDuration={0}>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button size="icon" variant="default" onClick={() => setIsOpen(true)}>
+                            <PencilLine size={18} />
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <span>Editar</span>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                <DialogTrigger>
-                    <TooltipProvider delayDuration={400} skipDelayDuration={0}>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button size="icon" variant="default">
-                                    <PencilLine size={18} />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <span>Editar</span>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-                </DialogTrigger>
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Editar detalhes</DialogTitle>
@@ -234,8 +200,13 @@ export function UpdateBookListDialog({
                             </div>
                         </div>
 
-                        <Button size="sm" variant="black" type="submit" disabled={isSubmitting}>
-                            {isSubmitting ? (
+                        <Button
+                            size="sm"
+                            variant="black"
+                            type="submit"
+                            disabled={isUpdateBookListLoading}
+                        >
+                            {isUpdateBookListLoading ? (
                                 <>
                                     <Loader2 size={22} className="animate-spin" />
                                     <span>Salvando...</span>

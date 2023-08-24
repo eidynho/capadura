@@ -3,23 +3,47 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { BookListData } from "@/app/(app)/usuario/[username]/listas/page";
 
-interface UseFetchBookListsProps {
+interface UseFetchUserBookListsProps {
+    userId: string;
+    enabled?: boolean;
+}
+
+export function useFetchUserBookLists({ userId, enabled = true }: UseFetchUserBookListsProps) {
+    return useQuery({
+        queryKey: ["fetchUserBookLists", { userId }],
+        queryFn: async () => {
+            const { data } = await api.get<BookListData[]>(`/booklists/user/${userId}`);
+
+            return data;
+        },
+        enabled,
+        staleTime: 1000 * 60 * 60 * 1, // 1 hour
+    });
+}
+
+interface UseFetchUserBookListsIncludeBookProps {
     userId: string;
     bookId: string;
     enabled?: boolean;
 }
 
-export function useFetchBookLists({ userId, bookId, enabled = true }: UseFetchBookListsProps) {
+export function useFetchUserBookListsIncludeBook({
+    userId,
+    bookId,
+    enabled = true,
+}: UseFetchUserBookListsIncludeBookProps) {
     return useQuery({
-        queryKey: ["fetchBookLists", { userId, bookId }],
+        queryKey: ["fetchUserBookListsIncludeBook", { userId, bookId }],
         queryFn: async () => {
+            const searchParams = bookId ? `?bookId=${bookId}` : "";
+
             const { data } = await api.get<BookListData[]>(
-                `/booklists/user/${userId}?bookId=${bookId}`,
+                `/booklists/user/${userId}${searchParams}`,
             );
 
-            return data as BookListData[];
+            return data;
         },
         enabled,
-        staleTime: 1000 * 60 * 10, // 10 minutes
+        staleTime: 1000 * 60 * 60 * 1, // 1 hour
     });
 }

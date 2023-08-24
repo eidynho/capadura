@@ -7,12 +7,12 @@ import { toast } from "react-toastify";
 import { BookData } from "../page";
 import { AuthContext } from "@/contexts/AuthContext";
 
-import { useFetchBookLists } from "@/endpoints/queries/bookListsQueries";
+import { useFetchUserBookListsIncludeBook } from "@/endpoints/queries/bookListsQueries";
+import { useCreateBookList } from "@/endpoints/mutations/bookListsMutations";
 import {
-    useAddBookToABookListMutation,
-    useCreateBookListMutation,
-    useRemoveBookFromBookListMutation,
-} from "@/endpoints/mutations/bookListsMutations";
+    useAddBookToABookList,
+    useRemoveBookFromBookList,
+} from "@/endpoints/mutations/booksOnBookListMutations";
 
 import { Button } from "@/components/ui/Button";
 import {
@@ -34,15 +34,13 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
 
     const [isOpen, setIsOpen] = useState(false);
 
-    const { data: bookLists, isFetching } = useFetchBookLists({
+    const { data: bookLists, isFetching } = useFetchUserBookListsIncludeBook({
         userId: user.id,
         bookId: bookData.id,
         enabled: isOpen,
     });
-    const createBookList = useCreateBookListMutation();
-    const addBookToABookList = useAddBookToABookListMutation();
-    const removeBookFromBookList = useRemoveBookFromBookListMutation();
 
+    const createBookList = useCreateBookList();
     function handleCreateBookList() {
         if (!user) {
             toast.error("Usuário não encontrado.");
@@ -51,11 +49,11 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
 
         createBookList.mutate({
             userId: user.id,
-            bookId: bookData.id,
             currentBooklistCount: bookLists?.length || 0,
         });
     }
 
+    const addBookToABookList = useAddBookToABookList();
     function handleAddBookToABookList(bookListId: string) {
         if (!user) {
             toast.error("Usuário não encontrado.");
@@ -69,6 +67,7 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
         });
     }
 
+    const removeBookFromBookList = useRemoveBookFromBookList();
     function handleRemoveBookFromBookList(bookListId: string, bookOnBookListId: string) {
         if (!user) {
             toast.error("Usuário não encontrado.");

@@ -1,11 +1,11 @@
 "use client";
 
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { Star } from "lucide-react";
 
-import { BookData, ReadData } from "@/app/(app)/livros/[id]/page";
+import { BookData } from "@/app/(app)/livros/[id]/page";
 
-import { FormReadReview } from "./FormReadReview";
+import { FormReadReview, HandleAddNewProgressProps, HandleUpdateReadProps } from "./FormReadReview";
 import { Button } from "@/components/ui/Button";
 import {
     Dialog,
@@ -18,7 +18,9 @@ import {
 interface ReadReviewDialogProps {
     readId?: string;
     bookData: BookData | null;
-    setUserReads: Dispatch<SetStateAction<ReadData[] | null>>;
+    handleStartNewRead: () => Promise<string | undefined>;
+    handleUpdateRead: (data: HandleUpdateReadProps) => Promise<void>;
+    handleAddNewProgress: (data: HandleAddNewProgressProps) => Promise<void>;
 
     isReviewWithoutProgress?: boolean;
 }
@@ -26,7 +28,9 @@ interface ReadReviewDialogProps {
 export function CreateReadReviewDialog({
     readId,
     bookData,
-    setUserReads,
+    handleStartNewRead,
+    handleUpdateRead,
+    handleAddNewProgress,
     isReviewWithoutProgress,
 }: ReadReviewDialogProps) {
     const [isOpen, setIsOpen] = useState(false);
@@ -48,7 +52,9 @@ export function CreateReadReviewDialog({
                     <div className="px-3 py-2">
                         <FormReadReview
                             readId={readId}
-                            setUserReads={setUserReads}
+                            handleStartNewRead={handleStartNewRead}
+                            handleUpdateRead={handleUpdateRead}
+                            handleAddNewProgress={handleAddNewProgress}
                             isReviewWithoutProgress={isReviewWithoutProgress}
                             bookData={bookData}
                             executeOnSubmit={() => setIsOpen(false)}

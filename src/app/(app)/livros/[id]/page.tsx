@@ -10,16 +10,17 @@ import { toast } from "react-toastify";
 import { api } from "@/lib/api";
 import { publishDateFormat } from "@/utils/publish-date-format";
 
+import { useFetchBook } from "@/endpoints/queries/booksQueries";
+
 import Loading from "./loading";
 
 import { ReadsProgress } from "./components/Read";
 import { Like } from "./components/Like";
 import { BookListMenu } from "./components/BookListMenu";
-
 import { Container } from "@/components/layout/Container";
 import { Title } from "@/components/Title";
 import { Subtitle } from "@/components/Subtitle";
-import { Separator } from "@/components/Separator";
+import { Separator } from "@/components/ui/Separator";
 import { BookDataFromGoogle } from "@/components/ApplicationSearch";
 import { RatingChart } from "@/components/RatingChart";
 import { LinkUnderline } from "@/components/LinkUnderline";
@@ -93,6 +94,11 @@ export default function Book({ params }: BookProps) {
     const [isMounted, setIsMounted] = useState(false);
     const [bookData, setBookData] = useState<BookData | null>(null);
 
+    const { data: bookFetchedFromDb, isFetched: isFetchedBook } = useFetchBook({
+        bookId: params.id,
+        enabled: !!params.id,
+    });
+
     async function fetchBookFromGoogle() {
         try {
             const { data } = await axios.get<BookDataFromGoogle>(
@@ -131,20 +137,19 @@ export default function Book({ params }: BookProps) {
             throw err;
         }
     }
-
     useEffect(() => {
+        if (!isFetchedBook) return;
+
         async function fetchBookFromDatabase() {
             setIsMounted(false);
 
             try {
-                const { data } = await api.get<BookData>(`/book/${params.id}`);
-
-                if (!data) {
+                if (!bookFetchedFromDb) {
                     await fetchBookFromGoogle();
                 } else {
-                    setBookData(data);
+                    setBookData(bookFetchedFromDb);
 
-                    if (!data.imageKey) {
+                    if (!bookFetchedFromDb.imageKey) {
                         // get image from google and update db
                         const googleImageResponse = await axios.get<BookImagesDataFromGoogle>(
                             `https://www.googleapis.com/books/v1/volumes/${params.id}?fields=id,volumeInfo(title,imageLinks)`,
@@ -180,7 +185,7 @@ export default function Book({ params }: BookProps) {
         }
 
         fetchBookFromDatabase();
-    }, [params.id]);
+    }, [params.id, isFetchedBook]);
 
     if (!isMounted || !bookData) {
         return <Loading />;
@@ -236,14 +241,14 @@ export default function Book({ params }: BookProps) {
                                     </LinkUnderline>
                                 </div>
 
-                                <Separator />
+                                <Separator className="my-4 bg-black dark:bg-primary" />
 
                                 <div className="mx-4 flex justify-between text-sm">
                                     <span className="font-semibold">Ano de publicação</span>
                                     <span>{publishDateFormat(bookData.publishDate)}</span>
                                 </div>
 
-                                <Separator />
+                                <Separator className="my-4 bg-black dark:bg-primary" />
 
                                 <div className="mx-4 flex justify-between text-sm">
                                     <span className="font-semibold">Editora</span>
@@ -251,7 +256,7 @@ export default function Book({ params }: BookProps) {
                                     <span>{bookData.publisher ?? "Sem informação"}</span>
                                 </div>
 
-                                <Separator />
+                                <Separator className="my-4 bg-black dark:bg-primary" />
 
                                 <div className="mx-4 flex justify-between text-sm">
                                     <span className="font-semibold">Idioma</span>
@@ -259,7 +264,7 @@ export default function Book({ params }: BookProps) {
                                     <span>{bookData.language ?? "Sem informação"}</span>
                                 </div>
 
-                                <Separator />
+                                <Separator className="my-4 bg-black dark:bg-primary" />
 
                                 <div className="mx-4 flex justify-between text-sm">
                                     <span className="font-semibold">Páginas</span>
@@ -267,7 +272,7 @@ export default function Book({ params }: BookProps) {
                                     <span>{bookData.pageCount ?? "Sem informação"}</span>
                                 </div>
 
-                                <Separator />
+                                <Separator className="my-4 bg-black dark:bg-primary" />
 
                                 {/* Book action buttons */}
                                 <div className="flex w-full items-center justify-center gap-2">

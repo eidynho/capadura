@@ -1,18 +1,21 @@
 "use client";
 
-import { Dispatch, SetStateAction } from "react";
-import { toast } from "react-toastify";
-
-import { api } from "@/lib/api";
-import { ReadData } from "@/app/(app)/livros/[id]/page";
-
 import { FormReadProgress, ProgressFormSchema } from "./FormReadProgress";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/Dialog";
 
+export interface HandleUpdateProgressProps {
+    id: string;
+    readId: string;
+    description?: string;
+    isSpoiler: boolean;
+    pagesCount: number;
+    countType: string;
+    bookPageCount: number;
+}
+
 interface ReadProgressDialogProps {
     isOpen: boolean;
-    setIsOpen: Dispatch<SetStateAction<boolean>>;
-    setUserReads: Dispatch<SetStateAction<ReadData[] | null>>;
+    handleOpenUpdateProgressDialog: (value: boolean) => void;
 
     bookTitle?: string;
     bookPageCount: number;
@@ -24,15 +27,16 @@ interface ReadProgressDialogProps {
         page: number | null;
         countType: "page" | "percentage";
     } | null;
+    handleUpdateProgress: (data: HandleUpdateProgressProps) => Promise<void>;
 }
 
 export function UpdateReadProgressDialog({
     isOpen,
-    setIsOpen,
-    setUserReads,
+    handleOpenUpdateProgressDialog,
     bookTitle,
     bookPageCount,
     editData,
+    handleUpdateProgress,
 }: ReadProgressDialogProps) {
     async function updateProgress({
         description,
@@ -41,8 +45,13 @@ export function UpdateReadProgressDialog({
         countType,
     }: ProgressFormSchema) {
         try {
-            await api.put("/progress", {
-                id: editData?.id,
+            if (!editData?.id) {
+                throw new Error("Missing id to update progress");
+            }
+
+            await handleUpdateProgress({
+                id: editData.id,
+                readId: editData.readId,
                 description,
                 isSpoiler,
                 pagesCount,
@@ -50,54 +59,14 @@ export function UpdateReadProgressDialog({
                 bookPageCount,
             });
 
-            toast.success("Progresso atualizado.");
-
-            // update front-end
-            setUserReads((prev) => {
-                if (!prev) return null;
-
-                const updatedReads = [...prev];
-
-                const read = updatedReads.find((read) => read.id === editData?.readId);
-                if (read) {
-                    const progress = read.progress.find((progress) => progress.id === editData?.id);
-                    if (!progress) return updatedReads;
-
-                    let page = 0;
-                    let percentage = 0;
-                    if (countType === "page") {
-                        page = Math.round(pagesCount);
-                        percentage = Math.round((pagesCount / bookPageCount) * 100);
-                    }
-
-                    if (countType === "percentage") {
-                        page = Math.round((bookPageCount / 100) * pagesCount);
-                        percentage = Math.round(pagesCount);
-                    }
-
-                    if (percentage >= 100) {
-                        page = bookPageCount;
-                        percentage = 100;
-                    }
-
-                    progress.description = description ?? "";
-                    progress.isSpoiler = isSpoiler;
-                    progress.page = page;
-                    progress.percentage = percentage;
-                }
-
-                return updatedReads;
-            });
-
-            setIsOpen(false);
+            handleOpenUpdateProgressDialog(false);
         } catch (err) {
-            toast.error("Erro ao atualizar o progresso.");
             throw err;
         }
     }
 
     return (
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <Dialog open={isOpen} onOpenChange={handleOpenUpdateProgressDialog}>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Progresso de leitura - {bookTitle}</DialogTitle>

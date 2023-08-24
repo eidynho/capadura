@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Star, StarHalf } from "phosphor-react";
 import { BarChart, Bar, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import { toast } from "react-toastify";
+
+import { useFetchReadsRating } from "@/endpoints/queries/readsQueries";
 
 import { RatingStars } from "./RatingStars";
-import { api } from "@/lib/api";
-import { toast } from "react-toastify";
 
 export interface ratingsDataChart {
     data: {
@@ -26,37 +27,18 @@ interface RatingChartProps {
 export function RatingChart({ bookId, userId }: RatingChartProps) {
     const router = useRouter();
 
-    const [bookRatings, setBookRatings] = useState<ratingsDataChart>({
-        data: [],
-        total: 0,
-        averageRating: 0,
-    });
     const [barGraphData, setBarGraphData] = useState({ x: 0, y: 0 });
 
-    useEffect(() => {
-        if (!bookId && !userId) return;
+    const { data: bookRatings, isError: isErrorBookRatings } = useFetchReadsRating({
+        bookId,
+        userId,
+    });
 
-        async function getReadsRatings() {
-            try {
-                let query = "";
-                if (bookId) {
-                    query = `bookId=${bookId}`;
-                }
-
-                if (userId) {
-                    query = `userId=${userId}`;
-                }
-
-                const { data } = await api.get(`/read/ratings?${query}`);
-
-                setBookRatings(data);
-            } catch (err) {
-                toast.error("Não foi possível exibir as avaliações.");
-                throw err;
-            }
-        }
-        getReadsRatings();
-    }, [bookId, userId]);
+    if (isErrorBookRatings) {
+        toast.error("Não foi possível exibir as avaliações.");
+        return;
+    }
+    if (!bookRatings) return;
 
     function handleClickBar({ rating }: { rating: number }) {
         router.push(`${bookId}/ratings/${rating}`);

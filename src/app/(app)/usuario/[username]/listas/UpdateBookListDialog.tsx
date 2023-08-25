@@ -88,9 +88,13 @@ export function UpdateBookListDialog({
     async function submitUpdate({ name, description, image }: UpdateBookListFormSchema) {
         if (isUpdateBookListLoading) return;
 
-        await handleUpdateBookList(name, description, image[0]);
+        try {
+            await handleUpdateBookList(name, description, image[0]);
 
-        setIsOpen(false);
+            setIsOpen(false);
+        } catch (err) {
+            throw err;
+        }
     }
 
     return (

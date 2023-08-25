@@ -55,6 +55,7 @@ export function useAddBookToABookList() {
         },
         onError: () => {
             toast.error("Erro ao adicionar livro na lista.");
+            throw new Error("Failed on add book in booklist.");
         },
     });
 }
@@ -115,6 +116,7 @@ export function useRemoveBookFromBookList() {
         },
         onError: () => {
             toast.error("Erro ao remover livro da lista.");
+            throw new Error("Failed on remove book from booklist.");
         },
     });
 }

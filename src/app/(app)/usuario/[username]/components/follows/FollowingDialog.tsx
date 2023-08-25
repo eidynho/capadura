@@ -1,11 +1,13 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { usePathname } from "next/navigation";
 
-import { api } from "@/lib/api";
 import { AuthContext } from "@/contexts/AuthContext";
 import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";
+import { HandleToggleFollowUserProps } from "../../page";
+
+import { useGetUserFollowing } from "@/endpoints/queries/followsQueries";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
@@ -18,24 +20,21 @@ import {
 } from "@/components/ui/Dialog";
 import { LinkUnderline } from "@/components/LinkUnderline";
 
-interface FollowingData {
-    following: {
-        name: string;
-        username: string;
-        imageKey?: string;
-        imageUrl?: string;
-    };
-    followerId: string;
-    followingId: string;
-    isFollowedByCurrentUser?: boolean;
-}
-
 interface FollowingDialogProps {
     userId: string;
     followingCount: number;
+    isFollowLoading: boolean;
+    followUser: ({ userId, targetUserId }: HandleToggleFollowUserProps) => void;
+    unfollowUser: ({ userId, targetUserId }: HandleToggleFollowUserProps) => void;
 }
 
-export function FollowingDialog({ userId, followingCount }: FollowingDialogProps) {
+export function FollowingDialog({
+    userId,
+    followingCount,
+    isFollowLoading,
+    followUser,
+    unfollowUser,
+}: FollowingDialogProps) {
     const { user } = useContext(AuthContext);
     const routePathname = usePathname();
     const username = routePathname.split("/")[2];
@@ -43,82 +42,28 @@ export function FollowingDialog({ userId, followingCount }: FollowingDialogProps
     const isCurrentUser = isPageUserSameCurrentUser(username);
 
     const [isOpen, setIsOpen] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [isFetching, setIsFetching] = useState(false);
-    const [following, setFollowing] = useState<FollowingData[]>([]);
 
-    useEffect(() => {
-        if (!isOpen) return;
+    const { data: following, isFetching } = useGetUserFollowing({
+        userId,
+        enabled: !!userId,
+    });
 
-        const fetchFollowing = async () => {
-            try {
-                setIsFetching(true);
+    async function handleFollowUser(followingId: string) {
+        if (isFollowLoading || !user || !followingId) return;
 
-                const { data } = await api.get(
-                    `/user-following/${userId}${user ? `/${user.id}` : ""}`,
-                );
-                setFollowing(data);
-            } catch (err) {
-                throw new Error("Failed on get user following: " + err);
-            } finally {
-                setIsFetching(false);
-            }
-        };
-
-        fetchFollowing();
-    }, [isOpen]);
-
-    function updateIsFollowedByCurrentUser(userIdToFollow: string, isFollow: boolean) {
-        setFollowing((prev) => {
-            const updatedFollowing = [...prev];
-
-            const itemToUpdate = updatedFollowing.find(
-                (item) => item.followingId === userIdToFollow,
-            );
-
-            if (!itemToUpdate) {
-                return updatedFollowing;
-            }
-
-            itemToUpdate.isFollowedByCurrentUser = isFollow;
-
-            return updatedFollowing;
+        followUser({
+            userId: user.id,
+            targetUserId: followingId,
         });
     }
 
-    async function handleFollowUser(followingId: string) {
-        if (isLoading || !user || !followingId) return;
-
-        try {
-            setIsLoading(true);
-
-            api.post("/user-followers", {
-                followerId: user.id,
-                followingId: followingId,
-            });
-
-            updateIsFollowedByCurrentUser(followingId, true);
-        } catch (err) {
-            throw new Error("Failed on follow user: " + err);
-        } finally {
-            setIsLoading(false);
-        }
-    }
-
     async function handleUnfollowUser(followingId: string) {
-        if (isLoading || !user || !followingId) return;
+        if (isFollowLoading || !user || !followingId) return;
 
-        try {
-            setIsLoading(true);
-
-            await api.delete(`/user-followers/${user.id}/${followingId}`);
-
-            updateIsFollowedByCurrentUser(followingId, false);
-        } catch (err) {
-            throw new Error("Failed on unfollow user: " + err);
-        } finally {
-            setIsLoading(false);
-        }
+        unfollowUser({
+            userId: user.id,
+            targetUserId: followingId,
+        });
     }
 
     return (
@@ -143,7 +88,7 @@ export function FollowingDialog({ userId, followingCount }: FollowingDialogProps
                             </div>
                         ))}
                     </>
-                ) : !!following.length ? (
+                ) : !!following?.length ? (
                     following.map((item) => (
                         <div className="flex items-center gap-4 text-sm">
                             <Avatar className="h-12 w-12">
@@ -175,7 +120,7 @@ export function FollowingDialog({ userId, followingCount }: FollowingDialogProps
                                                 ? () => handleUnfollowUser(item.followingId)
                                                 : () => handleFollowUser(item.followingId)
                                         }
-                                        disabled={isLoading}
+                                        disabled={isFollowLoading}
                                     >
                                         {item.isFollowedByCurrentUser ? "Seguindo" : "Seguir"}
                                     </Button>

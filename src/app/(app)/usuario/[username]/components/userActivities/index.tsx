@@ -1,53 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { formatDistance } from "date-fns";
 import { pt } from "date-fns/locale";
 import { BookOpen, CircleDashed, CircleSlash, Heart, Star, Undo2 } from "lucide-react";
 
-import { api } from "@/lib/api";
-import { BookData } from "@/app/(app)/livros/[id]/page";
-import { ProfileData } from "@/contexts/AuthContext";
+import {
+    FetchUserActivitiesResponse,
+    useFetchUserActivities,
+} from "@/endpoints/queries/userActivitiesQueries";
 
 import { RatingStars } from "@/components/RatingStars";
-
-interface userActivityData {
-    id: string;
-    activity?: string;
-    activityType:
-        | "LIKE_BOOK"
-        | "START_READ"
-        | "PAUSE_READ"
-        | "RESUME_READ"
-        | "ADD_BOOK_PROGRESS"
-        | "ADD_BOOK_REVIEW";
-    createdAt: Date;
-    book?: BookData;
-    bookId?: string;
-    user: ProfileData;
-    userId: string;
-}
 
 interface UserActivitiesProps {
     userId: string;
 }
 
 export function UserActivities({ userId }: UserActivitiesProps) {
-    const [userActivities, setUserActivities] = useState<userActivityData[]>([]);
-
-    useEffect(() => {
-        const getUserActivities = async () => {
-            try {
-                const { data } = await api.get(`/user-activities/${userId}`);
-                setUserActivities(data);
-            } catch (err) {
-                throw new Error("Failed on get user activities: " + err);
-            }
-        };
-
-        getUserActivities();
-    }, []);
+    const { data: userActivities } = useFetchUserActivities({
+        userId,
+        enabled: !!userId,
+    });
 
     function renderBookActivity({
         activity,
@@ -55,7 +28,7 @@ export function UserActivities({ userId }: UserActivitiesProps) {
         createdAt,
         book,
         bookId,
-    }: userActivityData) {
+    }: FetchUserActivitiesResponse) {
         if (!book || !bookId) return;
 
         const BookLink = (
@@ -159,7 +132,7 @@ export function UserActivities({ userId }: UserActivitiesProps) {
 
     return (
         <div className="mt-2 flex flex-col gap-5 rounded-md border p-3 text-xs">
-            {!!userActivities.length ? (
+            {!!userActivities?.length ? (
                 userActivities.map((item) => (
                     <div className="flex items-center gap-2">{renderBookActivity(item)}</div>
                 ))

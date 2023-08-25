@@ -17,6 +17,5 @@ export function useFetchUserByUsername({ username, enabled = true }: UseFetchUse
             return data;
         },
         enabled,
-        staleTime: 1000 * 60 * 60 * 1, // 1 hour
     });
 }

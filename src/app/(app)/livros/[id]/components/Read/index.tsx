@@ -10,7 +10,7 @@ import { AuthContext } from "@/contexts/AuthContext";
 import { BookData } from "@/app/(app)/livros/[id]/page";
 import { HandleAddNewProgressProps, HandleUpdateReadProps } from "./ReadReview/FormReadReview";
 
-import { useFetchUserReads } from "@/endpoints/queries/readsQueries";
+import { useFetchUserReadsByBook } from "@/endpoints/queries/readsQueries";
 import {
     ReadStatus,
     useStartNewRead,
@@ -60,7 +60,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
     const [progressEditData, setProgressEditData] = useState<EditReadData | null>(null);
     const [currentTab, setCurrentTab] = useState("all");
 
-    const { data: userReads } = useFetchUserReads({
+    const { data: userReads } = useFetchUserReadsByBook({
         bookId: bookData?.id || "",
         enabled: !!bookData?.id,
     });

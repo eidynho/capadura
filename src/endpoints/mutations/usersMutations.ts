@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";
 
@@ -16,6 +17,10 @@ export function useRegisterUser() {
                 email,
                 password,
             });
+        },
+        onError: () => {
+            toast.error("Ocorreu um erro no cadastro.");
+            throw new Error("Failed on register user.");
         },
     });
 }

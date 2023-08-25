@@ -1,11 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link as LinkIcon, MapPin, Twitter } from "lucide-react";
 
-import { api } from "@/lib/api";
 import { ProgressData, ReadData } from "../../livros/[id]/page";
 import { ProfileData } from "@/contexts/AuthContext";
+
+import { useFetchUserByUsername } from "@/endpoints/queries/usersQueries";
+import { useGetUsersFollowsCount } from "@/endpoints/queries/followsQueries";
+import { useFetchUserReadsByUser } from "@/endpoints/queries/readsQueries";
+import { useFetchUserProgress } from "@/endpoints/queries/progressQueries";
+import { useFollowUser, useUnfollowUser } from "@/endpoints/mutations/followsMutation";
 
 import Loading from "./loading";
 import { FavoriteBooks } from "./components/favoriteBooks";
@@ -22,6 +27,11 @@ import { FollowersDialog } from "./components/follows/FollowersDialog";
 import { FollowingDialog } from "./components/follows/FollowingDialog";
 import { FinishedReads } from "./components/finishedReads";
 import { RecentProgress } from "./components/recentProgress";
+
+export interface HandleToggleFollowUserProps {
+    userId: string;
+    targetUserId: string;
+}
 
 export interface UserData {
     user: ProfileData;
@@ -44,69 +54,52 @@ interface MeProps {
 }
 
 export default function Me({ params }: MeProps) {
-    const [isMounted, setIsMounted] = useState(false);
-    const [userData, setUserData] = useState<UserData>({
-        user: {
-            id: "",
-            name: "",
-            username: "",
-            email: "",
-            createdAt: undefined,
-            imageKey: null,
-            imageUrl: undefined,
-            description: null,
-            location: null,
-            website: null,
-            twitter: null,
-        },
-        reads: {
-            items: [],
-            total: 0,
-        },
-        progress: {
-            items: [],
-            total: 0,
-        },
-        followersCount: 0,
-        followingCount: 0,
-    });
     const [date, setDate] = useState<Date | undefined>(new Date());
 
-    useEffect(() => {
-        async function fetchUserData() {
-            try {
-                setIsMounted(false);
-                const user = await api.get(`/users/${params.username}`);
-                const userId = user.data.id;
+    // ----- queries ----- //
+    const { data: targetUser, isFetched: isFetchedUser } = useFetchUserByUsername({
+        username: params.username,
+        enabled: !!params.username,
+    });
+    const { data: followingCount, isFetched: isFetchedFollowsCount } = useGetUsersFollowsCount({
+        userId: targetUser?.id || "",
+        enabled: !!targetUser?.id,
+    });
 
-                const readsPromise = api.get(
-                    `/user-reads?userId=${userId}&status=FINISHED&page=1&perPage=3`,
-                );
-                const progressPromise = api.get(`/user-progress/${userId}?page=1&perPage=3`);
+    const { data: userReads, isFetched: isFetchedUserReads } = useFetchUserReadsByUser({
+        userId: targetUser?.id || "",
+        enabled: !!targetUser?.id,
+    });
 
-                const countUserFollowsPromise = api.get(`/count-user-follows/${userId}`);
+    const { data: userProgress, isFetched: isFetchedUserProgress } = useFetchUserProgress({
+        userId: targetUser?.id || "",
+        enabled: !!targetUser?.id,
+    });
 
-                const [reads, progress, countUserFollows] = await Promise.all([
-                    readsPromise,
-                    progressPromise,
-                    countUserFollowsPromise,
-                ]);
+    // ----- mutations ----- //
+    const followUser = useFollowUser();
+    function followUserFn({ userId, targetUserId }: HandleToggleFollowUserProps) {
+        followUser.mutate({
+            userId,
+            targetUserId,
+        });
+    }
 
-                setUserData({
-                    user: user.data,
-                    reads: reads.data,
-                    progress: progress.data,
-                    followersCount: countUserFollows.data.followers,
-                    followingCount: countUserFollows.data.following,
-                });
-            } catch (err) {
-                throw new Error("Failed on fetch user data: " + err);
-            } finally {
-                setIsMounted(true);
-            }
-        }
-        fetchUserData();
-    }, [params.username]);
+    const unfollowUser = useUnfollowUser();
+    function unfollowUserFn({ userId, targetUserId }: HandleToggleFollowUserProps) {
+        unfollowUser.mutate({
+            userId,
+            targetUserId,
+        });
+    }
+
+    // render loading
+    const isMounting =
+        !isFetchedUser || !isFetchedFollowsCount || !isFetchedUserReads || !isFetchedUserProgress;
+
+    if (isMounting) {
+        return <Loading />;
+    }
 
     function renderHeaderInfo() {
         return (
@@ -117,55 +110,59 @@ export default function Me({ params }: MeProps) {
                         <span className="text-zinc-500">livros</span>
                     </LinkUnderline>
 
-                    {!!userData.user.id && (
+                    {!!targetUser?.id && (
                         <>
                             <FollowersDialog
-                                userId={userData.user.id}
-                                followersCount={userData.followersCount}
+                                userId={targetUser.id}
+                                followersCount={followingCount?.followers || 0}
+                                isFollowLoading={followUser.isLoading || unfollowUser.isLoading}
+                                followUser={followUserFn}
+                                unfollowUser={unfollowUserFn}
                             />
 
                             <FollowingDialog
-                                userId={userData.user.id}
-                                followingCount={userData.followingCount}
+                                userId={targetUser.id}
+                                followingCount={followingCount?.following || 0}
+                                isFollowLoading={followUser.isLoading || unfollowUser.isLoading}
+                                followUser={followUserFn}
+                                unfollowUser={unfollowUserFn}
                             />
                         </>
                     )}
                 </div>
 
-                {userData.user.description && (
-                    <h1 className="text-sm">{userData.user.description}</h1>
-                )}
+                {targetUser?.description && <h1 className="text-sm">{targetUser?.description}</h1>}
 
                 <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
-                    {userData.user.location && (
+                    {targetUser?.location && (
                         <div className="flex items-center gap-1">
                             <MapPin size={16} />
 
-                            <span>{userData.user.location}</span>
+                            <span>{targetUser.location}</span>
                         </div>
                     )}
 
-                    {userData.user.website && (
+                    {targetUser?.website && (
                         <div className="flex items-center gap-1">
                             <LinkIcon size={15} />
 
                             <LinkUnderline asChild className="font-semibold">
-                                <a href={userData.user.website} target="_blank">
-                                    {userData.user.website}
+                                <a href={targetUser.website} target="_blank">
+                                    {targetUser.website}
                                 </a>
                             </LinkUnderline>
                         </div>
                     )}
 
-                    {userData.user.twitter && (
+                    {targetUser?.twitter && (
                         <div className="flex items-center gap-1">
                             <Twitter size={16} />
                             <LinkUnderline asChild className="font-semibold">
                                 <a
-                                    href={`https://twitter.com/${userData.user.twitter}`}
+                                    href={`https://twitter.com/${targetUser?.twitter}`}
                                     target="_blank"
                                 >
-                                    {userData.user.twitter}
+                                    {targetUser.twitter}
                                 </a>
                             </LinkUnderline>
                         </div>
@@ -175,47 +172,32 @@ export default function Me({ params }: MeProps) {
         );
     }
 
-    function updateCountUserFollowers(isFollow: boolean) {
-        setUserData((prev) => {
-            const updatedUser = { ...prev };
-
-            if (isFollow) {
-                updatedUser.followersCount++;
-            } else {
-                updatedUser.followersCount--;
-            }
-
-            return updatedUser;
-        });
-    }
-
-    // render loading
-    if (!isMounted) {
-        return <Loading />;
-    }
-
     return (
         <Container>
             <div className="flex flex-col items-start justify-center md:flex-row">
                 <div className="flex items-start gap-8">
                     <Avatar className="h-28 w-28 md:h-40 md:w-40">
-                        <AvatarImage src={userData.user.imageUrl} />
-                        <AvatarFallback>{userData.user.username[0]?.toUpperCase()}</AvatarFallback>
+                        <AvatarImage src={targetUser?.imageUrl} />
+                        <AvatarFallback>{targetUser?.username[0]?.toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-4 md:flex-row md:items-start">
                             <div>
                                 <h2 className="text-xl font-bold leading-relaxed tracking-tight">
-                                    {userData.user.name}
+                                    {targetUser?.name}
                                 </h2>
-                                <span className="font-medium">@{userData.user.username}</span>
+                                <span className="font-medium">@{targetUser?.username}</span>
                             </div>
 
                             <EditProfileButton />
-                            <FollowUserButton
-                                profileId={userData.user.id}
-                                updateCountUserFollowers={updateCountUserFollowers}
-                            />
+                            {!!targetUser?.id && (
+                                <FollowUserButton
+                                    targetUserId={targetUser.id}
+                                    isFollowLoading={followUser.isLoading || unfollowUser.isLoading}
+                                    followUser={followUserFn}
+                                    unfollowUser={unfollowUserFn}
+                                />
+                            )}
                         </div>
 
                         <div className="hidden md:block">{renderHeaderInfo()}</div>
@@ -229,9 +211,9 @@ export default function Me({ params }: MeProps) {
                 <div className="flex w-full flex-col gap-12 lg:w-3/5">
                     <FavoriteBooks />
 
-                    <FinishedReads readsData={userData.reads} />
+                    {!!userReads && <FinishedReads readsData={userReads} />}
 
-                    <RecentProgress progressData={userData.progress} />
+                    {!!userProgress && <RecentProgress progressData={userProgress} />}
                 </div>
 
                 <div className="flex w-full flex-col gap-8 sm:flex-row lg:w-72 lg:flex-col">
@@ -247,12 +229,12 @@ export default function Me({ params }: MeProps) {
 
                     <div className="w-full sm:w-1/2 lg:w-full">
                         <h3 className="font-semibold">Avaliações</h3>
-                        {userData.user?.id && <RatingChart userId={userData.user.id as string} />}
+                        {targetUser?.id && <RatingChart userId={targetUser.id} />}
                     </div>
 
                     <div className="w-full sm:w-1/2 lg:w-full">
                         <h3 className="font-semibold">Atividades</h3>
-                        {userData.user.id && <UserActivities userId={userData.user.id as string} />}
+                        {targetUser?.id && <UserActivities userId={targetUser.id} />}
                     </div>
                 </div>
             </div>

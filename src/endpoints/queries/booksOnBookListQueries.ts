@@ -22,6 +22,5 @@ export function useFetchBooksOnBookList({
             return data;
         },
         enabled,
-        staleTime: 1000 * 60 * 60 * 1, // 1 hour
     });
 }

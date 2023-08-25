@@ -158,7 +158,7 @@ export function FavoriteBooks() {
     }
 
     const removeFavoriteBook = useRemoveFavoriteBook();
-    async function handleRemoveFavoriteBook(order: number) {
+    function handleRemoveFavoriteBook(order: number) {
         if (favoriteBooks === undefined) return;
 
         const index = order - 1;
@@ -166,7 +166,7 @@ export function FavoriteBooks() {
 
         if (isLoading || !isCurrentUser || !bookToRemove) return;
 
-        await removeFavoriteBook.mutateAsync({
+        removeFavoriteBook.mutate({
             username,
             indexToRemove: index,
             bookIdToRemove: bookToRemove.id,

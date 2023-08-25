@@ -17,7 +17,6 @@ export function useFetchUserBookLists({ userId, enabled = true }: UseFetchUserBo
             return data;
         },
         enabled,
-        staleTime: 1000 * 60 * 60 * 1, // 1 hour
     });
 }
 
@@ -44,6 +43,5 @@ export function useFetchUserBookListsIncludeBook({
             return data;
         },
         enabled,
-        staleTime: 1000 * 60 * 60 * 1, // 1 hour
     });
 }

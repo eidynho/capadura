@@ -17,6 +17,6 @@ export function useFetchBook({ bookId, enabled = true }: UseFetchBookProps) {
             return data;
         },
         enabled,
-        staleTime: 1000 * 60 * 60 * 1, // 1 hour
+        staleTime: Infinity,
     });
 }

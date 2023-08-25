@@ -40,7 +40,7 @@ export function useCreateFavoriteBook() {
         },
         onError: () => {
             toast.error("Erro ao salvar livro favorito.");
-            throw new Error("Failed on save favorite book.");
+            throw new Error("Failed on create favorite book.");
         },
     });
 }
@@ -82,7 +82,7 @@ export function useUpdateFavoriteBook() {
         },
         onError: () => {
             toast.error("Erro ao salvar livro favorito.");
-            throw new Error("Failed on save favorite book.");
+            throw new Error("Failed on update favorite book");
         },
     });
 }

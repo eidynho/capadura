@@ -23,7 +23,7 @@ export function useStartNewRead() {
         },
         onSuccess: (newData, { bookId }) => {
             queryClient.setQueryData<ReadsDataResponse>(
-                ["fetchUserReads", { bookId }],
+                ["fetchUserReadsByBook", { bookId }],
                 (prevData) => {
                     const updatedReads = { ...(prevData || {}) };
 
@@ -42,6 +42,7 @@ export function useStartNewRead() {
         },
         onError: () => {
             toast.error("Erro ao iniciar a leitura.");
+            throw new Error("Failed on start new read.");
         },
     });
 }
@@ -84,7 +85,7 @@ export function useUpdateRead() {
             { bookId, readId, status, reviewContent, reviewRating, reviewIsSpoiler, endRead },
         ) => {
             queryClient.setQueryData<ReadsDataResponse>(
-                ["fetchUserReads", { bookId }],
+                ["fetchUserReadsByBook", { bookId }],
                 (prevData) => {
                     const updatedReads = { ...(prevData || {}) };
 
@@ -109,6 +110,7 @@ export function useUpdateRead() {
         },
         onError: () => {
             toast.error("Erro ao alterar dados da leitura.");
+            throw new Error("Failed on update read data.");
         },
     });
 }
@@ -131,7 +133,7 @@ export function useToggleReadPrivacy() {
         },
         onSuccess: (_, { bookId, readId }) => {
             queryClient.setQueryData<ReadsDataResponse>(
-                ["fetchUserReads", { bookId }],
+                ["fetchUserReadsByBook", { bookId }],
                 (prevData) => {
                     const updatedReads = { ...(prevData || {}) };
 
@@ -151,6 +153,7 @@ export function useToggleReadPrivacy() {
         },
         onError: () => {
             toast.error("Erro ao alterar privacidade da leitura.");
+            throw new Error("Failed on update read privacy.");
         },
     });
 }
@@ -176,7 +179,7 @@ export function useToggleReadStatus() {
         },
         onSuccess: (_, { bookId, readId, status }) => {
             queryClient.setQueryData<ReadsDataResponse>(
-                ["fetchUserReads", { bookId }],
+                ["fetchUserReadsByBook", { bookId }],
                 (prevData) => {
                     const updatedReads = { ...(prevData || {}) };
 
@@ -196,6 +199,7 @@ export function useToggleReadStatus() {
         },
         onError: () => {
             toast.error("Erro ao alterar o status da leitura.");
+            throw new Error("Failed on update read status.");
         },
     });
 }

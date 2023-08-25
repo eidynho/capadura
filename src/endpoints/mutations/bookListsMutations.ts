@@ -31,6 +31,7 @@ export function useCreateBookList() {
         },
         onError: () => {
             toast.error("Erro ao criar lista.");
+            throw new Error("Failed on create booklist.");
         },
     });
 }
@@ -89,6 +90,7 @@ export function useUpdateBookList() {
         },
         onError: () => {
             toast.error("Erro ao atualizar a lista.");
+            throw new Error("Failed on update booklist.");
         },
     });
 }
@@ -121,6 +123,10 @@ export function useDeleteBookList() {
                 queryKey: ["fetchUserBookListsIncludeBook", { userId }],
                 refetchType: "none",
             });
+        },
+        onError: () => {
+            toast.error("Erro ao deletar lista.");
+            throw new Error("Failed on delete booklist.");
         },
     });
 }

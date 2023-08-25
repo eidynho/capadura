@@ -8,21 +8,46 @@ export interface ReadsDataResponse {
     total: number;
 }
 
-interface UseFetchUserReadsProps {
+interface UseFetchUserReadsByUserProps {
+    userId: string;
+    page?: number;
+    perPage?: number;
+    enabled?: boolean;
+}
+
+export function useFetchUserReadsByUser({
+    userId,
+    page = 1,
+    perPage = 3,
+    enabled = true,
+}: UseFetchUserReadsByUserProps) {
+    return useQuery({
+        queryKey: ["fetchUserReadsByUser", { userId, page, perPage }],
+        queryFn: async () => {
+            const { data } = await api.get<ReadsDataResponse>(
+                `/user-reads?userId=${userId}&status=FINISHED&page=${page}&perPage=${perPage}`,
+            );
+
+            return data;
+        },
+        enabled,
+    });
+}
+
+interface UseFetchUserReadsByBookProps {
     bookId: string;
     enabled?: boolean;
 }
 
-export function useFetchUserReads({ bookId, enabled = true }: UseFetchUserReadsProps) {
+export function useFetchUserReadsByBook({ bookId, enabled = true }: UseFetchUserReadsByBookProps) {
     return useQuery({
-        queryKey: ["fetchUserReads", { bookId }],
+        queryKey: ["fetchUserReadsByBook", { bookId }],
         queryFn: async () => {
             const { data } = await api.get<ReadsDataResponse>(`/user-reads?bookId=${bookId}`);
 
             return data;
         },
         enabled,
-        staleTime: 1000 * 60 * 60 * 1, // 1 hour
     });
 }
 
@@ -59,6 +84,5 @@ export function useFetchReadsRating({ bookId, userId, enabled = true }: UseFetch
             return data;
         },
         enabled,
-        staleTime: 1000 * 60 * 60 * 1, // 1 hour
     });
 }

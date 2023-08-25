@@ -24,6 +24,6 @@ export function useGetUserLikedBook({ bookId, enabled = true }: UseGetUserLikedB
             return data.like;
         },
         enabled,
-        staleTime: 1000 * 60 * 60 * 1, // 1 hour
+        staleTime: Infinity,
     });
 }

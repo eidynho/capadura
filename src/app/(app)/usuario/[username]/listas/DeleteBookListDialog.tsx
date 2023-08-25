@@ -37,12 +37,9 @@ export function DeleteBookListDialog({
         if (typedName !== "deletar permanentemente" || isDeleteBookLoading) return;
 
         try {
-            handleDeleteBookList(bookListId);
-
-            toast.success("Lista removida com sucesso.");
+            await handleDeleteBookList(bookListId);
             setIsOpen(false);
         } catch (err) {
-            toast.error("Erro ao remover a lista.");
             throw err;
         }
     }

@@ -27,6 +27,7 @@ export function useAddLikeBook() {
         },
         onError: () => {
             toast.error("Erro ao curtir livro.");
+            throw new Error("Failed on like book.");
         },
     });
 }
@@ -50,6 +51,7 @@ export function useDislikeBook() {
         },
         onError: () => {
             toast.error("Erro ao descurtir livro.");
+            throw new Error("Failed on dislike book.");
         },
     });
 }

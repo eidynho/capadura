@@ -43,7 +43,7 @@ export function useAddNewProgress() {
         },
         onSuccess: (newData, { bookId, readId }) => {
             queryClient.setQueryData<ReadsDataResponse>(
-                ["fetchUserReads", { bookId }],
+                ["fetchUserReadsByBook", { bookId }],
                 (prevData) => {
                     const updatedReads = { ...(prevData || {}) };
 
@@ -71,6 +71,7 @@ export function useAddNewProgress() {
         },
         onError: () => {
             toast.error("Erro ao adicionar o progresso de leitura.");
+            throw new Error("Failed on add new read progress.");
         },
     });
 }
@@ -121,7 +122,7 @@ export function useUpdateProgress() {
             },
         ) => {
             queryClient.setQueryData<ReadsDataResponse>(
-                ["fetchUserReads", { bookId }],
+                ["fetchUserReadsByBook", { bookId }],
                 (prevData) => {
                     const updatedReads = { ...(prevData || {}) };
 
@@ -171,6 +172,7 @@ export function useUpdateProgress() {
         },
         onError: () => {
             toast.error("Erro ao alterar o progresso de leitura.");
+            throw new Error("Failed on update read progress.");
         },
     });
 }

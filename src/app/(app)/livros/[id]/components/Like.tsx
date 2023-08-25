@@ -24,22 +24,15 @@ export function Like({ bookId }: LikeProps) {
     async function handleToggleLikeBook() {
         const isLiked = !!like;
 
-        try {
-            if (isLiked) {
-                await dislikeBook.mutateAsync({
-                    bookId,
-                    likeId: like.id,
-                });
-            } else {
-                await addLikeBook.mutateAsync({
-                    bookId,
-                });
-            }
-        } catch (err) {
-            const message = isLiked ? "descurtir" : "curtir";
-
-            toast.error(`Não foi possível ${message} o livro.`);
-            throw err;
+        if (isLiked) {
+            dislikeBook.mutate({
+                bookId,
+                likeId: like.id,
+            });
+        } else {
+            addLikeBook.mutate({
+                bookId,
+            });
         }
     }
 

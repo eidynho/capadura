@@ -1,23 +1,29 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { usePathname } from "next/navigation";
 
-import { api } from "@/lib/api";
 import { AuthContext } from "@/contexts/AuthContext";
 import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";
+import { HandleToggleFollowUserProps } from "../../page";
+
+import { useGetIsTargetUserFollowingCurrentUser } from "@/endpoints/queries/followsQueries";
 
 import { Button } from "@/components/ui/Button";
 
 interface FollowUserButtonProps {
-    profileId: string;
-    updateCountUserFollowers: (isFollow: boolean) => void;
+    targetUserId: string;
+    isFollowLoading: boolean;
+    followUser: ({ userId, targetUserId }: HandleToggleFollowUserProps) => void;
+    unfollowUser: ({ userId, targetUserId }: HandleToggleFollowUserProps) => void;
 }
 
-export function FollowUserButton({ profileId, updateCountUserFollowers }: FollowUserButtonProps) {
-    const [isLoading, setIsLoading] = useState(false);
-    const [isFollowing, setIsFollowing] = useState(false);
-
+export function FollowUserButton({
+    targetUserId,
+    isFollowLoading,
+    followUser,
+    unfollowUser,
+}: FollowUserButtonProps) {
     const { user } = useContext(AuthContext);
 
     const routePathname = usePathname();
@@ -25,64 +31,27 @@ export function FollowUserButton({ profileId, updateCountUserFollowers }: Follow
 
     const isCurrentUser = isPageUserSameCurrentUser(username);
 
-    useEffect(() => {
-        if (isCurrentUser) return;
+    const { data: isFollowing } = useGetIsTargetUserFollowingCurrentUser({
+        targetUserId,
+        enabled: !!targetUserId,
+    });
 
-        const getIsCurrentUserFollowingAnUniqueUser = async () => {
-            try {
-                setIsLoading(true);
+    function handleFollowUser() {
+        if (isFollowLoading || !user || isCurrentUser) return;
 
-                const { data } = await api.get(`/user-is-following/${profileId}`);
-                setIsFollowing(data.isFollowing);
-            } catch (err) {
-                throw new Error(
-                    "Failed on get if is current user following an unique user: " + err,
-                );
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        getIsCurrentUserFollowingAnUniqueUser();
-    }, []);
-
-    async function handleFollowUser() {
-        if (isLoading || !user || isCurrentUser) return;
-
-        try {
-            setIsLoading(true);
-
-            api.post("/user-followers", {
-                followerId: user.id,
-                followingId: profileId,
-            });
-
-            updateCountUserFollowers(true);
-
-            setIsFollowing(true);
-        } catch (err) {
-            throw new Error("Failed on toggle user follow: " + err);
-        } finally {
-            setIsLoading(false);
-        }
+        followUser({
+            userId: user.id,
+            targetUserId: targetUserId,
+        });
     }
 
-    async function handleUnfollowUser() {
-        if (isLoading || !user || isCurrentUser) return;
+    function handleUnfollowUser() {
+        if (isFollowLoading || !user || isCurrentUser) return;
 
-        try {
-            setIsLoading(true);
-
-            await api.delete(`/user-followers/${user.id}/${profileId}`);
-
-            updateCountUserFollowers(false);
-
-            setIsFollowing(false);
-        } catch (err) {
-            throw new Error("Failed on toggle user follow: " + err);
-        } finally {
-            setIsLoading(false);
-        }
+        unfollowUser({
+            userId: user.id,
+            targetUserId: targetUserId,
+        });
     }
 
     return (
@@ -92,6 +61,7 @@ export function FollowUserButton({ profileId, updateCountUserFollowers }: Follow
                     size="sm"
                     variant="black"
                     onClick={isFollowing ? handleUnfollowUser : handleFollowUser}
+                    disabled={isFollowLoading}
                 >
                     {isFollowing ? "Seguindo" : "Seguir"}
                 </Button>

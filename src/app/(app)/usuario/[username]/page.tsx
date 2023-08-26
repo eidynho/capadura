@@ -10,7 +10,6 @@ import { useFetchUserByUsername } from "@/endpoints/queries/usersQueries";
 import { useGetUsersFollowsCount } from "@/endpoints/queries/followsQueries";
 import { useFetchUserReadsByUser } from "@/endpoints/queries/readsQueries";
 import { useFetchUserProgress } from "@/endpoints/queries/progressQueries";
-import { useFollowUser, useUnfollowUser } from "@/endpoints/mutations/followsMutation";
 
 import Loading from "./loading";
 import { FavoriteBooks } from "./components/favoriteBooks";
@@ -76,23 +75,6 @@ export default function Me({ params }: MeProps) {
         enabled: !!targetUser?.id,
     });
 
-    // ----- mutations ----- //
-    const followUser = useFollowUser();
-    function followUserFn({ userId, targetUserId }: HandleToggleFollowUserProps) {
-        followUser.mutate({
-            userId,
-            targetUserId,
-        });
-    }
-
-    const unfollowUser = useUnfollowUser();
-    function unfollowUserFn({ userId, targetUserId }: HandleToggleFollowUserProps) {
-        unfollowUser.mutate({
-            userId,
-            targetUserId,
-        });
-    }
-
     // render loading
     const isMounting =
         !isFetchedUser || !isFetchedFollowsCount || !isFetchedUserReads || !isFetchedUserProgress;
@@ -113,19 +95,13 @@ export default function Me({ params }: MeProps) {
                     {!!targetUser?.id && (
                         <>
                             <FollowersDialog
-                                userId={targetUser.id}
+                                targetUserId={targetUser.id}
                                 followersCount={followingCount?.followers || 0}
-                                isFollowLoading={followUser.isLoading || unfollowUser.isLoading}
-                                followUser={followUserFn}
-                                unfollowUser={unfollowUserFn}
                             />
 
                             <FollowingDialog
-                                userId={targetUser.id}
+                                targetUserId={targetUser.id}
                                 followingCount={followingCount?.following || 0}
-                                isFollowLoading={followUser.isLoading || unfollowUser.isLoading}
-                                followUser={followUserFn}
-                                unfollowUser={unfollowUserFn}
                             />
                         </>
                     )}
@@ -190,14 +166,7 @@ export default function Me({ params }: MeProps) {
                             </div>
 
                             <EditProfileButton />
-                            {!!targetUser?.id && (
-                                <FollowUserButton
-                                    targetUserId={targetUser.id}
-                                    isFollowLoading={followUser.isLoading || unfollowUser.isLoading}
-                                    followUser={followUserFn}
-                                    unfollowUser={unfollowUserFn}
-                                />
-                            )}
+                            {!!targetUser?.id && <FollowUserButton targetUserId={targetUser.id} />}
                         </div>
 
                         <div className="hidden md:block">{renderHeaderInfo()}</div>

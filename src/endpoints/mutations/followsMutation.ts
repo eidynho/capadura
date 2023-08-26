@@ -5,25 +5,27 @@ import { api } from "@/lib/api";
 import { GetUserFollowersResponse, GetUsersFollowsCountResponse } from "../queries/followsQueries";
 
 interface UseFollowUserProps {
-    userId: string;
-    targetUserId: string;
+    followerId: string;
+    followingId: string;
 }
 
 export function useFollowUser() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async ({ userId, targetUserId }: UseFollowUserProps) => {
+        mutationFn: async ({ followerId, followingId }: UseFollowUserProps) => {
             await api.post("/user-followers", {
-                followerId: userId,
-                followingId: targetUserId,
+                followerId,
+                followingId,
             });
         },
-        onSuccess: (_, { userId, targetUserId }) => {
-            // update current user follows count
+        onSuccess: (_, { followerId, followingId }) => {
+            // update target user follower count
             queryClient.setQueryData<GetUsersFollowsCountResponse>(
-                ["getUsersFollowsCount", { userId }],
+                ["getUsersFollowsCount", { userId: followerId }],
                 (prevData) => {
+                    if (!prevData) return;
+
                     const updatedUserFollows = { ...prevData };
 
                     if (typeof updatedUserFollows.following === "number") {
@@ -31,49 +33,28 @@ export function useFollowUser() {
                     }
 
                     return {
-                        followers: updatedUserFollows.followers || 0,
-                        following: updatedUserFollows.following || 0,
+                        followers: updatedUserFollows.followers ?? 0,
+                        following: updatedUserFollows.following ?? 0,
                     };
                 },
             );
 
-            // update modal user followers button "follow/following"
-            queryClient.setQueryData<GetUserFollowersResponse[]>(
-                ["getUserFollowers", { userId }],
+            // update current user following count
+            queryClient.setQueryData<GetUsersFollowsCountResponse>(
+                ["getUsersFollowsCount", { userId: followingId }],
                 (prevData) => {
-                    const updatedFollowers = [...(prevData || [])];
+                    if (!prevData) return;
 
-                    const itemToUpdate = updatedFollowers.find(
-                        (item) => item.followerId === targetUserId,
-                    );
+                    const updatedUserFollows = { ...prevData };
 
-                    if (!itemToUpdate) {
-                        return updatedFollowers;
+                    if (typeof updatedUserFollows.followers === "number") {
+                        updatedUserFollows.followers++;
                     }
 
-                    itemToUpdate.isFollowedByCurrentUser = true;
-
-                    return updatedFollowers;
-                },
-            );
-
-            // update modal user following button "follow/following"
-            queryClient.setQueryData<GetUserFollowersResponse[]>(
-                ["getUserFollowing", { userId }],
-                (prevData) => {
-                    const updatedFollowers = [...(prevData || [])];
-
-                    const itemToUpdate = updatedFollowers.find(
-                        (item) => item.followingId === targetUserId,
-                    );
-
-                    if (!itemToUpdate) {
-                        return updatedFollowers;
-                    }
-
-                    itemToUpdate.isFollowedByCurrentUser = true;
-
-                    return updatedFollowers;
+                    return {
+                        followers: updatedUserFollows.followers ?? 0,
+                        following: updatedUserFollows.following ?? 0,
+                    };
                 },
             );
         },
@@ -85,21 +66,24 @@ export function useFollowUser() {
 }
 
 interface UseUnfollowUserProps {
-    userId: string;
-    targetUserId: string;
+    followerId: string;
+    followingId: string;
 }
 
 export function useUnfollowUser() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async ({ userId, targetUserId }: UseUnfollowUserProps) => {
-            await api.delete(`/user-followers/${userId}/${targetUserId}`);
+        mutationFn: async ({ followerId, followingId }: UseUnfollowUserProps) => {
+            await api.delete(`/user-followers/${followerId}/${followingId}`);
         },
-        onSuccess: (_, { userId, targetUserId }) => {
+        onSuccess: (_, { followerId, followingId }) => {
+            // update target user following count
             queryClient.setQueryData<GetUsersFollowsCountResponse>(
-                ["getUsersFollowsCount", { userId }],
+                ["getUsersFollowsCount", { userId: followerId }],
                 (prevData) => {
+                    if (!prevData) return;
+
                     const updatedUserFollows = { ...prevData };
 
                     if (typeof updatedUserFollows.following === "number") {
@@ -107,20 +91,41 @@ export function useUnfollowUser() {
                     }
 
                     return {
-                        followers: updatedUserFollows.followers || 0,
-                        following: updatedUserFollows.following || 0,
+                        followers: updatedUserFollows.followers ?? 0,
+                        following: updatedUserFollows.following ?? 0,
+                    };
+                },
+            );
+
+            // update current user followers count
+            queryClient.setQueryData<GetUsersFollowsCountResponse>(
+                ["getUsersFollowsCount", { userId: followingId }],
+                (prevData) => {
+                    if (!prevData) return;
+
+                    const updatedUserFollows = { ...prevData };
+
+                    if (typeof updatedUserFollows.followers === "number") {
+                        updatedUserFollows.followers--;
+                    }
+
+                    return {
+                        followers: updatedUserFollows.followers ?? 0,
+                        following: updatedUserFollows.following ?? 0,
                     };
                 },
             );
 
             // update modal user followers button "follow/following"
             queryClient.setQueryData<GetUserFollowersResponse[]>(
-                ["getUserFollowers", { userId }],
+                ["getUserFollowers", { userId: followerId }],
                 (prevData) => {
-                    const updatedFollowers = [...(prevData || [])];
+                    if (!prevData) return;
+
+                    const updatedFollowers = [...prevData];
 
                     const itemToUpdate = updatedFollowers.find(
-                        (item) => item.followerId === targetUserId,
+                        (item) => item.followerId === followingId,
                     );
 
                     if (!itemToUpdate) {
@@ -135,12 +140,14 @@ export function useUnfollowUser() {
 
             // update modal user following button "follow/following"
             queryClient.setQueryData<GetUserFollowersResponse[]>(
-                ["getUserFollowing", { userId }],
+                ["getUserFollowing", { userId: followerId }],
                 (prevData) => {
-                    const updatedFollowers = [...(prevData || [])];
+                    if (!prevData) return;
+
+                    const updatedFollowers = [...prevData];
 
                     const itemToUpdate = updatedFollowers.find(
-                        (item) => item.followingId === targetUserId,
+                        (item) => item.followingId === followingId,
                     );
 
                     if (!itemToUpdate) {

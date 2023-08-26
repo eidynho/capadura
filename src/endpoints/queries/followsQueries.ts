@@ -84,19 +84,23 @@ export function useGetUserFollowing({ userId, enabled = true }: UseGetUserFollow
     });
 }
 
-interface UseGetIsTargetUserFollowingCurrentUserProps {
+export interface GetIsCurrentUserFollowingTargetUserResponse {
+    isFollowing: boolean;
+}
+
+interface UseGetIsCurrentUserFollowingTargetUserProps {
     targetUserId: string;
     enabled?: boolean;
 }
 
-export function useGetIsTargetUserFollowingCurrentUser({
+export function useGetIsCurrentUserFollowingTargetUser({
     targetUserId,
     enabled = true,
-}: UseGetIsTargetUserFollowingCurrentUserProps) {
+}: UseGetIsCurrentUserFollowingTargetUserProps) {
     return useQuery({
-        queryKey: ["getIsTargetUserFollowingCurrentUser", { targetUserId }],
+        queryKey: ["getIsCurrentUserFollowingTargetUser", { targetUserId }],
         queryFn: async () => {
-            const { data } = await api.get<GetUsersFollowsCountResponse>(
+            const { data } = await api.get<GetIsCurrentUserFollowingTargetUserResponse>(
                 `/user-is-following/${targetUserId}`,
             );
 

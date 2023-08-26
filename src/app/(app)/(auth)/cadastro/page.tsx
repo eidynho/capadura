@@ -22,16 +22,21 @@ export default function SignUp() {
     const registerUser = useRegisterUser();
     async function handleSignUp({ username, email, password }: FieldValues) {
         try {
-            await registerUser.mutateAsync({
-                username,
-                email,
-                password,
-            });
-
-            await signIn({
-                email,
-                password,
-            });
+            registerUser.mutate(
+                {
+                    username,
+                    email,
+                    password,
+                },
+                {
+                    onSuccess: async () => {
+                        await signIn({
+                            email,
+                            password,
+                        });
+                    },
+                },
+            );
 
             router.push("/livros");
         } catch (err) {

@@ -5,9 +5,12 @@ import { usePathname } from "next/navigation";
 
 import { AuthContext } from "@/contexts/AuthContext";
 import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";
-import { HandleToggleFollowUserProps } from "../../page";
 
-import { useGetUserFollowers } from "@/endpoints/queries/followsQueries";
+import {
+    GetIsCurrentUserFollowingTargetUserResponse,
+    GetUserFollowersResponse,
+    useGetUserFollowers,
+} from "@/endpoints/queries/followsQueries";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
@@ -19,22 +22,15 @@ import {
     DialogTrigger,
 } from "@/components/ui/Dialog";
 import { LinkUnderline } from "@/components/LinkUnderline";
+import { useFollowUser, useUnfollowUser } from "@/endpoints/mutations/followsMutation";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface FollowersDialogProps {
-    userId: string;
+    targetUserId: string;
     followersCount: number;
-    isFollowLoading: boolean;
-    followUser: ({ userId, targetUserId }: HandleToggleFollowUserProps) => void;
-    unfollowUser: ({ userId, targetUserId }: HandleToggleFollowUserProps) => void;
 }
 
-export function FollowersDialog({
-    userId,
-    followersCount,
-    isFollowLoading,
-    followUser,
-    unfollowUser,
-}: FollowersDialogProps) {
+export function FollowersDialog({ targetUserId, followersCount }: FollowersDialogProps) {
     const { user } = useContext(AuthContext);
     const routePathname = usePathname();
     const username = routePathname.split("/")[2];
@@ -43,32 +39,134 @@ export function FollowersDialog({
 
     const [isOpen, setIsOpen] = useState(false);
 
-    const { data: followers, isFetching } = useGetUserFollowers({
-        userId,
-        enabled: !!userId,
+    const queryClient = useQueryClient();
+    const {
+        data: followers,
+        isFetching,
+        isStale,
+        refetch,
+    } = useGetUserFollowers({
+        userId: targetUserId,
+        enabled: !!targetUserId && isOpen,
     });
 
-    async function handleFollowUser(followingId: string) {
-        if (isFollowLoading || !user || !followingId) return;
+    const followUser = useFollowUser();
+    const unfollowUser = useUnfollowUser();
+    const isLoading = followUser.isLoading || unfollowUser.isLoading;
 
-        followUser({
-            userId: user.id,
-            targetUserId: followingId,
-        });
+    function handleFollowUser(userIdToFollow: string) {
+        if (isLoading || !user || !userIdToFollow) return;
+
+        followUser.mutate(
+            {
+                followerId: user.id,
+                followingId: userIdToFollow,
+            },
+            {
+                onSuccess: () => {
+                    // real time update modal user following button "follow/following"
+                    // and invalidate both follows modal for next open
+                    queryClient.setQueryData<GetUserFollowersResponse[]>(
+                        ["getUserFollowers", { userId: targetUserId }],
+                        (prevData) => {
+                            if (!prevData) return;
+
+                            const updatedFollowers = [...prevData];
+
+                            const itemToUpdate = updatedFollowers.find(
+                                (item) => item.followerId === userIdToFollow,
+                            );
+
+                            if (itemToUpdate) {
+                                itemToUpdate.isFollowedByCurrentUser = true;
+                            }
+
+                            return updatedFollowers;
+                        },
+                    );
+                    queryClient.invalidateQueries({
+                        queryKey: ["getUserFollowers"],
+                        refetchType: "none",
+                    });
+                    queryClient.invalidateQueries({
+                        queryKey: ["getUserFollowing"],
+                        refetchType: "none",
+                    });
+
+                    queryClient.setQueryData<GetIsCurrentUserFollowingTargetUserResponse>(
+                        ["getIsCurrentUserFollowingTargetUser", { targetUserId: userIdToFollow }],
+                        () => {
+                            return {
+                                isFollowing: true,
+                            };
+                        },
+                    );
+                },
+            },
+        );
     }
 
-    async function handleUnfollowUser(followingId: string) {
-        if (isFollowLoading || !user || !followingId) return;
+    function handleUnfollowUser(userIdToUnfollow: string) {
+        if (isLoading || !user || !userIdToUnfollow) return;
 
-        unfollowUser({
-            userId: user.id,
-            targetUserId: followingId,
-        });
+        unfollowUser.mutate(
+            {
+                followerId: user.id,
+                followingId: userIdToUnfollow,
+            },
+            {
+                onSuccess: () => {
+                    // real time update modal user following button "follow/following"
+                    // and invalidate both follows modal for next open
+                    queryClient.setQueryData<GetUserFollowersResponse[]>(
+                        ["getUserFollowers", { userId: targetUserId }],
+                        (prevData) => {
+                            if (!prevData) return;
+
+                            const updatedFollowers = [...prevData];
+
+                            const itemToUpdate = updatedFollowers.find(
+                                (item) => item.followerId === userIdToUnfollow,
+                            );
+
+                            if (itemToUpdate) {
+                                itemToUpdate.isFollowedByCurrentUser = false;
+                            }
+
+                            return updatedFollowers;
+                        },
+                    );
+                    queryClient.invalidateQueries({
+                        queryKey: ["getUserFollowers"],
+                        refetchType: "none",
+                    });
+                    queryClient.invalidateQueries({
+                        queryKey: ["getUserFollowing"],
+                        refetchType: "none",
+                    });
+
+                    queryClient.setQueryData<GetIsCurrentUserFollowingTargetUserResponse>(
+                        ["getIsCurrentUserFollowingTargetUser", { targetUserId: userIdToUnfollow }],
+                        () => {
+                            return {
+                                isFollowing: false,
+                            };
+                        },
+                    );
+                },
+            },
+        );
+    }
+
+    async function handleOpenDialog() {
+        if (isStale) {
+            await refetch();
+        }
     }
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogTrigger>
+            <DialogTrigger onClick={handleOpenDialog}>
                 <span className="mr-1 font-medium">{followersCount}</span>
                 <span className="text-zinc-500">seguidores</span>
             </DialogTrigger>
@@ -120,7 +218,7 @@ export function FollowersDialog({
                                                 ? () => handleUnfollowUser(item.followerId)
                                                 : () => handleFollowUser(item.followerId)
                                         }
-                                        disabled={isFollowLoading}
+                                        disabled={isLoading}
                                     >
                                         {item.isFollowedByCurrentUser ? "Seguindo" : "Seguir"}
                                     </Button>

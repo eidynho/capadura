@@ -146,15 +146,20 @@ export function FavoriteBooks() {
         );
 
         if (favoriteBookWithSameOrder) {
-            await updateFavoriteBook.mutateAsync({
-                ...params,
-                favoriteBookId: favoriteBookWithSameOrder.id,
-            });
+            updateFavoriteBook.mutate(
+                {
+                    ...params,
+                    favoriteBookId: favoriteBookWithSameOrder.id,
+                },
+                {
+                    onSuccess: () => setIsOpen(false),
+                },
+            );
         } else {
-            await createFavoriteBook.mutateAsync(params);
+            createFavoriteBook.mutate(params, {
+                onSuccess: () => setIsOpen(false),
+            });
         }
-
-        setIsOpen(false);
     }
 
     const removeFavoriteBook = useRemoveFavoriteBook();

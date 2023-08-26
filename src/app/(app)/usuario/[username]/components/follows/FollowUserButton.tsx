@@ -5,25 +5,21 @@ import { usePathname } from "next/navigation";
 
 import { AuthContext } from "@/contexts/AuthContext";
 import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";
-import { HandleToggleFollowUserProps } from "../../page";
 
-import { useGetIsTargetUserFollowingCurrentUser } from "@/endpoints/queries/followsQueries";
+import {
+    GetIsCurrentUserFollowingTargetUserResponse,
+    useGetIsCurrentUserFollowingTargetUser,
+} from "@/endpoints/queries/followsQueries";
 
 import { Button } from "@/components/ui/Button";
+import { useFollowUser, useUnfollowUser } from "@/endpoints/mutations/followsMutation";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface FollowUserButtonProps {
     targetUserId: string;
-    isFollowLoading: boolean;
-    followUser: ({ userId, targetUserId }: HandleToggleFollowUserProps) => void;
-    unfollowUser: ({ userId, targetUserId }: HandleToggleFollowUserProps) => void;
 }
 
-export function FollowUserButton({
-    targetUserId,
-    isFollowLoading,
-    followUser,
-    unfollowUser,
-}: FollowUserButtonProps) {
+export function FollowUserButton({ targetUserId }: FollowUserButtonProps) {
     const { user } = useContext(AuthContext);
 
     const routePathname = usePathname();
@@ -31,27 +27,68 @@ export function FollowUserButton({
 
     const isCurrentUser = isPageUserSameCurrentUser(username);
 
-    const { data: isFollowing } = useGetIsTargetUserFollowingCurrentUser({
+    const { data } = useGetIsCurrentUserFollowingTargetUser({
         targetUserId,
         enabled: !!targetUserId,
     });
 
-    function handleFollowUser() {
-        if (isFollowLoading || !user || isCurrentUser) return;
+    const queryClient = useQueryClient();
+    const followUser = useFollowUser();
+    const unfollowUser = useUnfollowUser();
+    const isLoading = followUser.isLoading || unfollowUser.isLoading;
 
-        followUser({
-            userId: user.id,
-            targetUserId: targetUserId,
-        });
+    function handleFollowUser() {
+        if (isLoading || !user || isCurrentUser) return;
+
+        followUser.mutate(
+            {
+                followerId: user.id,
+                followingId: targetUserId,
+            },
+            {
+                onSuccess: () => {
+                    queryClient.invalidateQueries({
+                        queryKey: ["getUserFollowers", { userId: targetUserId }],
+                        refetchType: "none",
+                    });
+                    queryClient.setQueryData<GetIsCurrentUserFollowingTargetUserResponse>(
+                        ["getIsCurrentUserFollowingTargetUser", { targetUserId }],
+                        () => {
+                            return {
+                                isFollowing: true,
+                            };
+                        },
+                    );
+                },
+            },
+        );
     }
 
     function handleUnfollowUser() {
-        if (isFollowLoading || !user || isCurrentUser) return;
+        if (isLoading || !user || isCurrentUser) return;
 
-        unfollowUser({
-            userId: user.id,
-            targetUserId: targetUserId,
-        });
+        unfollowUser.mutate(
+            {
+                followerId: user.id,
+                followingId: targetUserId,
+            },
+            {
+                onSuccess: () => {
+                    queryClient.invalidateQueries({
+                        queryKey: ["getUserFollowers", { userId: targetUserId }],
+                        refetchType: "none",
+                    });
+                    queryClient.setQueryData<GetIsCurrentUserFollowingTargetUserResponse>(
+                        ["getIsCurrentUserFollowingTargetUser", { targetUserId }],
+                        () => {
+                            return {
+                                isFollowing: false,
+                            };
+                        },
+                    );
+                },
+            },
+        );
     }
 
     return (
@@ -60,10 +97,10 @@ export function FollowUserButton({
                 <Button
                     size="sm"
                     variant="black"
-                    onClick={isFollowing ? handleUnfollowUser : handleFollowUser}
-                    disabled={isFollowLoading}
+                    onClick={data?.isFollowing ? handleUnfollowUser : handleFollowUser}
+                    disabled={isLoading}
                 >
-                    {isFollowing ? "Seguindo" : "Seguir"}
+                    {data?.isFollowing ? "Seguindo" : "Seguir"}
                 </Button>
             )}
         </>

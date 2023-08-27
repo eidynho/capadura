@@ -24,11 +24,11 @@ export function useFetchUserReadsByUser({
     return useQuery({
         queryKey: ["fetchUserReadsByUser", { userId, page, perPage }],
         queryFn: async () => {
-            const { data } = await api.get<ReadsDataResponse>(
+            const { data } = await api.get(
                 `/user-reads?userId=${userId}&status=FINISHED&page=${page}&perPage=${perPage}`,
             );
 
-            return data;
+            return data as ReadsDataResponse;
         },
         enabled,
     });
@@ -43,9 +43,9 @@ export function useFetchUserReadsByBook({ bookId, enabled = true }: UseFetchUser
     return useQuery({
         queryKey: ["fetchUserReadsByBook", { bookId }],
         queryFn: async () => {
-            const { data } = await api.get<ReadsDataResponse>(`/user-reads?bookId=${bookId}`);
+            const { data } = await api.get(`/user-reads?bookId=${bookId}`);
 
-            return data;
+            return data as ReadsDataResponse;
         },
         enabled,
     });
@@ -79,9 +79,9 @@ export function useFetchReadsRating({ bookId, userId, enabled = true }: UseFetch
                 query = `?userId=${userId}`;
             }
 
-            const { data } = await api.get<FetchReadsRatingData>(`/read/ratings${query}`);
+            const { data } = await api.get(`/read/ratings${query}`);
 
-            return data;
+            return data as FetchReadsRatingData;
         },
         enabled,
     });

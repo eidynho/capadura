@@ -12,9 +12,9 @@ export function useFetchUserBookLists({ userId, enabled = true }: UseFetchUserBo
     return useQuery({
         queryKey: ["fetchUserBookLists", { userId }],
         queryFn: async () => {
-            const { data } = await api.get<BookListData[]>(`/booklists/user/${userId}`);
+            const { data } = await api.get(`/booklists/user/${userId}`);
 
-            return data;
+            return data as BookListData[];
         },
         enabled,
     });
@@ -36,11 +36,9 @@ export function useFetchUserBookListsIncludeBook({
         queryFn: async () => {
             const searchParams = bookId ? `?bookId=${bookId}` : "";
 
-            const { data } = await api.get<BookListData[]>(
-                `/booklists/user/${userId}${searchParams}`,
-            );
+            const { data } = await api.get(`/booklists/user/${userId}${searchParams}`);
 
-            return data;
+            return data as BookListData[];
         },
         enabled,
     });

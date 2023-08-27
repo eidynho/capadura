@@ -19,9 +19,9 @@ export function useGetUserLikedBook({ bookId, enabled = true }: UseGetUserLikedB
     return useQuery({
         queryKey: ["getUserLikedBook", { bookId }],
         queryFn: async () => {
-            const { data } = await api.get<LikeBook>(`/likes/book/${bookId}`);
+            const { data } = await api.get(`/likes/book/${bookId}`);
 
-            return data.like;
+            return data.like as LikeBook;
         },
         enabled,
         staleTime: Infinity,

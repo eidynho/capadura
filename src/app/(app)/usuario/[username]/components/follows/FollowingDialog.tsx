@@ -8,7 +8,6 @@ import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-use
 
 import {
     GetIsCurrentUserFollowingTargetUserResponse,
-    GetUserFollowersResponse,
     GetUserFollowingResponse,
     useGetUserFollowing,
 } from "@/endpoints/queries/followsQueries";

@@ -12,9 +12,9 @@ export function useFetchBook({ bookId, enabled = true }: UseFetchBookProps) {
     return useQuery({
         queryKey: ["fetchBook", { bookId }],
         queryFn: async () => {
-            const { data } = await api.get<BookData>(`/book/${bookId}`);
+            const { data } = await api.get(`/book/${bookId}`);
 
-            return data;
+            return data as BookData;
         },
         enabled,
         staleTime: Infinity,

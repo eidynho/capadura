@@ -15,11 +15,9 @@ export function useFetchBooksOnBookList({
     return useQuery({
         queryKey: ["fetchBooksOnBookList", { bookListId }],
         queryFn: async () => {
-            const { data } = await api.get<BookOnBookListWithBook[]>(
-                `/books-on-booklists/bookList/${bookListId}`,
-            );
+            const { data } = await api.get(`/books-on-booklists/bookList/${bookListId}`);
 
-            return data;
+            return data as BookOnBookListWithBook[];
         },
         enabled,
     });

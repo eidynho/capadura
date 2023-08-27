@@ -12,9 +12,9 @@ export function useFetchUserByUsername({ username, enabled = true }: UseFetchUse
     return useQuery({
         queryKey: ["fetchUserByUsername", { username }],
         queryFn: async () => {
-            const { data } = await api.get<ProfileData>(`/users/${username}`);
+            const { data } = await api.get(`/users/${username}`);
 
-            return data;
+            return data as ProfileData;
         },
         enabled,
     });

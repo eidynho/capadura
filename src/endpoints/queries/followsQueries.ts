@@ -16,11 +16,9 @@ export function useGetUsersFollowsCount({ userId, enabled = true }: UseGetUsersF
     return useQuery({
         queryKey: ["getUsersFollowsCount", { userId }],
         queryFn: async () => {
-            const { data } = await api.get<GetUsersFollowsCountResponse>(
-                `/count-user-follows/${userId}`,
-            );
+            const { data } = await api.get(`/count-user-follows/${userId}`);
 
-            return data;
+            return data as GetUsersFollowsCountResponse;
         },
         enabled,
     });
@@ -47,9 +45,9 @@ export function useGetUserFollowers({ userId, enabled = true }: UseGetUserFollow
     return useQuery({
         queryKey: ["getUserFollowers", { userId }],
         queryFn: async () => {
-            const { data } = await api.get<GetUserFollowersResponse[]>(`/user-followers/${userId}`);
+            const { data } = await api.get(`/user-followers/${userId}`);
 
-            return data;
+            return data as GetUserFollowersResponse[];
         },
         enabled,
     });
@@ -76,9 +74,9 @@ export function useGetUserFollowing({ userId, enabled = true }: UseGetUserFollow
     return useQuery({
         queryKey: ["getUserFollowing", { userId }],
         queryFn: async () => {
-            const { data } = await api.get<GetUserFollowingResponse[]>(`/user-following/${userId}`);
+            const { data } = await api.get(`/user-following/${userId}`);
 
-            return data;
+            return data as GetUserFollowingResponse[];
         },
         enabled,
     });
@@ -100,11 +98,9 @@ export function useGetIsCurrentUserFollowingTargetUser({
     return useQuery({
         queryKey: ["getIsCurrentUserFollowingTargetUser", { targetUserId }],
         queryFn: async () => {
-            const { data } = await api.get<GetIsCurrentUserFollowingTargetUserResponse>(
-                `/user-is-following/${targetUserId}`,
-            );
+            const { data } = await api.get(`/user-is-following/${targetUserId}`);
 
-            return data;
+            return data as GetIsCurrentUserFollowingTargetUserResponse;
         },
         enabled,
     });

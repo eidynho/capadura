@@ -24,11 +24,11 @@ export function useFetchUserProgress({
     return useQuery({
         queryKey: ["fetchUserProgress", { userId }],
         queryFn: async () => {
-            const { data } = await api.get<ProgressDataResponse>(
+            const { data } = await api.get(
                 `/user-progress/${userId}?page=${page}&perPage=${perPage}`,
             );
 
-            return data;
+            return data as ProgressDataResponse;
         },
         enabled,
     });

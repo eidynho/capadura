@@ -29,11 +29,9 @@ export function useFetchUserActivities({ userId, enabled = true }: UseFetchUserA
     return useQuery({
         queryKey: ["fetchUserActivities", { userId }],
         queryFn: async () => {
-            const { data } = await api.get<FetchUserActivitiesResponse[]>(
-                `/user-activities/${userId}`,
-            );
+            const { data } = await api.get(`/user-activities/${userId}`);
 
-            return data;
+            return data as FetchUserActivitiesResponse[];
         },
         enabled,
     });

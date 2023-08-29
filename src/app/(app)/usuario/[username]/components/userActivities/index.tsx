@@ -134,7 +134,9 @@ export function UserActivities({ userId }: UserActivitiesProps) {
         <div className="mt-2 flex flex-col gap-5 rounded-md border p-3 text-xs">
             {!!userActivities?.length ? (
                 userActivities.map((item) => (
-                    <div className="flex items-center gap-2">{renderBookActivity(item)}</div>
+                    <div key={item.id} className="flex items-center gap-2">
+                        {renderBookActivity(item)}
+                    </div>
                 ))
             ) : (
                 <div>Nenhuma atividade recente.</div>

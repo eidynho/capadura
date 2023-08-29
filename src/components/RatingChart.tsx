@@ -23,8 +23,11 @@ export interface ratingsDataChart {
 interface RatingChartProps {
     bookId?: string;
     userId?: string;
+    username?: string;
 }
-export function RatingChart({ bookId, userId }: RatingChartProps) {
+export function RatingChart({ bookId, userId, username }: RatingChartProps) {
+    if (!bookId && !userId) return;
+
     const router = useRouter();
 
     const [barGraphData, setBarGraphData] = useState({ x: 0, y: 0 });
@@ -41,7 +44,7 @@ export function RatingChart({ bookId, userId }: RatingChartProps) {
     if (!bookRatings) return;
 
     function handleClickBar({ rating }: { rating: number }) {
-        router.push(`${bookId}/ratings/${rating}`);
+        router.push(`/${username ? `@${username}` : bookId}/ratings/${rating}`);
     }
 
     function RenderTooltipContent({ payload }: any) {

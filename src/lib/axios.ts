@@ -1,6 +1,7 @@
-import { signOut } from "@/contexts/AuthContext";
 import axios, { AxiosError } from "axios";
 import { parseCookies, setCookie } from "nookies";
+
+import { signOut } from "@/utils/sign-out";
 
 interface failedRequestsQueueProps {
     resolve: (token: string) => void;
@@ -55,7 +56,7 @@ export function getAPIClient(ctx?: any) {
                             });
                     }
 
-                    return new Promise((resolve, reject) => {
+                    return new Promise((resolve) => {
                         if (!originalConfig) return;
 
                         failedRequestsQueue.push({
@@ -65,7 +66,7 @@ export function getAPIClient(ctx?: any) {
                                 resolve(api(originalConfig));
                             },
                             reject: (err: AxiosError) => {
-                                reject(err);
+                                throw new Error(err.message);
                             },
                         });
                     });

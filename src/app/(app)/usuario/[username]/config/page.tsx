@@ -8,18 +8,21 @@ import lodash from "lodash";
 import { toast } from "react-toastify";
 import { Loader2 } from "lucide-react";
 
-import { api } from "@/lib/api";
-import { AuthContext, ProfileData } from "@/contexts/AuthContext";
+import { AuthContext } from "@/contexts/AuthContext";
+import { signOut } from "@/utils/sign-out";
 
-import { Container } from "@/components/layout/Container";
+import { ProfileDataResponse } from "@/endpoints/queries/usersQueries";
+import { useUpdateUserData } from "@/endpoints/mutations/usersMutations";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
-import { Title } from "@/components/Title";
-import { Subtitle } from "@/components/Subtitle";
-import { Separator } from "@/components/ui/Separator";
+import { Container } from "@/components/layout/Container";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
+import { Separator } from "@/components/ui/Separator";
+import { Subtitle } from "@/components/Subtitle";
 import { Textarea } from "@/components/ui/Textarea";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
+import { Title } from "@/components/Title";
 
 const configTabs = ["Perfil"];
 
@@ -74,14 +77,16 @@ const profileFormSchema = z.object({
 
 type ProfileFormSchema = z.infer<typeof profileFormSchema>;
 
-export default function Config() {
+export default function UserConfigs() {
     const { user } = useContext(AuthContext);
-    const [userData, setUserData] = useState<ProfileData | null>(null);
+    if (!user) {
+        return signOut();
+    }
+
+    const [userData, setUserData] = useState<ProfileDataResponse | null>(null);
     const [currentTab, setCurrentTab] = useState(0);
 
     useEffect(() => {
-        if (!user) return;
-
         setUserData(user);
 
         setValue("id", user.id);
@@ -107,46 +112,52 @@ export default function Config() {
 
     const selectedImage = watch("image");
 
-    async function submitProfile(data: ProfileFormSchema) {
+    const updateUserData = useUpdateUserData();
+    function submitProfile(data: ProfileFormSchema) {
+        if (!user) {
+            return signOut();
+        }
+
         const { id, name, username, email, image, description, location, website, twitter } = data;
 
-        if (lodash.isEqual(userData, { ...data, createdAt: user?.createdAt })) {
+        if (lodash.isEqual(userData, { ...data, createdAt: user.createdAt })) {
             toast.success("O perfil está atualizado.");
             return;
         }
 
-        try {
-            // TODO: BE ABLE TO UPDATE USERNAME AND E-MAIL (UNIQUE)
-            const updatedUser = await api.putForm("/me", {
+        // TODO: BE ABLE TO UPDATE USERNAME AND E-MAIL (UNIQUE)
+        updateUserData.mutate(
+            {
                 id,
                 name,
-                username: user?.username,
-                email: user?.email,
+                username: user.username,
+                email: user.email,
                 image: image[0],
                 description: description ?? undefined,
                 location: location ?? undefined,
                 website: website ?? undefined,
                 twitter: twitter ?? undefined,
-            });
+            },
+            {
+                onSuccess: (updatedUser) => {
+                    if (!description) {
+                        setValue("description", "");
+                    }
+                    if (!location) {
+                        setValue("location", "");
+                    }
+                    if (!website) {
+                        setValue("website", "");
+                    }
+                    if (!twitter) {
+                        setValue("twitter", "");
+                    }
 
-            if (!description) {
-                setValue("description", "");
-            }
-            if (!location) {
-                setValue("location", "");
-            }
-            if (!website) {
-                setValue("website", "");
-            }
-            if (!twitter) {
-                setValue("twitter", "");
-            }
-
-            setUserData(updatedUser.data);
-            toast.success("Seu perfil foi atualizado.");
-        } catch (err) {
-            toast.error("Erro ao atualizar perfil.");
-        }
+                    setUserData(updatedUser);
+                    toast.success("Seu perfil foi atualizado.");
+                },
+            },
+        );
     }
 
     return (
@@ -274,11 +285,11 @@ export default function Config() {
                                                                 ? URL.createObjectURL(
                                                                       selectedImage[0],
                                                                   )
-                                                                : user?.imageUrl
+                                                                : user.imageUrl
                                                         }
                                                     />
                                                     <AvatarFallback>
-                                                        {user?.username[0].toUpperCase() || "-"}
+                                                        {user.username[0].toUpperCase() || "-"}
                                                     </AvatarFallback>
                                                 </Avatar>
 

@@ -1,4 +1,4 @@
-import { ProfileData } from "@/contexts/AuthContext";
+import { ProfileDataResponse } from "@/endpoints/queries/usersQueries";
 
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/Avatar";
 import { Button } from "./ui/Button";
@@ -6,7 +6,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/HoverCard";
 import { LinkUnderline } from "./LinkUnderline";
 
 interface UserHoverCardProps {
-    user: ProfileData;
+    user: ProfileDataResponse;
 }
 
 export function UserHoverCard({ user }: UserHoverCardProps) {

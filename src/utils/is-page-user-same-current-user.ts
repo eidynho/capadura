@@ -6,5 +6,5 @@ export function isPageUserSameCurrentUser(username: string) {
 
     if (!user) return false;
 
-    return user?.username === username;
+    return user.username === username;
 }

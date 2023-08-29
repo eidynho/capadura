@@ -14,6 +14,22 @@ const nextConfig = {
             },
         ],
     },
+    async rewrites() {
+        return [
+            {
+                source: "/@:username",
+                destination: "/usuario/:username",
+            },
+            {
+                source: "/@:username/config",
+                destination: "/usuario/:username/config",
+            },
+            {
+                source: "/@:username/listas",
+                destination: "/usuario/:username/listas",
+            },
+        ];
+    },
 };
 
 module.exports = nextConfig;

@@ -1,7 +1,9 @@
 "use client";
 
-import { toast } from "react-toastify";
+import { useContext } from "react";
 import { Heart } from "lucide-react";
+
+import { AuthContext } from "@/contexts/AuthContext";
 
 import { Button } from "@/components/ui/Button";
 import { useGetUserLikedBook } from "@/endpoints/queries/likeBookQueries";
@@ -12,10 +14,11 @@ interface LikeProps {
 }
 
 export function Like({ bookId }: LikeProps) {
-    // const [like, setLike] = useState<LikeBook | null>(null);
+    const { isAuthenticated } = useContext(AuthContext);
 
     const { data: like } = useGetUserLikedBook({
         bookId,
+        enabled: isAuthenticated,
     });
 
     const addLikeBook = useAddLikeBook();

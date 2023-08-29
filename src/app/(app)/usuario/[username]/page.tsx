@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { notFound } from "next/navigation";
 import { Link as LinkIcon, MapPin, Twitter } from "lucide-react";
 
 import { ProgressData, ReadData } from "../../livros/[id]/page";
-import { ProfileData } from "@/contexts/AuthContext";
+import { ProfileDataResponse } from "@/endpoints/queries/usersQueries";
 
 import { useFetchUserByUsername } from "@/endpoints/queries/usersQueries";
 import { useGetUsersFollowsCount } from "@/endpoints/queries/followsQueries";
@@ -33,7 +34,7 @@ export interface HandleToggleFollowUserProps {
 }
 
 export interface UserData {
-    user: ProfileData;
+    user: ProfileDataResponse;
     reads: {
         items: ReadData[];
         total: number;
@@ -46,20 +47,25 @@ export interface UserData {
     followingCount: number;
 }
 
-interface MeProps {
+interface ProfileProps {
     params: {
         username: string;
     };
 }
 
-export default function Me({ params }: MeProps) {
+export default function Profile({ params }: ProfileProps) {
     const [date, setDate] = useState<Date | undefined>(new Date());
 
     // ----- queries ----- //
-    const { data: targetUser, isFetched: isFetchedUser } = useFetchUserByUsername({
+    const {
+        data: targetUser,
+        isFetched: isFetchedUser,
+        isError: isErrorFetchUser,
+    } = useFetchUserByUsername({
         username: params.username,
         enabled: !!params.username,
     });
+
     const { data: followingCount, isFetched: isFetchedFollowsCount } = useGetUsersFollowsCount({
         userId: targetUser?.id || "",
         enabled: !!targetUser?.id,
@@ -79,74 +85,75 @@ export default function Me({ params }: MeProps) {
     const isMounting =
         !isFetchedUser || !isFetchedFollowsCount || !isFetchedUserReads || !isFetchedUserProgress;
 
+    if (isErrorFetchUser) {
+        notFound();
+    }
+
     if (isMounting) {
         return <Loading />;
     }
 
-    function renderHeaderInfo() {
-        return (
-            <div className="flex w-full flex-col gap-5 md:w-[28rem]">
-                <div className="mt-1 flex gap-x-8 gap-y-3">
-                    <LinkUnderline href="">
-                        <span className="mr-1 font-medium">234</span>
-                        <span className="text-zinc-500">livros</span>
-                    </LinkUnderline>
+    const ProfileHeader = () => (
+        <div className="flex w-full flex-col gap-5 md:w-[28rem]">
+            <div className="mt-1 flex gap-x-8 gap-y-3">
+                <LinkUnderline href="">
+                    <span className="mr-1 font-medium">234</span>
+                    <span className="text-zinc-500">livros</span>
+                </LinkUnderline>
 
-                    {!!targetUser?.id && (
-                        <>
-                            <FollowersDialog
-                                targetUserId={targetUser.id}
-                                followersCount={followingCount?.followers || 0}
-                            />
+                {!!targetUser?.id && (
+                    <>
+                        <FollowersDialog
+                            username={params.username}
+                            targetUserId={targetUser.id}
+                            followersCount={followingCount?.followers || 0}
+                        />
 
-                            <FollowingDialog
-                                targetUserId={targetUser.id}
-                                followingCount={followingCount?.following || 0}
-                            />
-                        </>
-                    )}
-                </div>
-
-                {targetUser?.description && <h1 className="text-sm">{targetUser?.description}</h1>}
-
-                <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
-                    {targetUser?.location && (
-                        <div className="flex items-center gap-1">
-                            <MapPin size={16} />
-
-                            <span>{targetUser.location}</span>
-                        </div>
-                    )}
-
-                    {targetUser?.website && (
-                        <div className="flex items-center gap-1">
-                            <LinkIcon size={15} />
-
-                            <LinkUnderline asChild className="font-semibold">
-                                <a href={targetUser.website} target="_blank">
-                                    {targetUser.website}
-                                </a>
-                            </LinkUnderline>
-                        </div>
-                    )}
-
-                    {targetUser?.twitter && (
-                        <div className="flex items-center gap-1">
-                            <Twitter size={16} />
-                            <LinkUnderline asChild className="font-semibold">
-                                <a
-                                    href={`https://twitter.com/${targetUser?.twitter}`}
-                                    target="_blank"
-                                >
-                                    {targetUser.twitter}
-                                </a>
-                            </LinkUnderline>
-                        </div>
-                    )}
-                </div>
+                        <FollowingDialog
+                            username={params.username}
+                            targetUserId={targetUser.id}
+                            followingCount={followingCount?.following || 0}
+                        />
+                    </>
+                )}
             </div>
-        );
-    }
+
+            {targetUser?.description && <h1 className="text-sm">{targetUser?.description}</h1>}
+
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
+                {targetUser?.location && (
+                    <div className="flex items-center gap-1">
+                        <MapPin size={16} />
+
+                        <span>{targetUser.location}</span>
+                    </div>
+                )}
+
+                {targetUser?.website && (
+                    <div className="flex items-center gap-1">
+                        <LinkIcon size={15} />
+
+                        <LinkUnderline asChild className="font-semibold">
+                            <a href={targetUser.website} target="_blank">
+                                {targetUser.website}
+                            </a>
+                        </LinkUnderline>
+                    </div>
+                )}
+
+                {targetUser?.twitter && (
+                    <div className="flex items-center gap-1">
+                        <Twitter size={16} />
+                        <LinkUnderline asChild className="font-semibold">
+                            <a href={`https://twitter.com/${targetUser?.twitter}`} target="_blank">
+                                {targetUser.twitter}
+                            </a>
+                        </LinkUnderline>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
 
     return (
         <Container>
@@ -165,24 +172,33 @@ export default function Me({ params }: MeProps) {
                                 <span className="font-medium">@{targetUser?.username}</span>
                             </div>
 
-                            <EditProfileButton />
-                            {!!targetUser?.id && <FollowUserButton targetUserId={targetUser.id} />}
+                            <EditProfileButton username={params.username} />
+                            {!!targetUser?.id && (
+                                <FollowUserButton
+                                    username={params.username}
+                                    targetUserId={targetUser.id}
+                                />
+                            )}
                         </div>
 
-                        <div className="hidden md:block">{renderHeaderInfo()}</div>
+                        <div className="hidden md:block">{ProfileHeader()}</div>
                     </div>
                 </div>
 
-                <div className="block md:hidden">{renderHeaderInfo()}</div>
+                <div className="block md:hidden">{ProfileHeader()}</div>
             </div>
 
             <div className="mt-8 flex flex-col justify-center gap-8 lg:flex-row">
                 <div className="flex w-full flex-col gap-12 lg:w-3/5">
-                    <FavoriteBooks />
+                    <FavoriteBooks username={params.username} />
 
-                    {!!userReads && <FinishedReads readsData={userReads} />}
+                    {!!userReads && (
+                        <FinishedReads username={params.username} readsData={userReads} />
+                    )}
 
-                    {!!userProgress && <RecentProgress progressData={userProgress} />}
+                    {!!userProgress && (
+                        <RecentProgress username={params.username} progressData={userProgress} />
+                    )}
                 </div>
 
                 <div className="flex w-full flex-col gap-8 sm:flex-row lg:w-72 lg:flex-col">
@@ -198,7 +214,9 @@ export default function Me({ params }: MeProps) {
 
                     <div className="w-full sm:w-1/2 lg:w-full">
                         <h3 className="font-semibold">Avaliações</h3>
-                        {targetUser?.id && <RatingChart userId={targetUser.id} />}
+                        {targetUser?.id && (
+                            <RatingChart userId={targetUser.id} username={params.username} />
+                        )}
                     </div>
 
                     <div className="w-full sm:w-1/2 lg:w-full">

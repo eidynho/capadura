@@ -1,7 +1,6 @@
 "use client";
 
 import { useContext, useState } from "react";
-import { usePathname } from "next/navigation";
 
 import { AuthContext } from "@/contexts/AuthContext";
 import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";
@@ -26,14 +25,13 @@ import { useFollowUser, useUnfollowUser } from "@/endpoints/mutations/followsMut
 import { useQueryClient } from "@tanstack/react-query";
 
 interface FollowingDialogProps {
+    username: string;
     targetUserId: string;
     followingCount: number;
 }
 
-export function FollowingDialog({ targetUserId, followingCount }: FollowingDialogProps) {
+export function FollowingDialog({ username, targetUserId, followingCount }: FollowingDialogProps) {
     const { user } = useContext(AuthContext);
-    const routePathname = usePathname();
-    const username = routePathname.split("/")[2];
 
     const isCurrentUser = isPageUserSameCurrentUser(username);
 
@@ -198,7 +196,7 @@ export function FollowingDialog({ targetUserId, followingCount }: FollowingDialo
 
                             <div className="flex flex-col items-start">
                                 <LinkUnderline
-                                    href={`/usuario/${item.following.username}`}
+                                    href={`/@${item.following.username}`}
                                     className="max-w-[10rem] truncate font-semibold sm:max-w-[18rem]"
                                 >
                                     @{item.following.username}

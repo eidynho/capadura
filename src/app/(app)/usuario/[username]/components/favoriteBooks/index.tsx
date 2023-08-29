@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 import { isValid, parse } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
@@ -32,10 +31,11 @@ import {
     DialogTitle,
 } from "@/components/ui/Dialog";
 
-export function FavoriteBooks() {
-    const routePathname = usePathname();
-    const username = routePathname.split("/")[2];
+interface FavoriteBooksProps {
+    username: string;
+}
 
+export function FavoriteBooks({ username }: FavoriteBooksProps) {
     const [isOpen, setIsOpen] = useState(false);
 
     // const [isLoading, setIsLoading] = useState(false);

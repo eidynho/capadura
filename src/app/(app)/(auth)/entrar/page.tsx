@@ -12,8 +12,8 @@ export default function Login() {
     const { register, handleSubmit } = useForm();
     const { signIn } = useContext(AuthContext);
 
-    async function handleSignIn({ email, password }: FieldValues) {
-        await signIn({
+    function handleSignIn({ email, password }: FieldValues) {
+        signIn({
             email,
             password,
         });

@@ -3,9 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
 import { Library, MoreHorizontal, PlusCircle } from "lucide-react";
-import { toast } from "react-toastify";
 
 import { BookData } from "@/app/(app)/livros/[id]/page";
 import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";
@@ -63,17 +61,20 @@ export interface BookListData {
     books: { id: string; bookId: string; bookListId: string }[];
 }
 
-export default function UserLists() {
-    const routePathname = usePathname();
-    const username = routePathname.split("/")[2];
+interface UserListsProps {
+    params: {
+        username: string;
+    };
+}
 
+export default function UserLists({ params }: UserListsProps) {
     const [isMounted, setIsMounted] = useState(false);
     const [activeBookList, setActiveBookList] = useState(0);
 
-    const isCurrentUser = isPageUserSameCurrentUser(username);
+    const isCurrentUser = isPageUserSameCurrentUser(params.username);
 
     const { data: targetUser, isError } = useFetchUserByUsername({
-        username,
+        username: params.username,
     });
 
     const { data: bookLists, isFetching: isFetchingUserBookLists } = useFetchUserBookLists({
@@ -174,7 +175,7 @@ export default function UserLists() {
 
     return (
         <Container>
-            <Title>{isCurrentUser ? "Minhas listas" : `Listas do ${username}`}</Title>
+            <Title>{isCurrentUser ? "Minhas listas" : `Listas do ${params.username}`}</Title>
             {isCurrentUser && <Subtitle>Organize sua leitura do jeito que você quiser.</Subtitle>}
 
             <Separator className="my-6 bg-gray-300" />

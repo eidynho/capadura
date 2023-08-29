@@ -54,7 +54,8 @@ interface ReadsProgressProps {
 }
 
 export function ReadsProgress({ bookData }: ReadsProgressProps) {
-    const { user } = useContext(AuthContext);
+    const { user, isAuthenticated } = useContext(AuthContext);
+    if (!isAuthenticated) return;
 
     const [isOpenUpdateProgressDialog, setIsOpenUpdateProgressDialog] = useState(false);
     const [progressEditData, setProgressEditData] = useState<EditReadData | null>(null);
@@ -62,7 +63,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
 
     const { data: userReads } = useFetchUserReadsByBook({
         bookId: bookData?.id || "",
-        enabled: !!bookData?.id,
+        enabled: isAuthenticated && !!bookData?.id,
     });
 
     const filteredReads = userReads?.items?.filter((item) => {

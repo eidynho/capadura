@@ -3,11 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 
 export interface LikeBook {
-    like: {
-        id: string;
-        bookId: string;
-        userId: string;
-    } | null;
+    id: string;
+    bookId: string;
+    userId: string;
 }
 
 interface UseGetUserLikedBookProps {
@@ -21,7 +19,7 @@ export function useGetUserLikedBook({ bookId, enabled = true }: UseGetUserLikedB
         queryFn: async () => {
             const { data } = await api.get(`/likes/book/${bookId}`);
 
-            return data.like as LikeBook;
+            return data.like as LikeBook | null;
         },
         enabled,
         staleTime: Infinity,

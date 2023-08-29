@@ -1,4 +1,3 @@
-import { usePathname } from "next/navigation";
 import { format, parseISO } from "date-fns";
 import { pt } from "date-fns/locale";
 
@@ -9,16 +8,14 @@ import { LinkUnderline } from "@/components/LinkUnderline";
 import { RatingStars } from "@/components/RatingStars";
 
 interface FinishedReadsProps {
+    username: string;
     readsData: {
         items: ReadData[];
         total: number;
     };
 }
 
-export function FinishedReads({ readsData }: FinishedReadsProps) {
-    const routePathname = usePathname();
-    const username = routePathname.split("/")[2];
-
+export function FinishedReads({ username, readsData }: FinishedReadsProps) {
     const isCurrentUser = isPageUserSameCurrentUser(username);
 
     return (

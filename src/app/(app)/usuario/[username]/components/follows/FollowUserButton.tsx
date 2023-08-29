@@ -1,7 +1,6 @@
 "use client";
 
 import { useContext } from "react";
-import { usePathname } from "next/navigation";
 
 import { AuthContext } from "@/contexts/AuthContext";
 import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";
@@ -16,20 +15,18 @@ import { useFollowUser, useUnfollowUser } from "@/endpoints/mutations/followsMut
 import { useQueryClient } from "@tanstack/react-query";
 
 interface FollowUserButtonProps {
+    username: string;
     targetUserId: string;
 }
 
-export function FollowUserButton({ targetUserId }: FollowUserButtonProps) {
-    const { user } = useContext(AuthContext);
-
-    const routePathname = usePathname();
-    const username = routePathname.split("/")[2];
+export function FollowUserButton({ username, targetUserId }: FollowUserButtonProps) {
+    const { user, isAuthenticated } = useContext(AuthContext);
 
     const isCurrentUser = isPageUserSameCurrentUser(username);
 
     const { data } = useGetIsCurrentUserFollowingTargetUser({
         targetUserId,
-        enabled: !!targetUserId,
+        enabled: isAuthenticated && !!targetUserId,
     });
 
     const queryClient = useQueryClient();
@@ -93,7 +90,7 @@ export function FollowUserButton({ targetUserId }: FollowUserButtonProps) {
 
     return (
         <>
-            {!isCurrentUser && (
+            {isAuthenticated && !isCurrentUser && (
                 <Button
                     size="sm"
                     variant="black"

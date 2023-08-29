@@ -1,4 +1,3 @@
-import { usePathname } from "next/navigation";
 import { format, parseISO } from "date-fns";
 import { pt } from "date-fns/locale";
 
@@ -9,16 +8,14 @@ import { LinkUnderline } from "@/components/LinkUnderline";
 import Link from "next/link";
 
 interface RecentProgressProps {
+    username: string;
     progressData: {
         items: ProgressData[];
         total: number;
     };
 }
 
-export function RecentProgress({ progressData }: RecentProgressProps) {
-    const routePathname = usePathname();
-    const username = routePathname.split("/")[2];
-
+export function RecentProgress({ username, progressData }: RecentProgressProps) {
     const isCurrentUser = isPageUserSameCurrentUser(username);
 
     return (

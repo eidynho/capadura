@@ -7,10 +7,10 @@ import { isValid, parse } from "date-fns";
 import { ImageOff } from "lucide-react";
 import { toast } from "react-toastify";
 
-import { api } from "@/lib/api";
 import { publishDateFormat } from "@/utils/publish-date-format";
 
 import { useFetchBook } from "@/endpoints/queries/booksQueries";
+import { useCreateBook, useUpdateBookImage } from "@/endpoints/mutations/booksMutations";
 
 import Loading from "./loading";
 
@@ -99,6 +99,9 @@ export default function Book({ params }: BookProps) {
         enabled: !!params.id,
     });
 
+    const createBook = useCreateBook();
+    const updateBookImage = useUpdateBookImage();
+
     async function fetchBookFromGoogle() {
         try {
             const { data } = await axios.get<BookDataFromGoogle>(
@@ -119,19 +122,25 @@ export default function Book({ params }: BookProps) {
 
             const parsedDate = parse(publishedDate, "yyyy-MM-dd", new Date());
 
-            const createdBook = await api.post("/book", {
-                id: data.id,
-                title,
-                subtitle,
-                authors,
-                publisher,
-                publishDate: isValid(parsedDate) ? parsedDate : undefined,
-                language,
-                pageCount,
-                description,
-                imageLink: imageLinks?.medium?.replace("&edge=curl", ""),
-            });
-            setBookData(createdBook.data);
+            createBook.mutate(
+                {
+                    bookId: params.id,
+                    title,
+                    subtitle,
+                    authors,
+                    publisher,
+                    publishDate: isValid(parsedDate) ? parsedDate : undefined,
+                    language,
+                    pageCount,
+                    description,
+                    imageLink: imageLinks?.medium?.replace("&edge=curl", ""),
+                },
+                {
+                    onSuccess: (createdBook) => {
+                        setBookData(createdBook);
+                    },
+                },
+            );
         } catch (err) {
             toast.error("Erro ao carregar os dados do livro.");
             throw err;
@@ -140,7 +149,7 @@ export default function Book({ params }: BookProps) {
     useEffect(() => {
         if (!isFetchedBook) return;
 
-        async function fetchBookFromDatabase() {
+        async function fetchBook() {
             setIsMounted(false);
 
             try {
@@ -156,24 +165,32 @@ export default function Book({ params }: BookProps) {
                         );
 
                         const imageLinkFromGoogle =
-                            googleImageResponse.data.volumeInfo.imageLinks?.medium?.replace(
+                            googleImageResponse.data?.volumeInfo?.imageLinks?.medium?.replace(
                                 "&edge=curl",
                                 "",
                             );
 
-                        await api.put(`/book/${params.id}`, {
-                            id: params.id,
-                            imageLink: imageLinkFromGoogle,
-                        });
+                        if (imageLinkFromGoogle) {
+                            updateBookImage.mutate(
+                                {
+                                    bookId: params.id,
+                                    imageLink: imageLinkFromGoogle,
+                                },
+                                {
+                                    onSuccess: (updatedBookData) => {
+                                        setBookData((prev) => {
+                                            if (!prev) return bookFetchedFromDb;
 
-                        setBookData((prev) => {
-                            if (!prev) return null;
-
-                            return {
-                                ...prev,
-                                imageKey: `book-${params.id}`,
-                            };
-                        });
+                                            return {
+                                                ...prev,
+                                                imageKey: updatedBookData.imageKey,
+                                                imageUrl: updatedBookData.imageUrl,
+                                            };
+                                        });
+                                    },
+                                },
+                            );
+                        }
                     }
                 }
             } catch (err) {
@@ -184,7 +201,7 @@ export default function Book({ params }: BookProps) {
             }
         }
 
-        fetchBookFromDatabase();
+        fetchBook();
     }, [params.id, isFetchedBook]);
 
     if (!isMounted || !bookData) {
@@ -236,9 +253,13 @@ export default function Book({ params }: BookProps) {
                                 <div className="mx-4 mt-4 flex justify-between text-sm">
                                     <span className="font-semibold">Escrito por</span>
 
-                                    <LinkUnderline href="" className="font-semibold">
-                                        {bookData.authors}
-                                    </LinkUnderline>
+                                    {!!bookData.authors?.[0] ? (
+                                        <LinkUnderline href="" className="font-semibold">
+                                            {bookData.authors[0]}
+                                        </LinkUnderline>
+                                    ) : (
+                                        <span>-</span>
+                                    )}
                                 </div>
 
                                 <Separator className="my-4 bg-black dark:bg-primary" />

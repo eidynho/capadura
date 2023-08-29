@@ -1,11 +1,9 @@
 "use client";
 
 import { useContext } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FieldValues, useForm } from "react-hook-form";
 
-import { api } from "@/lib/api";
 import { AuthContext } from "@/contexts/AuthContext";
 import getGoogleOAuthURL from "@/utils/get-google-url";
 
@@ -14,34 +12,26 @@ import { useRegisterUser } from "@/endpoints/mutations/usersMutations";
 import { Button } from "@/components/ui/Button";
 
 export default function SignUp() {
-    const router = useRouter();
-
     const { register, handleSubmit } = useForm();
     const { signIn } = useContext(AuthContext);
 
     const registerUser = useRegisterUser();
-    async function handleSignUp({ username, email, password }: FieldValues) {
-        try {
-            registerUser.mutate(
-                {
-                    username,
-                    email,
-                    password,
+    function handleSignUp({ username, email, password }: FieldValues) {
+        registerUser.mutate(
+            {
+                username,
+                email,
+                password,
+            },
+            {
+                onSuccess: () => {
+                    signIn({
+                        email,
+                        password,
+                    });
                 },
-                {
-                    onSuccess: async () => {
-                        await signIn({
-                            email,
-                            password,
-                        });
-                    },
-                },
-            );
-
-            router.push("/livros");
-        } catch (err) {
-            throw new Error("Failed to create account: " + err);
-        }
+            },
+        );
     }
 
     return (

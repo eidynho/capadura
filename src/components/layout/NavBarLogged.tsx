@@ -79,52 +79,54 @@ export function NavBarLoggedComponent() {
 
     const isMobile = windowWidth < 1024;
 
-    const profileRoutes: routeProps[] = [
-        {
-            name: "Perfil",
-            path: `/usuario/${user?.username}`,
-            icon: User,
-        },
-        {
-            name: "Minhas leituras",
-            path: `/usuario/${user?.username}/leituras`,
-            icon: BookOpen,
-        },
-        {
-            name: "Linha do tempo",
-            path: `/usuario/${user?.username}/linha-do-tempo`,
-            icon: CalendarClock,
-        },
-        {
-            name: "Minhas listas",
-            path: `/usuario/${user?.username}/listas`,
-            icon: List,
-        },
-        {
-            name: "Separator",
-            path: "",
-        },
-        {
-            name: "Seja membro",
-            path: "/seja-membro",
-            icon: Hexagon,
-        },
-        {
-            name: "Convidar amigos",
-            path: "/convidar-amigos",
-            icon: UserPlus,
-        },
-        {
-            name: "Configurações",
-            path: `/usuario/${user?.username}/config`,
-            icon: Settings,
-        },
-        {
-            name: "Sair",
-            path: "/sair",
-            icon: LogOut,
-        },
-    ];
+    const profileRoutes: routeProps[] = user
+        ? [
+              {
+                  name: "Perfil",
+                  path: `/@${user.username}`,
+                  icon: User,
+              },
+              {
+                  name: "Minhas leituras",
+                  path: `/@${user.username}/leituras`,
+                  icon: BookOpen,
+              },
+              {
+                  name: "Linha do tempo",
+                  path: `/@${user.username}/linha-do-tempo`,
+                  icon: CalendarClock,
+              },
+              {
+                  name: "Minhas listas",
+                  path: `/@${user.username}/listas`,
+                  icon: List,
+              },
+              {
+                  name: "Separator",
+                  path: "",
+              },
+              {
+                  name: "Seja membro",
+                  path: "/seja-membro",
+                  icon: Hexagon,
+              },
+              {
+                  name: "Convidar amigos",
+                  path: "/convidar-amigos",
+                  icon: UserPlus,
+              },
+              {
+                  name: "Configurações",
+                  path: `/@${user.username}/config`,
+                  icon: Settings,
+              },
+              {
+                  name: "Sair",
+                  path: "/sair",
+                  icon: LogOut,
+              },
+          ]
+        : [];
 
     function routesTree(routes: routeProps[]) {
         return (

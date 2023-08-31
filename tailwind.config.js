@@ -25,8 +25,9 @@ module.exports = {
         },
         extend: {
             colors: {
-                // light
-                primary: "#F5F5F0",
+                primary: "#FACC12",
+                light: "#F5F5F0",
+                dark: "#0C0A09",
                 pink: {
                     500: "#F7A1C6",
                 },
@@ -41,7 +42,6 @@ module.exports = {
                 },
 
                 // dark
-                "primary-dark": "#1E191E",
 
                 border: "hsl(var(--border))",
                 input: "hsl(var(--input))",

@@ -9,15 +9,17 @@ const buttonVariants = cva(
     {
         variants: {
             variant: {
-                default: "text-black hover:bg-black hover:bg-opacity-5",
-                black: "bg-black text-primary hover:bg-black/90",
+                default:
+                    "text-black hover:bg-dark hover:bg-opacity-5 text-black dark:text-white dark:hover:bg-accent",
+                black: "bg-dark text-light hover:bg-dark/90",
+                primary: "bg-primary text-black hover:bg-primary/90",
                 success: "bg-green-500 text-white hover:bg-green-500/90",
                 destructive: "bg-destructive text-white hover:bg-destructive/90",
                 outline:
-                    "border border-input bg-background text-black hover:bg-accent hover:text-accent-foreground",
-                link: "text-black underline-offset-4 hover:underline",
+                    "border border-input bg-background text-black hover:bg-accent hover:text-accent-foreground dark:text-white",
+                link: "text-black underline-offset-4 hover:underline dark:text-white",
                 neobrutalism:
-                    "border border-black bg-black text-white transition-all duration-300 hover:-translate-x-1 hover:-translate-y-1 hover:bg-yellow-500 hover:text-black hover:shadow-[0.25rem_0.25rem_#000] disabled:cursor-default disabled:border-black disabled:bg-black/80 disabled:bg-opacity-100 disabled:text-white",
+                    "border border-black bg-dark text-white transition-all duration-300 hover:-translate-x-1 hover:-translate-y-1 hover:bg-yellow-500 hover:text-black hover:shadow-[0.25rem_0.25rem_#000] disabled:cursor-default disabled:border-dark disabled:bg-dark/80 disabled:bg-opacity-100 disabled:text-white dark:border-border",
             },
             size: {
                 default: "text-base px-4 py-3",

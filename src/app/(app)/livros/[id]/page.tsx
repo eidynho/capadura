@@ -239,7 +239,7 @@ export default function Book({ params }: BookProps) {
                                         className="mx-auto rounded-md"
                                     />
                                 ) : (
-                                    <div className="flex h-96 w-full flex-col items-center justify-center rounded-md border border-black bg-zinc-500/10 opacity-75">
+                                    <div className="flex h-96 w-full flex-col items-center justify-center rounded-md border border-dark bg-zinc-500/10 opacity-75">
                                         <ImageOff size={36} strokeWidth={1.6} />
                                         <span className="mt-1 text-sm font-medium text-muted-foreground">
                                             Sem imagem
@@ -249,7 +249,7 @@ export default function Book({ params }: BookProps) {
                             </div>
 
                             {/* Book data */}
-                            <div className="mt-3 rounded-md border border-black pb-4">
+                            <div className="mt-3 rounded-md border pb-4 text-black dark:text-white">
                                 <div className="mx-4 mt-4 flex justify-between text-sm">
                                     <span className="font-semibold">Escrito por</span>
 
@@ -262,14 +262,14 @@ export default function Book({ params }: BookProps) {
                                     )}
                                 </div>
 
-                                <Separator className="my-4 bg-black dark:bg-primary" />
+                                <Separator className="my-4" />
 
                                 <div className="mx-4 flex justify-between text-sm">
                                     <span className="font-semibold">Ano de publicação</span>
                                     <span>{publishDateFormat(bookData.publishDate)}</span>
                                 </div>
 
-                                <Separator className="my-4 bg-black dark:bg-primary" />
+                                <Separator className="my-4" />
 
                                 <div className="mx-4 flex justify-between text-sm">
                                     <span className="font-semibold">Editora</span>
@@ -277,7 +277,7 @@ export default function Book({ params }: BookProps) {
                                     <span>{bookData.publisher ?? "Sem informação"}</span>
                                 </div>
 
-                                <Separator className="my-4 bg-black dark:bg-primary" />
+                                <Separator className="my-4" />
 
                                 <div className="mx-4 flex justify-between text-sm">
                                     <span className="font-semibold">Idioma</span>
@@ -285,7 +285,7 @@ export default function Book({ params }: BookProps) {
                                     <span>{bookData.language ?? "Sem informação"}</span>
                                 </div>
 
-                                <Separator className="my-4 bg-black dark:bg-primary" />
+                                <Separator className="my-4" />
 
                                 <div className="mx-4 flex justify-between text-sm">
                                     <span className="font-semibold">Páginas</span>
@@ -293,7 +293,7 @@ export default function Book({ params }: BookProps) {
                                     <span>{bookData.pageCount ?? "Sem informação"}</span>
                                 </div>
 
-                                <Separator className="my-4 bg-black dark:bg-primary" />
+                                <Separator className="my-4" />
 
                                 {/* Book action buttons */}
                                 <div className="flex w-full items-center justify-center gap-2">
@@ -314,7 +314,7 @@ export default function Book({ params }: BookProps) {
                                 <div className="flex w-full flex-col gap-2">
                                     {/* Book content */}
                                     <p
-                                        className="text-justify text-sm leading-7"
+                                        className="text-justify text-sm leading-7 text-black dark:text-muted-foreground"
                                         dangerouslySetInnerHTML={{
                                             __html: bookData.description ?? "",
                                         }}

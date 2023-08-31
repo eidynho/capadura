@@ -165,9 +165,9 @@ export default function UserConfigs() {
             <Title>Configurações</Title>
             <Subtitle>Gerencie as configurações da sua conta.</Subtitle>
 
-            <Separator className="my-6 bg-gray-300" />
+            <Separator className="my-6" />
 
-            <section className="mt-4 flex flex-col gap-8 md:flex-row lg:gap-6 xl:gap-8">
+            <section className="mt-4 flex flex-col gap-8 text-black dark:text-white md:flex-row lg:gap-6 xl:gap-8">
                 {currentTab === 0 && (
                     <>
                         <div className="w-full md:w-1/4">
@@ -178,8 +178,8 @@ export default function UserConfigs() {
                                         onClick={() => setCurrentTab(index)}
                                         className={`${
                                             currentTab === index
-                                                ? "border border-black bg-black text-white"
-                                                : "border border-transparent hover:bg-black hover:bg-opacity-5"
+                                                ? "bg-muted-foreground text-white dark:bg-accent"
+                                                : "hover:bg-muted-foreground/25 dark:hover:bg-accent/50"
                                         } cursor-pointer rounded-md px-4 py-2 text-sm`}
                                     >
                                         <span className="block w-full truncate">{item}</span>
@@ -235,7 +235,7 @@ export default function UserConfigs() {
                                         errors.username ? "border-destructive" : ""
                                     } mt-2 w-2/3 lg:w-1/4`}
                                 />
-                                <span className="mt-1 text-xs text-zinc-500">
+                                <span className="mt-1 text-xs text-muted-foreground">
                                     Não é possível alterar o usuário no momento.
                                 </span>
                                 {errors.username && (
@@ -258,7 +258,7 @@ export default function UserConfigs() {
                                         errors.email ? "border-destructive" : ""
                                     } mt-2 w-2/3 lg:w-1/3`}
                                 />
-                                <span className="mt-1 text-xs text-zinc-500">
+                                <span className="mt-1 text-xs text-muted-foreground">
                                     Não é possível alterar o e-mail no momento.
                                 </span>
                                 {errors.email && (
@@ -334,7 +334,7 @@ export default function UserConfigs() {
                                     id="config-profile-description"
                                     rows={4}
                                     placeholder="Harry Potter: Bruxo corajoso, amigos leais, combate o mal, símbolo de esperança."
-                                    className="mt-2 bg-white"
+                                    className="mt-2 bg-white dark:bg-dark"
                                 ></Textarea>
                             </div>
 
@@ -398,7 +398,12 @@ export default function UserConfigs() {
                                 )}
                             </div>
 
-                            <Button size="md" variant="black" type="submit" disabled={isSubmitting}>
+                            <Button
+                                size="md"
+                                variant="primary"
+                                type="submit"
+                                disabled={isSubmitting}
+                            >
                                 {isSubmitting ? (
                                     <>
                                         <Loader2 size={22} className="animate-spin" />

@@ -7,5 +7,5 @@ interface SubtitleProps extends HTMLAttributes<HTMLHeadingElement> {
 }
 
 export function Subtitle({ className, children }: SubtitleProps) {
-    return <p className={cn("text-zinc-500", className)}>{children}</p>;
+    return <p className={cn("text-muted-foreground", className)}>{children}</p>;
 }

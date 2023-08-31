@@ -8,7 +8,12 @@ interface TitleProps extends HTMLAttributes<HTMLHeadingElement> {
 
 export function Title({ className, children }: TitleProps) {
     return (
-        <h1 className={cn("text-2xl font-bold leading-relaxed tracking-tight", className)}>
+        <h1
+            className={cn(
+                "text-2xl font-bold leading-relaxed tracking-tight text-black dark:text-white",
+                className,
+            )}
+        >
             {children}
         </h1>
     );

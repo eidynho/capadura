@@ -61,7 +61,10 @@ export function FormReadProgress({ editData, submitForm }: FormReadProgressProps
     }, [editData]);
 
     return (
-        <form onSubmit={handleSubmit(submitForm)} className="flex w-full flex-col gap-4">
+        <form
+            onSubmit={handleSubmit(submitForm)}
+            className="flex w-full flex-col gap-4 text-black dark:text-white"
+        >
             <div>
                 <Label htmlFor="description-progress">Comentário</Label>
                 <Textarea
@@ -80,7 +83,7 @@ export function FormReadProgress({ editData, submitForm }: FormReadProgressProps
                     name="isSpoiler"
                     type="checkbox"
                     id="is-spoiler-checkbox"
-                    className="h-4 w-4 accent-black outline-black"
+                    className="h-4 w-4 accent-primary outline-black"
                 />
                 <Label htmlFor="is-spoiler-checkbox">Contém spoiler</Label>
             </div>
@@ -111,7 +114,7 @@ export function FormReadProgress({ editData, submitForm }: FormReadProgressProps
                                 id="page-count-type"
                                 type="radio"
                                 value="page"
-                                className="h-4 w-4 border-none accent-[#000]"
+                                className="h-4 w-4 border-none accent-primary"
                             />
                             <Label htmlFor="page-count-type">Páginas</Label>
                         </div>
@@ -121,7 +124,7 @@ export function FormReadProgress({ editData, submitForm }: FormReadProgressProps
                                 id="percentage-count-type"
                                 type="radio"
                                 value="percentage"
-                                className="h-4 w-4 border-none accent-[#000]"
+                                className="h-4 w-4 border-none accent-primary"
                             />
                             <Label htmlFor="percentage-count-type">Porcentagem</Label>
                         </div>

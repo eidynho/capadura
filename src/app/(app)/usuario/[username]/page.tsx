@@ -97,8 +97,8 @@ export default function Profile({ params }: ProfileProps) {
         <div className="flex w-full flex-col gap-5 md:w-[28rem]">
             <div className="mt-1 flex gap-x-8 gap-y-3">
                 <LinkUnderline href="">
-                    <span className="mr-1 font-medium">234</span>
-                    <span className="text-zinc-500">livros</span>
+                    <span className="mr-1 font-medium text-black dark:text-white">234</span>
+                    <span className="text-muted-foreground">livros</span>
                 </LinkUnderline>
 
                 {!!targetUser?.id && (
@@ -118,22 +118,24 @@ export default function Profile({ params }: ProfileProps) {
                 )}
             </div>
 
-            {targetUser?.description && <h1 className="text-sm">{targetUser?.description}</h1>}
+            {targetUser?.description && (
+                <h1 className="text-sm text-muted-foreground">{targetUser?.description}</h1>
+            )}
 
             <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
                 {targetUser?.location && (
                     <div className="flex items-center gap-1">
-                        <MapPin size={16} />
+                        <MapPin size={16} className="text-black dark:text-white" />
 
-                        <span>{targetUser.location}</span>
+                        <span className="text-muted-foreground">{targetUser.location}</span>
                     </div>
                 )}
 
                 {targetUser?.website && (
                     <div className="flex items-center gap-1">
-                        <LinkIcon size={15} />
+                        <LinkIcon size={15} className="text-black dark:text-white" />
 
-                        <LinkUnderline asChild className="font-semibold">
+                        <LinkUnderline asChild className="font-semibold text-muted-foreground">
                             <a href={targetUser.website} target="_blank">
                                 {targetUser.website}
                             </a>
@@ -143,8 +145,8 @@ export default function Profile({ params }: ProfileProps) {
 
                 {targetUser?.twitter && (
                     <div className="flex items-center gap-1">
-                        <Twitter size={16} />
-                        <LinkUnderline asChild className="font-semibold">
+                        <Twitter size={16} className="text-black dark:text-white" />
+                        <LinkUnderline asChild className="font-semibold text-muted-foreground">
                             <a href={`https://twitter.com/${targetUser?.twitter}`} target="_blank">
                                 {targetUser.twitter}
                             </a>
@@ -166,10 +168,12 @@ export default function Profile({ params }: ProfileProps) {
                     <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-4 md:flex-row md:items-start">
                             <div>
-                                <h2 className="text-xl font-bold leading-relaxed tracking-tight">
+                                <h2 className="text-xl font-bold leading-relaxed tracking-tight text-black dark:text-white">
                                     {targetUser?.name}
                                 </h2>
-                                <span className="font-medium">@{targetUser?.username}</span>
+                                <span className="font-medium text-black dark:text-white">
+                                    @{targetUser?.username}
+                                </span>
                             </div>
 
                             <EditProfileButton username={params.username} />
@@ -203,24 +207,24 @@ export default function Profile({ params }: ProfileProps) {
 
                 <div className="flex w-full flex-col gap-8 sm:flex-row lg:w-72 lg:flex-col">
                     <div className="w-full sm:w-1/2 lg:w-full">
-                        <h3 className="font-semibold">Calendário</h3>
+                        <h3 className="font-semibold text-black dark:text-white">Calendário</h3>
                         <Calendar
                             mode="single"
                             selected={date}
                             onSelect={setDate}
-                            className="mt-2 rounded-md border bg-white"
+                            className="mt-2 rounded-md border bg-white transition-colors dark:bg-dark"
                         />
                     </div>
 
                     <div className="w-full sm:w-1/2 lg:w-full">
-                        <h3 className="font-semibold">Avaliações</h3>
+                        <h3 className="font-semibold text-black dark:text-white">Avaliações</h3>
                         {targetUser?.id && (
                             <RatingChart userId={targetUser.id} username={params.username} />
                         )}
                     </div>
 
                     <div className="w-full sm:w-1/2 lg:w-full">
-                        <h3 className="font-semibold">Atividades</h3>
+                        <h3 className="font-semibold text-black dark:text-white">Atividades</h3>
                         {targetUser?.id && <UserActivities userId={targetUser.id} />}
                     </div>
                 </div>

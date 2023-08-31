@@ -149,7 +149,7 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
                 <Button size="sm" variant="outline">
                     <List size={16} />
                     <span className="text-sm font-medium">Adicionar a lista</span>
-                    <ChevronDown size={14} className="text-zinc-500" />
+                    <ChevronDown size={14} className="text-muted-foreground" />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="max-h-72 w-56 overflow-auto">

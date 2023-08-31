@@ -165,8 +165,10 @@ export function FollowersDialog({ username, targetUserId, followersCount }: Foll
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger onClick={handleOpenDialog}>
-                <span className="mr-1 font-medium">{followersCount}</span>
-                <span className="text-zinc-500">seguidores</span>
+                <span className="mr-1 font-medium text-black dark:text-white">
+                    {followersCount}
+                </span>
+                <span className="text-muted-foreground">seguidores</span>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
@@ -197,7 +199,7 @@ export function FollowersDialog({ username, targetUserId, followersCount }: Foll
                             <div className="flex flex-col items-start">
                                 <LinkUnderline
                                     href={`/@${item.follower.username}`}
-                                    className="max-w-[10rem] truncate font-semibold sm:max-w-[18rem]"
+                                    className="max-w-[10rem] truncate font-semibold text-black dark:text-white sm:max-w-[18rem]"
                                 >
                                     @{item.follower.username}
                                 </LinkUnderline>
@@ -210,7 +212,7 @@ export function FollowersDialog({ username, targetUserId, followersCount }: Foll
                                 <div className="ml-auto">
                                     <Button
                                         size="sm"
-                                        variant="black"
+                                        variant="outline"
                                         onClick={
                                             item.isFollowedByCurrentUser
                                                 ? () => handleUnfollowUser(item.followerId)
@@ -227,7 +229,7 @@ export function FollowersDialog({ username, targetUserId, followersCount }: Foll
                 ) : (
                     <div className="flex h-36 flex-col items-center justify-center text-center">
                         <h2 className="text-base font-semibold">Nenhum seguidor encontrado.</h2>
-                        <p className="mt-2 w-[26rem] text-sm leading-6 text-slate-600">
+                        <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
                             {isCurrentUser
                                 ? "Que tal convidar seus amigos para te seguir e compartilhar leituras?"
                                 : `Que tal seguir ${username} para acompanhar suas leituras?`}

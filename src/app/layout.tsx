@@ -31,7 +31,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                     content="Conecte-se com apaixonados por livros, descubra recomendações, compartilhe leituras e explore um mundo literário colaborativo. Junte-se a nós!"
                 />
             </head>
-            <body className="bg-white transition-colors dark:bg-black">
+            <body className="bg-white transition-colors dark:bg-dark">
                 <div className={`${manrope.variable} mx-auto max-w-[120rem] font-manrope`}>
                     <Providers>
                         <div className="flex flex-col">

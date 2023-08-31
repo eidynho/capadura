@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Moon, Sun } from "phosphor-react";
+import { Moon, Sun } from "lucide-react";
+
+import { Button } from "./ui/Button";
 
 export function ThemeToggler() {
     const [theme, setTheme] = useState("light");
 
     useEffect(() => {
-        const storedTheme = localStorage.getItem("@viniciuseidy-portfolio-theme-v1.0.0");
+        const storedTheme = localStorage.getItem("@contopia-theme-v1.0.0");
         if (storedTheme) {
             setTheme(storedTheme);
         } else {
@@ -18,18 +20,15 @@ export function ThemeToggler() {
 
     function toggleTheme() {
         const newTheme = theme === "light" ? "dark" : "light";
+
         setTheme(newTheme);
-        localStorage.setItem("@viniciuseidy-portfolio-theme-v1.0.0", newTheme);
+        localStorage.setItem("@contopia-theme-v1.0.0", newTheme);
         document.documentElement.classList.toggle("dark");
     }
 
     return (
-        <button
-            onClick={toggleTheme}
-            className="rounded-md p-1 text-black
-            dark:text-white"
-        >
-            {theme === "light" ? <Moon size={24} /> : <Sun size={24} />}
-        </button>
+        <Button size="md" variant="outline" onClick={toggleTheme} className="px-3">
+            {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
+        </Button>
     );
 }

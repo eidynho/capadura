@@ -69,7 +69,7 @@ export default function Loading() {
                         {Array.from({ length: 3 }, (_, index) => (
                             <div
                                 key={index}
-                                className="flex gap-4 border-t border-black/20 py-4 last:border-b"
+                                className="flex gap-4 border-t border-dark/20 py-4 last:border-b"
                             >
                                 <div className="h-28 w-20 items-center rounded-md bg-gray-200"></div>
                                 <div className="w-full">
@@ -95,7 +95,7 @@ export default function Loading() {
                         {Array.from({ length: 3 }, (_, index) => (
                             <div
                                 key={index}
-                                className="flex gap-4 border-t border-black/20 py-4 last:border-b"
+                                className="flex gap-4 border-t border-dark/20 py-4 last:border-b"
                             >
                                 <div className="h-28 w-20 items-center rounded-md bg-gray-200"></div>
 

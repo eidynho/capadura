@@ -56,8 +56,8 @@ export function NewReadProgressDialog({
         <>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger>
-                    <Button size="sm" variant="outline">
-                        <BadgePlus size={16} className="text-pink-500" />
+                    <Button size="sm" variant="primary">
+                        <BadgePlus size={16} />
                         Novo progresso
                     </Button>
                 </DialogTrigger>

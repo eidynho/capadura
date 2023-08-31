@@ -103,7 +103,7 @@ export function UpdateBookListDialog({
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <Button size="icon" variant="default" onClick={() => setIsOpen(true)}>
-                            <PencilLine size={18} />
+                            <PencilLine size={16} />
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -118,7 +118,10 @@ export function UpdateBookListDialog({
                         <DialogTitle>Editar detalhes</DialogTitle>
                     </DialogHeader>
 
-                    <form onSubmit={handleSubmit(submitUpdate)} className="flex flex-col gap-6">
+                    <form
+                        onSubmit={handleSubmit(submitUpdate)}
+                        className="flex flex-col gap-6 text-black dark:text-white"
+                    >
                         <div className="flex w-full gap-4">
                             <div className="flex flex-col">
                                 <Label htmlFor="update-booklist-image">Foto de capa</Label>
@@ -198,7 +201,7 @@ export function UpdateBookListDialog({
                                         id="update-booklist-description"
                                         name="description"
                                         rows={4}
-                                        className="mt-2 max-h-40 bg-white"
+                                        className="mt-2 max-h-40 bg-white dark:bg-dark"
                                     />
                                 </div>
                             </div>
@@ -206,7 +209,7 @@ export function UpdateBookListDialog({
 
                         <Button
                             size="sm"
-                            variant="black"
+                            variant="success"
                             type="submit"
                             disabled={isUpdateBookListLoading}
                         >

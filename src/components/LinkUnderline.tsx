@@ -25,7 +25,7 @@ export function LinkUnderline({
             <Component href={href} target={target}>
                 {children}
             </Component>
-            <div className="absolute bottom-0 left-0 right-auto top-auto h-[1px] w-0 bg-black transition-all duration-200 will-change-auto group-hover:w-full"></div>
+            <div className="absolute bottom-0 left-0 right-auto top-auto h-[1px] w-0 bg-dark transition-all duration-200 will-change-auto group-hover:w-full dark:bg-light"></div>
         </div>
     );
 }

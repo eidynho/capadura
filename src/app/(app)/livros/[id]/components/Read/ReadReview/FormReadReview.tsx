@@ -158,11 +158,14 @@ export function FormReadReview({
     );
 
     return (
-        <form onSubmit={handleSubmit(submitReview)} className="flex w-full flex-col gap-4">
+        <form
+            onSubmit={handleSubmit(submitReview)}
+            className="flex w-full flex-col gap-4 text-black dark:text-white"
+        >
             <div>
                 <label
                     htmlFor="content-read-review"
-                    className="flex items-center gap-1 text-sm font-semibold text-black"
+                    className="flex items-center gap-1 text-sm font-semibold"
                 >
                     Avaliação
                 </label>
@@ -182,7 +185,7 @@ export function FormReadReview({
                             name="isSpoiler"
                             type="checkbox"
                             id="is-spoiler-read-review"
-                            className="h-4 w-4 accent-black outline-black"
+                            className="h-4 w-4 accent-primary"
                         />
                         <Label htmlFor="is-spoiler-read-review">Contém spoiler</Label>
                     </div>
@@ -220,7 +223,7 @@ export function FormReadReview({
                                             key={star.full}
                                             size={26}
                                             weight={isFull || isHalf ? "fill" : undefined}
-                                            className="text-yellow-500"
+                                            className="text-primary"
                                         />
                                     );
                                 })}

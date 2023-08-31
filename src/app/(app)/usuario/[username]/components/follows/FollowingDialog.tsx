@@ -165,8 +165,10 @@ export function FollowingDialog({ username, targetUserId, followingCount }: Foll
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger onClick={handleOpenDialog}>
-                <span className="mr-1 font-medium">{followingCount}</span>
-                <span className="text-zinc-500">seguindo</span>
+                <span className="mr-1 font-medium text-black dark:text-white">
+                    {followingCount}
+                </span>
+                <span className="text-muted-foreground">seguindo</span>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
@@ -197,7 +199,7 @@ export function FollowingDialog({ username, targetUserId, followingCount }: Foll
                             <div className="flex flex-col items-start">
                                 <LinkUnderline
                                     href={`/@${item.following.username}`}
-                                    className="max-w-[10rem] truncate font-semibold sm:max-w-[18rem]"
+                                    className="max-w-[10rem] truncate font-semibold text-black dark:text-white sm:max-w-[18rem]"
                                 >
                                     @{item.following.username}
                                 </LinkUnderline>
@@ -210,7 +212,7 @@ export function FollowingDialog({ username, targetUserId, followingCount }: Foll
                                 <div className="ml-auto">
                                     <Button
                                         size="sm"
-                                        variant="black"
+                                        variant="outline"
                                         onClick={
                                             item.isFollowedByCurrentUser
                                                 ? () => handleUnfollowUser(item.followingId)
@@ -229,7 +231,7 @@ export function FollowingDialog({ username, targetUserId, followingCount }: Foll
                         <h2 className="text-base font-semibold">
                             {isCurrentUser ? "Você" : `${username}`} não está seguindo ninguém.
                         </h2>
-                        <p className="mt-2 w-[26rem] text-sm leading-6 text-slate-600">
+                        <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
                             {isCurrentUser
                                 ? "Que tal seguir seus amigos e acompanhar suas leituras?"
                                 : `Atualmente ${username} prefere não acompanhar a leitura  dos outros usuários.`}

@@ -131,7 +131,7 @@ export function ApplicationSearch() {
                 <Search size={18} />
                 <span>Procurar livro...</span>
 
-                <kbd className="pointer-events-none absolute right-1.5 top-2.5 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-xs font-medium opacity-100 sm:flex">
+                <kbd className="pointer-events-none absolute right-1.5 top-2.5 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-xs font-medium opacity-100 transition-colors sm:flex">
                     Ctrl + K
                 </kbd>
             </Button>
@@ -182,7 +182,7 @@ export function ApplicationSearch() {
                                               <h2 className="text-base font-semibold">
                                                   Nenhum resultado encontrado.
                                               </h2>
-                                              <p className="mt-2 w-[26rem] text-sm leading-6 text-slate-600">
+                                              <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
                                                   Não encontramos nenhum item com esse termo, tente
                                                   procurar algo diferente.
                                               </p>

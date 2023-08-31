@@ -15,7 +15,7 @@ export function EditProfileButton({ username }: EditProfileButtonProps) {
     return (
         <>
             {isCurrentUser && (
-                <Button asChild size="sm" variant="black">
+                <Button asChild size="sm" variant="primary">
                     <Link href={`${document.location.pathname}/config`}>Editar perfil</Link>
                 </Button>
             )}

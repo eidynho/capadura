@@ -33,7 +33,7 @@ export function CardFavoriteBook({
     removeFavoriteBook,
 }: CardFavoriteBookProps) {
     return (
-        <div className="flex h-28 w-full items-start gap-4 rounded-md border bg-white/80 px-4 py-3">
+        <div className="flex h-28 w-full items-start gap-4 rounded-md border bg-white bg-opacity-80 px-4 py-3 transition-colors dark:bg-dark">
             <div className="h-[5.6rem] w-16 overflow-hidden rounded-sm">
                 {currentBook.imageUrl ? (
                     <Link href={`/livros/${currentBook.id}`}>
@@ -48,7 +48,7 @@ export function CardFavoriteBook({
                     </Link>
                 ) : (
                     <div className="flex h-full items-center justify-center rounded-sm border border-zinc-500">
-                        <ImageIcon size={20} className="text-zinc-500" />
+                        <ImageIcon size={20} className="text-muted-foreground" />
                     </div>
                 )}
             </div>
@@ -58,19 +58,24 @@ export function CardFavoriteBook({
                     <div>
                         <LinkUnderline href={`/livros/${currentBook.id}`} className="table">
                             <h3
-                                className="font-semibold leading-none tracking-tight"
+                                className="font-semibold leading-none tracking-tight text-black dark:text-white"
                                 title={currentBook.title}
                             >
                                 {currentBook.title}
                             </h3>
                         </LinkUnderline>
-                        <span className="text-sm text-zinc-500">{currentBook.authors?.[0]}</span>
+                        <span className="text-sm text-muted-foreground">
+                            {currentBook.authors?.[0]}
+                        </span>
                     </div>
                     {showMenu && (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button size="icon-sm" variant="default">
-                                    <MoreVertical size={16} />
+                                    <MoreVertical
+                                        size={16}
+                                        className="text-black dark:text-white"
+                                    />
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
@@ -91,14 +96,16 @@ export function CardFavoriteBook({
                 </div>
                 <div className="flex items-center gap-6">
                     <div className="flex items-center gap-1">
-                        <span className="text-sm text-zinc-500">
+                        <span className="text-sm text-muted-foreground">
                             Publicado em {publishDateFormat(currentBook.publishDate)}
                         </span>
                     </div>
 
                     <div className="flex items-center gap-1">
-                        <FileText size={14} className="text-zinc-500" />
-                        <span className="text-sm text-zinc-500">{currentBook.pageCount}</span>
+                        <FileText size={14} className="text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">
+                            {currentBook.pageCount}
+                        </span>
                     </div>
                 </div>
             </div>

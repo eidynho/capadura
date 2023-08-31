@@ -32,7 +32,10 @@ export function UserActivities({ userId }: UserActivitiesProps) {
         if (!book || !bookId) return;
 
         const BookLink = (
-            <Link href={`/livros/${bookId}`} className="font-medium text-black hover:underline">
+            <Link
+                href={`/livros/${bookId}`}
+                className="font-medium text-black hover:underline dark:text-white"
+            >
                 {book.title}
             </Link>
         );
@@ -131,7 +134,7 @@ export function UserActivities({ userId }: UserActivitiesProps) {
     }
 
     return (
-        <div className="mt-2 flex flex-col gap-5 rounded-md border bg-white p-3 text-xs">
+        <div className="mt-2 flex flex-col gap-5 rounded-md border bg-white p-3 text-xs transition-colors dark:bg-dark">
             {!!userActivities?.length ? (
                 userActivities.map((item) => (
                     <div key={item.id} className="flex items-center gap-2">
@@ -139,7 +142,7 @@ export function UserActivities({ userId }: UserActivitiesProps) {
                     </div>
                 ))
             ) : (
-                <div>Nenhuma atividade recente.</div>
+                <div className="text-black dark:text-white">Nenhuma atividade recente.</div>
             )}
         </div>
     );

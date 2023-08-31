@@ -185,12 +185,12 @@ export function FavoriteBooks({ username }: FavoriteBooksProps) {
     return (
         <>
             <div className="flex flex-col">
-                <h3 className="font-semibold">Livros favoritos</h3>
+                <h3 className="font-semibold text-black dark:text-white">Livros favoritos</h3>
 
                 {!isCurrentUser && noFavoriteBook && (
                     <div className="mt-2 flex h-36 w-full flex-col items-center justify-center rounded-md border bg-white text-center">
                         <h2 className="text-base font-semibold">Nenhum livro favorito.</h2>
-                        <p className="mt-2 w-[26rem] text-sm leading-6 text-slate-600">
+                        <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
                             {username} ainda não favoritou seus livros de cabeceira.
                         </p>
                     </div>
@@ -217,10 +217,12 @@ export function FavoriteBooks({ username }: FavoriteBooksProps) {
                             ) : (
                                 isCurrentUser && (
                                     <div
-                                        className="flex h-28 w-full cursor-pointer items-center justify-center rounded-md border border-dashed border-muted-foreground bg-white/80 px-3 py-2"
+                                        className="flex h-28 w-full cursor-pointer items-center justify-center rounded-md border border-dashed bg-white bg-opacity-80 px-3 py-2 transition-colors dark:bg-dark"
                                         onClick={() => openFavoriteBookDialog(index + 1)}
                                     >
-                                        <span className="text-sm font-medium">Adicionar livro</span>
+                                        <span className="text-sm font-medium text-black dark:text-white">
+                                            Adicionar livro
+                                        </span>
                                     </div>
                                 )
                             )}
@@ -286,7 +288,7 @@ export function FavoriteBooks({ username }: FavoriteBooksProps) {
                                                             <h2 className="text-base font-semibold">
                                                                 Nenhum resultado encontrado.
                                                             </h2>
-                                                            <p className="mt-2 w-[26rem] text-sm leading-6 text-slate-600">
+                                                            <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
                                                                 Não encontramos nenhum item com esse
                                                                 termo, tente procurar algo
                                                                 diferente.
@@ -304,8 +306,8 @@ export function FavoriteBooks({ username }: FavoriteBooksProps) {
                                         <CardFavoriteBook currentBook={currentBook} />
                                     </div>
                                 ) : (
-                                    <div className="flex h-28 w-full items-center justify-center rounded-md border border-dashed border-muted-foreground bg-white/80 px-3 py-2">
-                                        <span className="text-sm font-medium">
+                                    <div className="flex h-28 w-full items-center justify-center rounded-md border border-dashed border-muted-foreground bg-white bg-opacity-80 px-3 py-2 dark:bg-dark">
+                                        <span className="text-sm font-medium text-muted-foreground">
                                             Pré-visualização
                                         </span>
                                     </div>

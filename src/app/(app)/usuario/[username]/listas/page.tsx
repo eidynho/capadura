@@ -147,7 +147,7 @@ export default function UserLists({ params }: UserListsProps) {
         return (
             <>
                 {bookLists?.length ? (
-                    <nav className="flex flex-col gap-1">
+                    <nav className="flex flex-col gap-1 text-black dark:text-white">
                         {bookLists.map((bookList, index) => {
                             return (
                                 <div
@@ -155,8 +155,8 @@ export default function UserLists({ params }: UserListsProps) {
                                     onClick={() => handleUpdateActiveBookList(index)}
                                     className={`${
                                         activeBookList === index
-                                            ? "border border-black bg-black text-white"
-                                            : "border border-transparent hover:bg-black hover:bg-opacity-5"
+                                            ? "bg-muted-foreground text-white dark:bg-accent"
+                                            : "hover:bg-muted-foreground/25 dark:hover:bg-accent/50"
                                     } cursor-pointer rounded-md px-4 py-2 text-sm`}
                                 >
                                     <span className="block w-full truncate">{bookList.name}</span>
@@ -178,14 +178,14 @@ export default function UserLists({ params }: UserListsProps) {
             <Title>{isCurrentUser ? "Minhas listas" : `Listas do ${params.username}`}</Title>
             {isCurrentUser && <Subtitle>Organize sua leitura do jeito que você quiser.</Subtitle>}
 
-            <Separator className="my-6 bg-gray-300" />
+            <Separator className="my-6" />
 
             <div className="mt-4 flex flex-col gap-8 md:flex-row lg:gap-6 xl:gap-8">
                 <div className="w-full md:w-1/4">
                     {isCurrentUser && (
                         <>
                             <Button
-                                variant="default"
+                                variant="outline"
                                 onClick={handleCreateBookList}
                                 disabled={createBookList.isLoading}
                             >
@@ -193,7 +193,7 @@ export default function UserLists({ params }: UserListsProps) {
                                 Nova lista
                             </Button>
 
-                            <Separator className="my-6 bg-black" />
+                            <Separator className="my-6" />
                         </>
                     )}
                     {renderBookLists()}
@@ -221,7 +221,7 @@ export default function UserLists({ params }: UserListsProps) {
                             <div className="flex flex-1 flex-col justify-between gap-3">
                                 <div>
                                     <div className="flex items-center justify-between gap-2">
-                                        <h2 className="flex-1 text-xl font-medium leading-relaxed tracking-tight">
+                                        <h2 className="flex-1 text-xl font-medium leading-relaxed tracking-tight text-black dark:text-white">
                                             {bookLists[activeBookList].name}
                                         </h2>
 
@@ -246,11 +246,11 @@ export default function UserLists({ params }: UserListsProps) {
                                             </>
                                         )}
                                     </div>
-                                    <p className="mt-2 text-zinc-500">
+                                    <p className="mt-2 text-muted-foreground">
                                         {bookLists[activeBookList].description}
                                     </p>
                                 </div>
-                                <div className="flex items-center">
+                                <div className="flex items-center text-black dark:text-white">
                                     {targetUser && <UserHoverCard user={targetUser} />}
                                     <span className="mr-2">•</span>
                                     <span className="text-sm font-medium">
@@ -327,9 +327,11 @@ export default function UserLists({ params }: UserListsProps) {
                                 </TableBody>
                             </Table>
                         ) : (
-                            <div className="mt-2 flex h-36 w-full flex-col items-center justify-center rounded-md border bg-white text-center">
-                                <h2 className="text-base font-semibold">Nenhum livro na lista.</h2>
-                                <p className="mt-2 w-[26rem] text-sm leading-6 text-slate-600">
+                            <div className="mt-2 flex h-36 w-full flex-col items-center justify-center rounded-md border bg-white text-center transition-colors dark:bg-dark">
+                                <h2 className="text-base font-semibold text-black dark:text-white">
+                                    Nenhum livro na lista.
+                                </h2>
+                                <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
                                     Vamos começar adicionar livros para organizar sua leitura?
                                 </p>
                             </div>

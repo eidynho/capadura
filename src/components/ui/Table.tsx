@@ -7,7 +7,10 @@ const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableE
         <div className="w-full overflow-auto">
             <table
                 ref={ref}
-                className={cn("w-full caption-bottom text-sm", className)}
+                className={cn(
+                    "w-full caption-bottom text-sm text-black dark:text-white",
+                    className,
+                )}
                 {...props}
             />
         </div>
@@ -35,7 +38,7 @@ const TableFooter = React.forwardRef<
     HTMLTableSectionElement,
     React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-    <tfoot ref={ref} className={cn("bg-primary font-medium text-primary", className)} {...props} />
+    <tfoot ref={ref} className={cn("bg-light font-medium text-light", className)} {...props} />
 ));
 TableFooter.displayName = "TableFooter";
 
@@ -60,7 +63,7 @@ const TableHead = React.forwardRef<
     <th
         ref={ref}
         className={cn(
-            "h-12 px-4 text-left align-middle font-medium text-zinc-500 [&:has([role=checkbox])]:pr-0",
+            "h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0",
             className,
         )}
         {...props}
@@ -84,7 +87,7 @@ const TableCaption = React.forwardRef<
     HTMLTableCaptionElement,
     React.HTMLAttributes<HTMLTableCaptionElement>
 >(({ className, ...props }, ref) => (
-    <caption ref={ref} className={cn("mt-4 text-sm text-zinc-500", className)} {...props} />
+    <caption ref={ref} className={cn("mt-4 text-sm text-muted-foreground", className)} {...props} />
 ));
 TableCaption.displayName = "TableCaption";
 

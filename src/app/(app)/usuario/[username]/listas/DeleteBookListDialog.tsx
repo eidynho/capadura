@@ -50,7 +50,7 @@ export function DeleteBookListDialog({
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <Button size="icon" variant="default" onClick={() => setIsOpen(true)}>
-                            <Trash size={18} />
+                            <Trash size={16} />
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -70,16 +70,18 @@ export function DeleteBookListDialog({
                     </DialogDescription>
 
                     <div className="flex flex-col gap-2">
-                        <p className="text-sm">
+                        <p className="text-sm text-muted-foreground">
                             Para confirmar a deleção, digite
-                            <span className="mx-1 font-bold italic">deletar permanentemente</span>
+                            <span className="mx-1 font-bold italic text-black dark:text-white">
+                                deletar permanentemente
+                            </span>
                             abaixo.
                         </p>
                         <Input
                             onChange={(e) => setTypedName(e.target.value)}
                             autoFocus
                             placeholder={confirmMessage}
-                            className="mb-2 placeholder:italic"
+                            className="mb-2 text-black placeholder:italic dark:text-white"
                         />
 
                         <Button

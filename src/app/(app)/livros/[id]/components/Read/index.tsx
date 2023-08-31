@@ -250,7 +250,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
             <div className="mt-2">
                 <ul className="-mb-px flex flex-wrap items-center justify-between text-center text-sm font-medium">
                     <div className="flex flex-wrap items-center py-1">
-                        <div className="flex items-center gap-2 pl-2 pr-4 text-black">
+                        <div className="flex items-center gap-2 pl-2 pr-4 text-black dark:text-white">
                             <BookOpen size={16} />
                             <h3 className="font-semibold">Leituras</h3>
                         </div>
@@ -272,7 +272,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                         <div className="flex flex-col items-center gap-2">
                             <div className="flex flex-col items-center justify-center gap-2 lg:flex-row">
                                 <Button size="sm" variant="outline" onClick={handleStartNewRead}>
-                                    <PlusCircle size={16} className="text-pink-500" />
+                                    <PlusCircle size={16} />
                                     Nova leitura
                                 </Button>
 
@@ -293,16 +293,18 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
 
             {!!filteredReads?.length ? (
                 filteredReads.map((read) => (
-                    <div key={read.id} className="relative rounded-md border bg-white text-sm">
+                    <div
+                        key={read.id}
+                        className="relative rounded-md border bg-white text-sm transition-colors dark:bg-dark"
+                    >
                         {/* read cancelled */}
                         {read.status === "CANCELLED" && (
-                            <div className="absolute z-10 flex h-full w-full flex-col items-center justify-center gap-2 rounded-md bg-white/20 backdrop-blur-sm">
-                                <span className="mx-8 text-center text-base font-medium">
+                            <div className="absolute z-10 flex h-full w-full flex-col items-center justify-center gap-2 rounded-md bg-muted-foreground/10 backdrop-blur-sm">
+                                <span className="mx-8 text-center text-base font-medium text-black dark:text-white">
                                     Você abandonou a leitura, deseja retomar?
                                 </span>
                                 <Button
-                                    size="sm"
-                                    variant="black"
+                                    variant="outline"
                                     onClick={() => handleToggleReadStatus(read.id, "ACTIVE")}
                                 >
                                     <Undo2 size={18} />
@@ -321,7 +323,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                     <div className="inline-flex items-center gap-2">
                                         {read.reviewRating && (
                                             <>
-                                                <div className="mx-1 h-5 w-px bg-black"></div>
+                                                <div className="mx-1 h-5 w-px bg-dark"></div>
                                                 <div className="inline-flex items-center">
                                                     <RatingStars rating={read.reviewRating} />
                                                 </div>
@@ -358,7 +360,10 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                             <Button size="icon-sm" variant="default">
-                                                <MoreVertical size={16} />
+                                                <MoreVertical
+                                                    size={16}
+                                                    className="text-black dark:text-white"
+                                                />
                                             </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end" className="w-44">
@@ -438,10 +443,10 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                         )}
                                 </div>
                             )}
-                            <div className="mt-2 flex flex-col gap-3">
+                            <div className="mt-2 flex flex-col gap-3 text-black dark:text-white">
                                 <div className="flex items-center justify-between gap-2">
                                     <h4 className="font-bold">Progressos anteriores</h4>
-                                    <Button size="sm" variant="link">
+                                    <Button size="sm" variant="outline">
                                         Ver todos
                                     </Button>
                                 </div>
@@ -449,7 +454,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                     read.progress.map((progress) => (
                                         <div
                                             key={progress.id}
-                                            className="border-t border-black/20 p-4"
+                                            className="border-t border-dark/20 p-4"
                                         >
                                             <div className="flex items-start justify-between gap-2">
                                                 <div className="flex items-center gap-2">
@@ -466,7 +471,10 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
                                                         <Button size="icon-sm" variant="default">
-                                                            <MoreVertical size={16} />
+                                                            <MoreVertical
+                                                                size={16}
+                                                                className="text-black dark:text-white"
+                                                            />
                                                         </Button>
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end">
@@ -498,14 +506,14 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                                 <div className="flex items-center gap-1 text-sm font-medium">
                                                     <span>{progress.page}</span>
                                                 </div>
-                                                <div className="relative mx-2 h-5 flex-1 overflow-hidden rounded  border-black bg-white dark:bg-gray-700">
+                                                <div className="relative mx-2 h-5 flex-1 overflow-hidden rounded border-dark bg-white dark:bg-gray-700">
                                                     <div
-                                                        className="h-5 bg-pink-500"
+                                                        className="h-5 bg-primary"
                                                         style={{
                                                             width: `${progress.percentage}%` ?? 0,
                                                         }}
                                                     ></div>
-                                                    <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-semibold">
+                                                    <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-semibold text-black">
                                                         {`${progress.percentage}%`}
                                                     </span>
                                                 </div>
@@ -523,11 +531,11 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                     </div>
                 ))
             ) : (
-                <div className="mt-2 flex h-36 w-full flex-col items-center justify-center rounded-md border bg-white text-center">
-                    <h2 className="text-base font-semibold">
+                <div className="mt-2 flex h-36 w-full flex-col items-center justify-center rounded-md border bg-white text-center dark:bg-dark">
+                    <h2 className="text-base font-semibold text-black dark:text-white">
                         Nenhuma leitura {tabNoReadsFoundType}.
                     </h2>
-                    <p className="mt-2 w-[26rem] text-sm leading-6 text-slate-600">
+                    <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
                         Que tal iniciar a leitura desse livro?
                     </p>
                 </div>

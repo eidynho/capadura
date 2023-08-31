@@ -19,13 +19,13 @@ export function FinishedReads({ username, readsData }: FinishedReadsProps) {
     const isCurrentUser = isPageUserSameCurrentUser(username);
 
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col text-black dark:text-white">
             <h3 className="font-semibold">Leituras finalizadas</h3>
 
             {!!readsData.items?.length ? (
                 readsData.items.map((read) => (
-                    <div className="flex gap-4 border-t border-black/20 py-4 last:border-b">
-                        <div className="h-28 w-20 rounded-md border border-black"></div>
+                    <div className="flex gap-4 border-t py-4 last:border-b">
+                        <div className="h-28 w-20 rounded-md border border-dark"></div>
                         <div className="w-full">
                             <div className="flex items-start justify-between gap-2">
                                 <div className="flex items-center gap-2">
@@ -44,7 +44,7 @@ export function FinishedReads({ username, readsData }: FinishedReadsProps) {
                                 {read.endDate && (
                                     <div className="ml-3 flex items-center gap-1">
                                         <span className="text-sm font-medium">Finalizado em</span>
-                                        <span className="mt-[2px] text-xs font-semibold text-gray-500">
+                                        <span className="mt-[2px] text-xs font-semibold text-muted-foreground">
                                             {format(
                                                 parseISO(read?.endDate.toString()),
                                                 "dd/MM/yyyy",
@@ -64,7 +64,7 @@ export function FinishedReads({ username, readsData }: FinishedReadsProps) {
             ) : (
                 <div className="mt-2 flex h-36 flex-col items-center justify-center rounded-md border bg-white text-center">
                     <h2 className="text-base font-semibold">Nenhuma leitura finalizada.</h2>
-                    <p className="mt-2 w-[26rem] text-sm leading-6 text-slate-600">
+                    <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
                         {isCurrentUser
                             ? "Você ainda não terminou de ler um livro, vamos registar algum?"
                             : `${username} ainda não terminou de ler nenhum livro.`}

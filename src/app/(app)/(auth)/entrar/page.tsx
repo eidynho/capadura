@@ -41,8 +41,8 @@ export default function Login() {
                     </Button>
                     <div
                         className="flex items-center
-                            before:mr-4 before:h-[1px] before:flex-1 before:bg-black before:content-['']
-                            after:ml-4 after:h-[1px] after:flex-1 after:bg-black after:content-['']
+                            before:mr-4 before:h-[1px] before:flex-1 before:bg-dark before:content-['']
+                            after:ml-4 after:h-[1px] after:flex-1 after:bg-dark after:content-['']
                         "
                     >
                         <span>ou</span>
@@ -53,7 +53,7 @@ export default function Login() {
                             <input
                                 {...register("email")}
                                 type="text"
-                                className="w-full rounded-md border border-black px-4 py-3 font-normal outline-pink-500"
+                                className="w-full rounded-md border border-dark px-4 py-3 font-normal outline-pink-500"
                             />
                         </label>
                         <label className="w-full">
@@ -66,7 +66,7 @@ export default function Login() {
                             <input
                                 {...register("password")}
                                 type="password"
-                                className="w-full rounded-md border border-black px-4 py-3 font-normal outline-pink-500"
+                                className="w-full rounded-md border border-dark px-4 py-3 font-normal outline-pink-500"
                             />
                         </label>
 
@@ -86,7 +86,7 @@ export default function Login() {
                 </div>
             </main>
             <aside className="hidden lg:block lg:w-2/5">
-                <div className="h-screen w-full bg-black"></div>
+                <div className="h-screen w-full bg-dark"></div>
             </aside>
         </div>
     );

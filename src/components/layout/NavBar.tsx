@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export function NavBarComponent() {
     return (
-        <section className="flex items-center justify-between border-b-2 border-black px-8 py-4">
+        <section className="flex items-center justify-between border-b-2 border-dark px-8 py-4">
             <div>
                 <span>Contopia</span>
             </div>

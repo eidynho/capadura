@@ -34,7 +34,7 @@ export function UserHoverCard({ user }: UserHoverCardProps) {
                     <div className="flex items-center gap-2 pt-2">
                         <LinkUnderline href="" className="text-sm">
                             <span className="mr-1 font-semibold">234</span>
-                            <span>livros</span>
+                            <span className="text-muted-foreground">livros</span>
                         </LinkUnderline>
                     </div>
                 </div>

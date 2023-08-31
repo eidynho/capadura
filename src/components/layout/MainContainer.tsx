@@ -7,5 +7,9 @@ interface MainContinerProps {
 }
 
 export function MainContainer({ children }: MainContinerProps) {
-    return <main className="ml-auto w-full bg-[#F4F4F0] lg:w-full">{children}</main>;
+    return (
+        <main className="ml-auto w-full bg-light transition-colors dark:bg-dark lg:w-full">
+            {children}
+        </main>
+    );
 }

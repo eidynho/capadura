@@ -188,7 +188,7 @@ export function FavoriteBooks({ username }: FavoriteBooksProps) {
                 <h3 className="font-semibold">Livros favoritos</h3>
 
                 {!isCurrentUser && noFavoriteBook && (
-                    <div className="mt-2 flex h-36 w-full flex-col items-center justify-center rounded-md border text-center">
+                    <div className="mt-2 flex h-36 w-full flex-col items-center justify-center rounded-md border bg-white text-center">
                         <h2 className="text-base font-semibold">Nenhum livro favorito.</h2>
                         <p className="mt-2 w-[26rem] text-sm leading-6 text-slate-600">
                             {username} ainda não favoritou seus livros de cabeceira.

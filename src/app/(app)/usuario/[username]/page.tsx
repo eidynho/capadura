@@ -208,7 +208,7 @@ export default function Profile({ params }: ProfileProps) {
                             mode="single"
                             selected={date}
                             onSelect={setDate}
-                            className="mt-2 rounded-md border"
+                            className="mt-2 rounded-md border bg-white"
                         />
                     </div>
 

@@ -327,7 +327,12 @@ export default function UserLists({ params }: UserListsProps) {
                                 </TableBody>
                             </Table>
                         ) : (
-                            <span className="font-medium">A lista ainda não possui livros.</span>
+                            <div className="mt-2 flex h-36 w-full flex-col items-center justify-center rounded-md border bg-white text-center">
+                                <h2 className="text-base font-semibold">Nenhum livro na lista.</h2>
+                                <p className="mt-2 w-[26rem] text-sm leading-6 text-slate-600">
+                                    Vamos começar adicionar livros para organizar sua leitura?
+                                </p>
+                            </div>
                         )}
                     </div>
                 ) : (

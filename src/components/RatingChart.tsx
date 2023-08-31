@@ -61,7 +61,7 @@ export function RatingChart({ bookId, userId, username }: RatingChartProps) {
     }
 
     return (
-        <div className="mt-2 flex flex-col justify-center rounded-md border px-4 pb-6 pt-4 text-sm">
+        <div className="mt-2 flex flex-col justify-center rounded-md border bg-white px-4 pb-6 pt-4 text-sm">
             <div className="my-1 flex items-center justify-between">
                 <h3 className="font-semibold">Avaliações</h3>
                 <div className="flex items-center gap-1">

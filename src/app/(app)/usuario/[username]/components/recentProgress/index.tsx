@@ -72,7 +72,7 @@ export function RecentProgress({ username, progressData }: RecentProgressProps) 
                     </div>
                 ))
             ) : (
-                <div className="mt-2 flex h-36 flex-col items-center justify-center rounded-md border text-center">
+                <div className="mt-2 flex h-36 flex-col items-center justify-center rounded-md border bg-white text-center">
                     <h2 className="text-base font-semibold">Nenhum progresso recente.</h2>
                     <p className="mt-2 w-[26rem] text-sm leading-6 text-slate-600">
                         {isCurrentUser ? (

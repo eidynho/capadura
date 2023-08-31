@@ -131,7 +131,7 @@ export function UserActivities({ userId }: UserActivitiesProps) {
     }
 
     return (
-        <div className="mt-2 flex flex-col gap-5 rounded-md border p-3 text-xs">
+        <div className="mt-2 flex flex-col gap-5 rounded-md border bg-white p-3 text-xs">
             {!!userActivities?.length ? (
                 userActivities.map((item) => (
                     <div key={item.id} className="flex items-center gap-2">

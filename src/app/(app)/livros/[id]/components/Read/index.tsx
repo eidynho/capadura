@@ -238,6 +238,13 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
         return <Badge variant={variant}>{message}</Badge>;
     }
 
+    const tabNoReadsFoundType =
+        currentTab === "all"
+            ? " encontrada"
+            : currentTab === "active"
+            ? " em andamento"
+            : " finalizada";
+
     return (
         <>
             <div className="mt-2">
@@ -286,7 +293,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
 
             {!!filteredReads?.length ? (
                 filteredReads.map((read) => (
-                    <div key={read.id} className="relative rounded-md border border-black text-sm">
+                    <div key={read.id} className="relative rounded-md border bg-white text-sm">
                         {/* read cancelled */}
                         {read.status === "CANCELLED" && (
                             <div className="absolute z-10 flex h-full w-full flex-col items-center justify-center gap-2 rounded-md bg-white/20 backdrop-blur-sm">
@@ -434,7 +441,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                             <div className="mt-2 flex flex-col gap-3">
                                 <div className="flex items-center justify-between gap-2">
                                     <h4 className="font-bold">Progressos anteriores</h4>
-                                    <Button size="sm" variant="outline">
+                                    <Button size="sm" variant="link">
                                         Ver todos
                                     </Button>
                                 </div>
@@ -516,15 +523,14 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                     </div>
                 ))
             ) : (
-                <span className="mt-1 text-center text-sm">
-                    Nenhuma leitura
-                    {currentTab === "all"
-                        ? " encontrada"
-                        : currentTab === "active"
-                        ? " em andamento"
-                        : " finalizada"}
-                    .
-                </span>
+                <div className="mt-2 flex h-36 w-full flex-col items-center justify-center rounded-md border bg-white text-center">
+                    <h2 className="text-base font-semibold">
+                        Nenhuma leitura {tabNoReadsFoundType}.
+                    </h2>
+                    <p className="mt-2 w-[26rem] text-sm leading-6 text-slate-600">
+                        Que tal iniciar a leitura desse livro?
+                    </p>
+                </div>
             )}
             <UpdateReadProgressDialog
                 isOpen={isOpenUpdateProgressDialog}

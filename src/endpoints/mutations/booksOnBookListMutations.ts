@@ -3,11 +3,8 @@ import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";
 
-import {
-    BookListData,
-    BookOnBookList,
-    BookOnBookListWithBook,
-} from "@/app/(app)/usuario/[username]/listas/page";
+import { BookListData } from "../queries/bookListsQueries";
+import { BookOnBookList, BookOnBookListWithBook } from "@/app/(app)/usuario/[username]/listas/page";
 
 export interface UseAddBookToABookListProps {
     userId: string;

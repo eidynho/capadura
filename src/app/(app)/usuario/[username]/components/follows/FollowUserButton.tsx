@@ -93,7 +93,7 @@ export function FollowUserButton({ username, targetUserId }: FollowUserButtonPro
             {isAuthenticated && !isCurrentUser && (
                 <Button
                     size="sm"
-                    variant="black"
+                    variant="outline"
                     onClick={data?.isFollowing ? handleUnfollowUser : handleFollowUser}
                     disabled={isLoading}
                 >

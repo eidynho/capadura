@@ -36,7 +36,7 @@ export default function Login() {
                     </h1>
                 </header>
                 <div className="flex w-full flex-col gap-8">
-                    <Button asChild size="md" variant="black">
+                    <Button asChild size="md" variant="outline">
                         <Link href={getGoogleOAuthURL()}>Conectar com Google</Link>
                     </Button>
                     <div
@@ -70,7 +70,7 @@ export default function Login() {
                             />
                         </label>
 
-                        <Button variant="black">Entrar</Button>
+                        <Button variant="outline">Entrar</Button>
                     </form>
                     <span className="mb-8 block font-medium">
                         Você concorda com nossos{" "}

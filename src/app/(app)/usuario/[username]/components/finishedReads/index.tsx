@@ -62,8 +62,10 @@ export function FinishedReads({ username, readsData }: FinishedReadsProps) {
                     </div>
                 ))
             ) : (
-                <div className="mt-2 flex h-36 flex-col items-center justify-center rounded-md border bg-white text-center">
-                    <h2 className="text-base font-semibold">Nenhuma leitura finalizada.</h2>
+                <div className="mt-2 flex h-36 flex-col items-center justify-center rounded-md border bg-white text-center transition-colors dark:bg-dark">
+                    <h2 className="text-base font-semibold text-black dark:text-white">
+                        Nenhuma leitura finalizada.
+                    </h2>
                     <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
                         {isCurrentUser
                             ? "Você ainda não terminou de ler um livro, vamos registar algum?"

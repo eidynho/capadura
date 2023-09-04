@@ -2,21 +2,24 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";
-
-import { BookListData } from "@/app/(app)/usuario/[username]/listas/page";
+import { BookListData } from "../queries/bookListsQueries";
 
 export interface UseCreateBookListProps {
     userId: string;
-    currentBooklistCount: number;
+    name: string;
+    description?: string;
+    image?: any;
 }
 
 export function useCreateBookList() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async ({ currentBooklistCount }: UseCreateBookListProps) => {
-            const { data } = await api.post("/booklists", {
-                name: `Lista ${currentBooklistCount + 1}`,
+        mutationFn: async ({ name, description, image }: UseCreateBookListProps) => {
+            const { data } = await api.postForm("/booklists", {
+                name,
+                description,
+                image,
             });
 
             return data;

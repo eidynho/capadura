@@ -17,10 +17,10 @@ export function NavBarComponent() {
                 </ul>
             </nav>
             <div className="flex items-center gap-2">
-                <Button size="sm" variant="black">
+                <Button size="sm" variant="outline">
                     <Link href="/">Entrar</Link>
                 </Button>
-                <Button size="sm" variant="black">
+                <Button size="sm" variant="outline">
                     <Link href="/">Cadastrar</Link>
                 </Button>
             </div>

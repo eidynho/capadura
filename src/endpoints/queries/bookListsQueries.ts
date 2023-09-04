@@ -1,7 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
-import { BookListData } from "@/app/(app)/usuario/[username]/listas/page";
+
+export interface BookListData {
+    id: string;
+    name: string;
+    description: string;
+    imageKey?: string;
+    imageUrl?: string;
+    books: { id: string; bookId: string; bookListId: string }[];
+}
 
 interface UseFetchUserBookListsProps {
     userId: string;

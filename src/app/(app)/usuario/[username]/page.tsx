@@ -163,7 +163,9 @@ export default function Profile({ params }: ProfileProps) {
                 <div className="flex items-start gap-8">
                     <Avatar className="h-28 w-28 md:h-40 md:w-40">
                         <AvatarImage src={targetUser?.imageUrl} />
-                        <AvatarFallback>{targetUser?.username[0]?.toUpperCase()}</AvatarFallback>
+                        <AvatarFallback className="text-2xl">
+                            {targetUser?.username[0]?.toUpperCase()}
+                        </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-4 md:flex-row md:items-start">

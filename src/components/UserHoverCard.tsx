@@ -11,7 +11,7 @@ interface UserHoverCardProps {
 
 export function UserHoverCard({ user }: UserHoverCardProps) {
     return (
-        <HoverCard>
+        <HoverCard openDelay={300}>
             <HoverCardTrigger asChild>
                 <div className="flex items-center">
                     <Avatar className="h-8 w-8">

@@ -1,25 +1,35 @@
-import { useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import Image from "next/image";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Library, Loader2, PencilLine } from "lucide-react";
+import { Library, Loader2, PencilLine, PlusCircle } from "lucide-react";
 
-import { BookListData } from "./page";
+import { AuthContext } from "@/contexts/AuthContext";
+
+import { useCreateBookList } from "@/endpoints/mutations/bookListsMutations";
 
 import { Button } from "@/components/ui/Button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/Dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/Dialog";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Textarea } from "@/components/ui/Textarea";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/Tooltip";
 
 const MAX_FILE_SIZE = 1024 * 1024 * 2; // 2 MB;
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
-const updateBookListFormSchema = z.object({
-    name: z.string(),
-    description: z.string().optional(),
+const createBookListFormSchema = z.object({
+    name: z
+        .string()
+        .min(1, { message: "Campo obrigatório" })
+        .max(80, { message: "Máximo 80 caracteres" }),
+    description: z.string().max(600, { message: "Máximo 600 caracteres" }).optional(),
     image: z
         .any()
         .refine(
@@ -48,74 +58,62 @@ const updateBookListFormSchema = z.object({
         ),
 });
 
-type UpdateBookListFormSchema = z.infer<typeof updateBookListFormSchema>;
+type CreateBookListFormSchema = z.infer<typeof createBookListFormSchema>;
 
-interface UpdateBookListDialogProps {
-    activeBookList: number;
-    bookLists: BookListData[];
-    isUpdateBookListLoading: boolean;
-    handleUpdateBookList: (name: string, description?: string, image?: any) => Promise<void>;
-}
-
-export function UpdateBookListDialog({
-    activeBookList,
-    bookLists,
-    isUpdateBookListLoading,
-    handleUpdateBookList,
-}: UpdateBookListDialogProps) {
-    const bookList = bookLists[activeBookList];
-
+export function CreateBookListDialog() {
+    const { user } = useContext(AuthContext);
     const [isOpen, setIsOpen] = useState(false);
 
     const {
         register,
         handleSubmit,
         formState: { errors },
-        setValue,
         control,
         watch,
-    } = useForm<UpdateBookListFormSchema>({
-        resolver: zodResolver(updateBookListFormSchema),
+        reset,
+    } = useForm<CreateBookListFormSchema>({
+        resolver: zodResolver(createBookListFormSchema),
     });
 
-    useEffect(() => {
-        setValue("name", bookList.name);
-        setValue("description", bookList.description);
-    }, [isOpen]);
-
-    const selectedImage = watch("image");
-
-    async function submitUpdate({ name, description, image }: UpdateBookListFormSchema) {
-        if (isUpdateBookListLoading) return;
+    const createBookList = useCreateBookList();
+    async function submitUpdate({ name, description, image }: CreateBookListFormSchema) {
+        if (createBookList.isLoading) return;
 
         try {
-            await handleUpdateBookList(name, description, image[0]);
-
-            setIsOpen(false);
+            createBookList.mutate(
+                {
+                    userId: user?.id || "",
+                    name,
+                    description,
+                    image: image?.[0],
+                },
+                {
+                    onSuccess: () => {
+                        setIsOpen(false);
+                        reset();
+                    },
+                },
+            );
         } catch (err) {
             throw err;
         }
     }
 
+    const selectedImage = watch("image");
+
     return (
         <>
-            <TooltipProvider delayDuration={400} skipDelayDuration={0}>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button size="icon" variant="default" onClick={() => setIsOpen(true)}>
-                            <PencilLine size={16} />
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                        <span>Editar</span>
-                    </TooltipContent>
-                </Tooltip>
-            </TooltipProvider>
-
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
+                <DialogTrigger asChild>
+                    <Button size="sm" variant="primary">
+                        <PlusCircle size={16} />
+                        Nova lista
+                    </Button>
+                </DialogTrigger>
+
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Editar detalhes</DialogTitle>
+                        <DialogTitle>Criar lista</DialogTitle>
                     </DialogHeader>
 
                     <form
@@ -124,23 +122,19 @@ export function UpdateBookListDialog({
                     >
                         <div className="flex w-full gap-4">
                             <div className="flex flex-col">
-                                <Label htmlFor="update-booklist-image">Foto de capa</Label>
+                                <Label htmlFor="create-booklist-image">Foto de capa</Label>
                                 <Controller
                                     name="image"
                                     control={control}
                                     render={({ field }) => (
                                         <>
-                                            <Label htmlFor="update-booklist-image">
-                                                <div className="group relative mt-2 cursor-pointer rounded-md bg-neutral-800 transition-all">
-                                                    {selectedImage?.[0] || bookList.imageUrl ? (
+                                            <Label htmlFor="create-booklist-image">
+                                                <div className="group relative mt-2 h-44 w-44 cursor-pointer overflow-hidden rounded-md bg-neutral-800 transition-all">
+                                                    {selectedImage?.[0] ? (
                                                         <Image
-                                                            src={
-                                                                selectedImage?.[0]
-                                                                    ? URL.createObjectURL(
-                                                                          selectedImage[0],
-                                                                      )
-                                                                    : bookList.imageUrl || ""
-                                                            }
+                                                            src={URL.createObjectURL(
+                                                                selectedImage[0],
+                                                            )}
                                                             alt=""
                                                             width={176}
                                                             height={176}
@@ -163,7 +157,7 @@ export function UpdateBookListDialog({
 
                                             <Input
                                                 {...register("image")}
-                                                id="update-booklist-image"
+                                                id="create-booklist-image"
                                                 name="image"
                                                 type="file"
                                                 className="hidden"
@@ -176,50 +170,56 @@ export function UpdateBookListDialog({
 
                             <div className="flex w-full flex-1 flex-col gap-4">
                                 <div className="flex flex-col">
-                                    <Label htmlFor="update-booklist-name">Título</Label>
+                                    <Label htmlFor="create-booklist-name">Título</Label>
                                     <Input
                                         {...register("name")}
-                                        id="update-booklist-name"
+                                        id="create-booklist-name"
                                         name="name"
                                         type="text"
-                                        maxLength={50}
+                                        maxLength={80}
                                         className={`${
                                             errors.name ? "border-destructive" : ""
                                         } mt-2 w-full`}
                                     />
                                     {errors.name && (
-                                        <span className="mt-1 text-xs font-semibold text-destructive">
-                                            Campo obrigatório
+                                        <span className="mt-1 text-xs font-medium text-destructive">
+                                            {errors.name.message}
                                         </span>
                                     )}
                                 </div>
 
                                 <div className="flex flex-col">
-                                    <Label htmlFor="update-booklist-description">Descrição</Label>
+                                    <Label htmlFor="create-booklist-description">Descrição</Label>
                                     <Textarea
                                         {...register("description")}
-                                        id="update-booklist-description"
+                                        id="create-booklist-description"
                                         name="description"
                                         rows={4}
+                                        maxLength={600}
                                         className="mt-2 max-h-40 bg-white dark:bg-dark"
                                     />
+                                    {errors.description && (
+                                        <span className="mt-1 text-xs font-medium text-destructive">
+                                            {errors.description.message}
+                                        </span>
+                                    )}
                                 </div>
                             </div>
                         </div>
 
                         <Button
                             size="sm"
-                            variant="success"
+                            variant="primary"
                             type="submit"
-                            disabled={isUpdateBookListLoading}
+                            disabled={createBookList.isLoading}
                         >
-                            {isUpdateBookListLoading ? (
+                            {createBookList.isLoading ? (
                                 <>
                                     <Loader2 size={22} className="animate-spin" />
-                                    <span>Salvando...</span>
+                                    <span>Criando...</span>
                                 </>
                             ) : (
-                                <span>Salvar</span>
+                                <span>Criar lista</span>
                             )}
                         </Button>
                     </form>

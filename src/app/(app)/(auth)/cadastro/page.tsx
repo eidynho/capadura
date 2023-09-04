@@ -51,7 +51,7 @@ export default function SignUp() {
                     </h1>
                 </header>
                 <div className="flex w-full flex-col gap-8">
-                    <Button asChild size="md" variant="black">
+                    <Button asChild size="md" variant="outline">
                         <Link href={getGoogleOAuthURL()}>Conectar com Google</Link>
                     </Button>
                     <div
@@ -87,7 +87,7 @@ export default function SignUp() {
                                 className="w-full rounded-md border border-dark px-4 py-3 font-normal outline-pink-500"
                             />
                         </label>
-                        <Button size="md" variant="black">
+                        <Button size="md" variant="outline">
                             Criar conta
                         </Button>
                     </form>

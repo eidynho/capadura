@@ -55,7 +55,7 @@ export function Header() {
                                 Junte-se a nós!
                             </p>
                             <div className="mt-10 flex items-center justify-center gap-x-6">
-                                <Button asChild size="md" variant="black">
+                                <Button asChild size="md" variant="primary">
                                     <Link href="/cadastro">Começar agora</Link>
                                 </Button>
                                 <Button asChild size="md" variant="outline">

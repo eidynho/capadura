@@ -238,7 +238,7 @@ export function FormReadReview({
                 </div>
             </div>
 
-            <Button size="sm" variant="success" type="submit" disabled={isSubmitting}>
+            <Button size="sm" variant="primary" type="submit" disabled={isSubmitting}>
                 {isSubmitting ? (
                     <>
                         <Loader2 size={22} className="animate-spin" />

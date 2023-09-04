@@ -188,8 +188,10 @@ export function FavoriteBooks({ username }: FavoriteBooksProps) {
                 <h3 className="font-semibold text-black dark:text-white">Livros favoritos</h3>
 
                 {!isCurrentUser && noFavoriteBook && (
-                    <div className="mt-2 flex h-36 w-full flex-col items-center justify-center rounded-md border bg-white text-center">
-                        <h2 className="text-base font-semibold">Nenhum livro favorito.</h2>
+                    <div className="mt-2 flex h-36 w-full flex-col items-center justify-center rounded-md border bg-white text-center transition-colors dark:bg-dark">
+                        <h2 className="text-base font-semibold text-black dark:text-white">
+                            Nenhum livro favorito.
+                        </h2>
                         <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
                             {username} ainda não favoritou seus livros de cabeceira.
                         </p>
@@ -315,7 +317,7 @@ export function FavoriteBooks({ username }: FavoriteBooksProps) {
 
                                 <Button
                                     size="sm"
-                                    variant="success"
+                                    variant="primary"
                                     type="submit"
                                     onClick={saveFavoriteBook}
                                     disabled={!currentBook}

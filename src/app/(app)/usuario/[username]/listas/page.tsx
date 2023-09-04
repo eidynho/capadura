@@ -3,17 +3,34 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Library, MoreHorizontal, PlusCircle } from "lucide-react";
+import { Library, MoreHorizontal } from "lucide-react";
 
 import { BookData } from "@/app/(app)/livros/[id]/page";
 import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";
+import { publishDateFormat } from "@/utils/publish-date-format";
+
+import { useFetchUserBookLists } from "@/endpoints/queries/bookListsQueries";
+import { useFetchUserByUsername } from "@/endpoints/queries/usersQueries";
+import { useFetchBooksOnBookList } from "@/endpoints/queries/booksOnBookListQueries";
+import { useDeleteBookList, useUpdateBookList } from "@/endpoints/mutations/bookListsMutations";
+import { useRemoveBookFromBookList } from "@/endpoints/mutations/booksOnBookListMutations";
 
 import Loading from "./loading";
 
-import { Container } from "@/components/layout/Container";
-import { Title } from "@/components/Title";
-import { Subtitle } from "@/components/Subtitle";
+import { CreateBookListDialog } from "./components/CreateBookListDialog";
+import { UpdateBookListDialog } from "./components/UpdateBookListDialog";
+import { DeleteBookListDialog } from "./components/DeleteBookListDialog";
+
 import { Button } from "@/components/ui/Button";
+import { Container } from "@/components/layout/Container";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/DropdownMenu";
+import { Separator } from "@/components/ui/Separator";
+import { Subtitle } from "@/components/Subtitle";
 import {
     Table,
     TableBody,
@@ -22,25 +39,8 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/Table";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/DropdownMenu";
-import { Separator } from "@/components/ui/Separator";
+import { Title } from "@/components/Title";
 import { UserHoverCard } from "@/components/UserHoverCard";
-import { UpdateBookListDialog } from "./UpdateBookListDialog";
-import { DeleteBookListDialog } from "./DeleteBookListDialog";
-import { useFetchUserBookLists } from "@/endpoints/queries/bookListsQueries";
-import { useFetchUserByUsername } from "@/endpoints/queries/usersQueries";
-import { useFetchBooksOnBookList } from "@/endpoints/queries/booksOnBookListQueries";
-import {
-    useCreateBookList,
-    useDeleteBookList,
-    useUpdateBookList,
-} from "@/endpoints/mutations/bookListsMutations";
-import { useRemoveBookFromBookList } from "@/endpoints/mutations/booksOnBookListMutations";
 
 export interface BookOnBookList {
     id: string;
@@ -51,15 +51,6 @@ export interface BookOnBookList {
 export type BookOnBookListWithBook = BookOnBookList & {
     book: BookData;
 };
-
-export interface BookListData {
-    id: string;
-    name: string;
-    description: string;
-    imageKey?: string;
-    imageUrl?: string;
-    books: { id: string; bookId: string; bookListId: string }[];
-}
 
 interface UserListsProps {
     params: {
@@ -87,14 +78,6 @@ export default function UserLists({ params }: UserListsProps) {
             bookListId: bookLists?.[activeBookList]?.id || "",
             enabled: !!bookLists?.[activeBookList]?.id,
         });
-
-    const createBookList = useCreateBookList();
-    function handleCreateBookList() {
-        createBookList.mutate({
-            userId: targetUser?.id || "",
-            currentBooklistCount: bookLists?.length || 0,
-        });
-    }
 
     const updateBookList = useUpdateBookList();
     async function handleUpdateBookList(name: string, description?: string, image?: any) {
@@ -184,15 +167,7 @@ export default function UserLists({ params }: UserListsProps) {
                 <div className="w-full md:w-1/4">
                     {isCurrentUser && (
                         <>
-                            <Button
-                                variant="outline"
-                                onClick={handleCreateBookList}
-                                disabled={createBookList.isLoading}
-                            >
-                                <PlusCircle size={18} />
-                                Nova lista
-                            </Button>
-
+                            <CreateBookListDialog />
                             <Separator className="my-6" />
                         </>
                     )}
@@ -291,7 +266,9 @@ export default function UserLists({ params }: UserListsProps) {
                                                 </Link>
                                             </TableCell>
                                             <TableCell>{bookOnBookList.book.authors[0]}</TableCell>
-                                            <TableCell>{`${bookOnBookList.book.publishDate}`}</TableCell>
+                                            <TableCell>
+                                                {publishDateFormat(bookOnBookList.book.publishDate)}
+                                            </TableCell>
                                             <TableCell>{bookOnBookList.book.pageCount}</TableCell>
                                             <TableCell className="text-right">
                                                 <DropdownMenu>

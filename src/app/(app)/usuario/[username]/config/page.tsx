@@ -34,12 +34,15 @@ const profileFormSchema = z.object({
     name: z
         .string()
         .min(1, { message: "Campo obrigatório." })
-        .max(50, { message: "Máximo 50 caracteres." }),
+        .max(100, { message: "Máximo 100 caracteres." }),
     username: z
         .string()
         .min(1, { message: "Campo obrigatório." })
         .max(50, { message: "Máximo 50 caracteres." }),
-    email: z.string().email(),
+    email: z
+        .string()
+        .max(200, { message: "Máximo 200 caracteres." })
+        .email({ message: "E-mail inválido" }),
     image: z
         .any()
         .refine(
@@ -66,7 +69,7 @@ const profileFormSchema = z.object({
                 message: "Formatos permitidos: .jpg, .jpeg, .png and .webp.",
             },
         ),
-    description: z.string().optional().nullable(),
+    description: z.string().max(600, { message: "Máximo 600 caracteres." }).optional().nullable(),
     location: z.string().max(50, { message: "Máximo 50 caracteres." }).optional().nullable(),
     website: z
         .union([z.literal(""), z.string().trim().url({ message: "URL inválida" })])
@@ -208,7 +211,7 @@ export default function UserConfigs() {
                                     id="config-profile-name"
                                     name="name"
                                     type="text"
-                                    maxLength={50}
+                                    maxLength={100}
                                     placeholder="Harry J. Potter"
                                     className={`${
                                         errors.name ? "border-destructive" : ""
@@ -240,7 +243,7 @@ export default function UserConfigs() {
                                 </span>
                                 {errors.username && (
                                     <span className="mt-1 text-xs font-medium text-destructive">
-                                        Campo obrigatório
+                                        {errors.username.message}
                                     </span>
                                 )}
                             </div>
@@ -263,7 +266,7 @@ export default function UserConfigs() {
                                 </span>
                                 {errors.email && (
                                     <span className="mt-1 text-xs font-medium text-destructive">
-                                        Campo obrigatório
+                                        {errors.email.message}
                                     </span>
                                 )}
                             </div>
@@ -333,9 +336,15 @@ export default function UserConfigs() {
                                     name="description"
                                     id="config-profile-description"
                                     rows={4}
+                                    maxLength={600}
                                     placeholder="Harry Potter: Bruxo corajoso, amigos leais, combate o mal, símbolo de esperança."
                                     className="mt-2 bg-white dark:bg-dark"
                                 ></Textarea>
+                                {errors.description && (
+                                    <span className="mt-1 text-xs font-medium text-destructive">
+                                        {errors.description.message}
+                                    </span>
+                                )}
                             </div>
 
                             <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
@@ -354,7 +363,7 @@ export default function UserConfigs() {
                                     />
                                     {errors.location && (
                                         <span className="mt-1 text-xs font-medium text-destructive">
-                                            Campo obrigatório
+                                            {errors.location.message}
                                         </span>
                                     )}
                                 </div>
@@ -391,11 +400,6 @@ export default function UserConfigs() {
                                         errors.twitter ? "border-destructive" : ""
                                     } mt-2 w-2/3 lg:w-1/4`}
                                 />
-                                {errors.twitter && (
-                                    <span className="mt-1 text-xs font-medium text-destructive">
-                                        Campo obrigatório
-                                    </span>
-                                )}
                             </div>
 
                             <Button

@@ -112,8 +112,8 @@ export function NavBarLoggedComponent() {
                   icon: Hexagon,
               },
               {
-                  name: "Convidar amigos",
-                  path: "/convidar-amigos",
+                  name: "Convide e ganhe",
+                  path: "/convide-e-ganhe",
                   icon: UserPlus,
               },
               {

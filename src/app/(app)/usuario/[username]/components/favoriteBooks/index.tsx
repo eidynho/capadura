@@ -25,6 +25,7 @@ import { CardFavoriteBook } from "./CardFavoriteBook";
 import { Command, CommandInput, CommandItem, CommandList } from "@/components/ui/Command";
 import {
     Dialog,
+    DialogClose,
     DialogContent,
     DialogDescription,
     DialogHeader,
@@ -332,6 +333,8 @@ export function FavoriteBooks({ username }: FavoriteBooksProps) {
                                     )}
                                 </Button>
                             </div>
+
+                            <DialogClose />
                         </DialogContent>
                     </Dialog>
                 </div>

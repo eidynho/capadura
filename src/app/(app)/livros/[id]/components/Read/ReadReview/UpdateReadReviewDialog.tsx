@@ -9,6 +9,7 @@ import { FormReadReview, HandleAddNewProgressProps, HandleUpdateReadProps } from
 import { Button } from "@/components/ui/Button";
 import {
     Dialog,
+    DialogClose,
     DialogContent,
     DialogHeader,
     DialogTitle,
@@ -71,6 +72,8 @@ export function UpdateReadReviewDialog({
                             executeOnSubmit={() => setIsOpen(false)}
                         />
                     </div>
+
+                    <DialogClose />
                 </DialogContent>
             </Dialog>
         </>

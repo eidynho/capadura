@@ -86,7 +86,7 @@ export default function Books() {
                                 <Link
                                     href={`/livros/${item.id}`}
                                     key={item.id}
-                                    className="h-44 w-2/5 cursor-pointer rounded-md border border-dark p-2 transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[0.25rem_0.25rem_#000]"
+                                    className="h-44 w-2/5 cursor-pointer rounded-md border p-2 transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[0.25rem_0.25rem_#000]"
                                 >
                                     <div className="flex items-start gap-4">
                                         <div className="h-[9.75rem] w-[7rem] overflow-hidden rounded-md border border-dark">

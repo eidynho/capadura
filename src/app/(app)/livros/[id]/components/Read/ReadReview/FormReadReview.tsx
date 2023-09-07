@@ -175,7 +175,7 @@ export function FormReadReview({
                     id="content-read-review"
                     onClick={() => setContentHeight("h-80")}
                     placeholder="Escreva sua avaliação..."
-                    className={`${contentHeight} mt-1 bg-white transition-all`}
+                    className={`${contentHeight} mt-1 transition-all`}
                 ></Textarea>
 
                 <div className="mt-2 flex items-start justify-between">

@@ -14,6 +14,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/DropdownMenu";
 import { LinkUnderline } from "@/components/LinkUnderline";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/Tooltip";
 
 interface CardFavoriteBookProps {
     currentBook: BookData;
@@ -101,12 +102,21 @@ export function CardFavoriteBook({
                         </span>
                     </div>
 
-                    <div className="flex items-center gap-1">
-                        <FileText size={14} className="text-muted-foreground" />
-                        <span className="text-sm text-muted-foreground">
-                            {currentBook.pageCount}
-                        </span>
-                    </div>
+                    <TooltipProvider delayDuration={400} skipDelayDuration={0}>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <div className="flex cursor-default items-center gap-1">
+                                    <FileText size={14} className="text-muted-foreground" />
+                                    <span className="text-sm text-muted-foreground">
+                                        {currentBook.pageCount}
+                                    </span>
+                                </div>
+                            </TooltipTrigger>
+                            <TooltipContent side="top">
+                                <span>Quantidade de páginas</span>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
                 </div>
             </div>
         </div>

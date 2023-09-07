@@ -9,6 +9,7 @@ import { FormReadProgress, ProgressFormSchema } from "./FormReadProgress";
 import { Button } from "@/components/ui/Button";
 import {
     Dialog,
+    DialogClose,
     DialogContent,
     DialogHeader,
     DialogTitle,
@@ -69,6 +70,8 @@ export function NewReadProgressDialog({
                     <div className="px-3 py-2">
                         <FormReadProgress submitForm={submitNewProgress} />
                     </div>
+
+                    <DialogClose />
                 </DialogContent>
             </Dialog>
         </>

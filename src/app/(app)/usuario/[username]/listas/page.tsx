@@ -309,7 +309,7 @@ export default function UserLists({ params }: UserListsProps) {
                                     Nenhum livro na lista.
                                 </h2>
                                 <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
-                                    Vamos começar adicionar livros para organizar sua leitura?
+                                    Vamos adicionar livros para organizar sua leitura?
                                 </p>
                             </div>
                         )}

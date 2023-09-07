@@ -52,7 +52,7 @@ export function RatingChart({ bookId, userId, username }: RatingChartProps) {
         if (!data) return <></>;
 
         return (
-            <div className="flex items-center rounded-md border border-dark bg-white/95 px-2 py-1 text-xs font-semibold">
+            <div className="flex items-center rounded-md border bg-white px-2 py-1 text-xs font-semibold text-black dark:bg-dark dark:text-white">
                 <span className="mr-1">{data.amount}</span>
                 <RatingStars rating={data.rating} size={12} />
                 <span className="ml-1">avaliações ({data.percentage}%)</span>

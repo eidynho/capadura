@@ -1,7 +1,13 @@
 "use client";
 
 import { FormReadProgress, ProgressFormSchema } from "./FormReadProgress";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/Dialog";
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/Dialog";
 
 export interface HandleUpdateProgressProps {
     id: string;
@@ -75,6 +81,8 @@ export function UpdateReadProgressDialog({
                 <div className="px-3 py-2">
                     <FormReadProgress editData={editData} submitForm={updateProgress} />
                 </div>
+
+                <DialogClose />
             </DialogContent>
         </Dialog>
     );

@@ -2,7 +2,9 @@
 
 import { useContext } from "react";
 import Link from "next/link";
-import { FieldValues, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { GoogleLogo } from "phosphor-react";
 
 import { AuthContext } from "@/contexts/AuthContext";
 import getGoogleOAuthURL from "@/utils/get-google-url";
@@ -10,13 +12,28 @@ import getGoogleOAuthURL from "@/utils/get-google-url";
 import { useRegisterUser } from "@/endpoints/mutations/usersMutations";
 
 import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+
+export const signUpFormSchema = z.object({
+    username: z
+        .string()
+        .min(1, { message: "Campo obrigatório." })
+        .max(50, { message: "Máximo 50 caracteres." }),
+    email: z
+        .string()
+        .max(200, { message: "Máximo 200 caracteres." })
+        .email({ message: "E-mail inválido" }),
+    password: z.string(),
+});
+
+export type SignUpFormSchema = z.infer<typeof signUpFormSchema>;
 
 export default function SignUp() {
-    const { register, handleSubmit } = useForm();
+    const { register, handleSubmit } = useForm<SignUpFormSchema>();
     const { signIn } = useContext(AuthContext);
 
     const registerUser = useRegisterUser();
-    function handleSignUp({ username, email, password }: FieldValues) {
+    function handleSignUp({ username, email, password }: SignUpFormSchema) {
         registerUser.mutate(
             {
                 username,
@@ -35,7 +52,7 @@ export default function SignUp() {
     }
 
     return (
-        <div className="flex w-full">
+        <div className="flex w-full text-black dark:text-white">
             <main className="w-full px-4 lg:w-3/5 lg:px-20">
                 <header className="pb-20 pt-20">
                     <div className="flex items-center justify-between">
@@ -52,42 +69,35 @@ export default function SignUp() {
                 </header>
                 <div className="flex w-full flex-col gap-8">
                     <Button asChild size="md" variant="outline">
-                        <Link href={getGoogleOAuthURL()}>Conectar com Google</Link>
+                        <Link href={getGoogleOAuthURL()}>
+                            <GoogleLogo size={18} weight="bold" />
+                            Conectar com Google
+                        </Link>
                     </Button>
+
                     <div
-                        className="flex items-center
-                            before:mr-4 before:h-[1px] before:flex-1 before:bg-dark before:content-['']
-                            after:ml-4 after:h-[1px] after:flex-1 after:bg-dark after:content-['']
+                        className="flex items-center transition-colors
+                            before:mr-4 before:h-[1px] before:flex-1 before:bg-border before:content-['']
+                            after:ml-4 after:h-[1px] after:flex-1 after:bg-border after:content-['']
                         "
                     >
-                        <span>ou</span>
+                        <span className="text-muted-foreground">ou</span>
                     </div>
+
                     <form onSubmit={handleSubmit(handleSignUp)} className="flex flex-col gap-8">
                         <label className="w-full">
                             <span className="mb-2 block font-medium">Nome do usuário</span>
-                            <input
-                                {...register("username")}
-                                type="text"
-                                className="w-full rounded-md border border-dark px-4 py-3 font-normal outline-pink-500"
-                            />
+                            <Input {...register("username")} type="text" />
                         </label>
                         <label className="w-full">
                             <span className="mb-2 block font-medium">Email</span>
-                            <input
-                                {...register("email")}
-                                type="text"
-                                className="w-full rounded-md border border-dark px-4 py-3 font-normal outline-pink-500"
-                            />
+                            <Input {...register("email")} type="text" />
                         </label>
                         <label className="w-full">
                             <span className="mb-2 block font-medium">Senha</span>
-                            <input
-                                {...register("password")}
-                                type="password"
-                                className="w-full rounded-md border border-dark px-4 py-3 font-normal outline-pink-500"
-                            />
+                            <Input {...register("password")} type="password" />
                         </label>
-                        <Button size="md" variant="outline">
+                        <Button size="md" variant="primary">
                             Criar conta
                         </Button>
                     </form>

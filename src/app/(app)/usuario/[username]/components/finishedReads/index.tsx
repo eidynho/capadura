@@ -42,9 +42,9 @@ export function FinishedReads({ username, readsData }: FinishedReadsProps) {
                                 {!!read.reviewRating && <RatingStars rating={read.reviewRating} />}
 
                                 {read.endDate && (
-                                    <div className="ml-3 flex items-center gap-1">
+                                    <div className="ml-3 flex items-center gap-1 text-muted-foreground">
                                         <span className="text-sm font-medium">Finalizado em</span>
-                                        <span className="mt-[2px] text-xs font-semibold text-muted-foreground">
+                                        <span className="mt-[2px] text-xs font-semibold">
                                             {format(
                                                 parseISO(read?.endDate.toString()),
                                                 "dd/MM/yyyy",

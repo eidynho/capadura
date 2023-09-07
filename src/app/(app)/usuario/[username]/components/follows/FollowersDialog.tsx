@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
 import {
     Dialog,
+    DialogClose,
     DialogContent,
     DialogHeader,
     DialogTitle,
@@ -236,6 +237,8 @@ export function FollowersDialog({ username, targetUserId, followersCount }: Foll
                         </p>
                     </div>
                 )}
+
+                <DialogClose />
             </DialogContent>
         </Dialog>
     );

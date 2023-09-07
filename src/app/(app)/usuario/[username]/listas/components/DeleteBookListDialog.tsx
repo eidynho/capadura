@@ -4,6 +4,7 @@ import { Loader2, Trash } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import {
     Dialog,
+    DialogClose,
     DialogContent,
     DialogDescription,
     DialogHeader,
@@ -52,7 +53,7 @@ export function DeleteBookListDialog({
                             <Trash size={16} />
                         </Button>
                     </TooltipTrigger>
-                    <TooltipContent>
+                    <TooltipContent sideOffset={8}>
                         <span>Deletar</span>
                     </TooltipContent>
                 </Tooltip>
@@ -100,6 +101,8 @@ export function DeleteBookListDialog({
                             )}
                         </Button>
                     </div>
+
+                    <DialogClose />
                 </DialogContent>
             </Dialog>
         </>

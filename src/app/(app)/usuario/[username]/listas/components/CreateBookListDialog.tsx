@@ -12,6 +12,7 @@ import { useCreateBookList } from "@/endpoints/mutations/bookListsMutations";
 import { Button } from "@/components/ui/Button";
 import {
     Dialog,
+    DialogClose,
     DialogContent,
     DialogHeader,
     DialogTitle,
@@ -196,7 +197,7 @@ export function CreateBookListDialog() {
                                         name="description"
                                         rows={4}
                                         maxLength={600}
-                                        className="mt-2 max-h-40 bg-white dark:bg-dark"
+                                        className="mt-2 max-h-40"
                                     />
                                     {errors.description && (
                                         <span className="mt-1 text-xs font-medium text-destructive">
@@ -223,6 +224,8 @@ export function CreateBookListDialog() {
                             )}
                         </Button>
                     </form>
+
+                    <DialogClose />
                 </DialogContent>
             </Dialog>
         </>

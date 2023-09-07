@@ -20,7 +20,7 @@ export function RatingStars({ rating, size = 16, className }: RatingStarsProps) 
     };
 
     return (
-        <div className={cn("inline-flex items-center", className)}>
+        <div className={cn("inline-flex items-center text-black dark:text-white", className)}>
             {renderIntegerStars()}
             {!isInteger && <StarHalf size={size} weight="fill" />}
         </div>

@@ -11,6 +11,7 @@ import { MainContainer } from "@/components/layout/MainContainer";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { AuthDialog } from "@/components/AuthDialog";
 
 export const manrope = Manrope({
     subsets: ["latin"],
@@ -37,21 +38,22 @@ export default function RootLayout({ children }: RootLayoutProps) {
                         <div className="flex flex-col">
                             <NavBarLoggedComponent />
                             <MainContainer>{children}</MainContainer>
-
-                            <ToastContainer
-                                position="bottom-right"
-                                autoClose={3000}
-                                hideProgressBar
-                                newestOnTop={false}
-                                closeOnClick
-                                rtl={false}
-                                pauseOnFocusLoss={false}
-                                draggable
-                                pauseOnHover
-                                closeButton={false}
-                                theme="light"
-                            />
                         </div>
+
+                        <ToastContainer
+                            position="bottom-right"
+                            autoClose={3000}
+                            hideProgressBar
+                            newestOnTop={false}
+                            closeOnClick
+                            rtl={false}
+                            pauseOnFocusLoss={false}
+                            draggable
+                            pauseOnHover
+                            closeButton={false}
+                            theme="light"
+                        />
+                        <AuthDialog />
                     </Providers>
                 </div>
             </body>

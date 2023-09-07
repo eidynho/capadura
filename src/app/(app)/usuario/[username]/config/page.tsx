@@ -338,7 +338,7 @@ export default function UserConfigs() {
                                     rows={4}
                                     maxLength={600}
                                     placeholder="Harry Potter: Bruxo corajoso, amigos leais, combate o mal, símbolo de esperança."
-                                    className="mt-2 bg-white dark:bg-dark"
+                                    className="mt-2"
                                 ></Textarea>
                                 {errors.description && (
                                     <span className="mt-1 text-xs font-medium text-destructive">

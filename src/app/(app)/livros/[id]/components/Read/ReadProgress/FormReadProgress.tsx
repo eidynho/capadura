@@ -73,7 +73,7 @@ export function FormReadProgress({ editData, submitForm }: FormReadProgressProps
                     id="description-progress"
                     rows={4}
                     placeholder="O que está achando?"
-                    className="mt-2 max-h-96 bg-white"
+                    className="mt-2 max-h-96"
                 />
             </div>
 

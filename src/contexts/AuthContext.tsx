@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, ReactNode } from "react";
+import { createContext, ReactNode, useState } from "react";
 import { useRouter } from "next/navigation";
 import { setCookie, parseCookies } from "nookies";
 
@@ -14,11 +14,15 @@ interface AuthContextType {
     user?: ProfileDataResponse;
     isAuthenticated: boolean;
     signIn: (data: SignInRequestProps) => void;
+    isSignInLoading: boolean;
+    isOpenAuthDialog: boolean;
+    toggleAuthDialog: (isOpen: boolean) => void;
 }
 
 export interface SignInRequestProps {
     email: string;
     password: string;
+    onSuccess?: () => void;
 }
 
 interface AuthProviderProps {
@@ -28,6 +32,8 @@ interface AuthProviderProps {
 export const AuthContext = createContext({} as AuthContextType);
 
 export function AuthProvider({ children }: AuthProviderProps) {
+    const [isOpenAuthDialog, setIsOpenAuthDialog] = useState(false);
+
     const router = useRouter();
 
     const { token } = parseCookies();
@@ -43,7 +49,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
 
     const signInUser = useSignIn();
-    function signIn({ email, password }: SignInRequestProps) {
+    const isSignInLoading = signInUser.isLoading;
+    function signIn({ email, password, onSuccess }: SignInRequestProps) {
         signInUser.mutate(
             {
                 email,
@@ -67,14 +74,31 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
                     api.defaults.headers["Authorization"] = `Bearer ${data.token}`;
 
-                    router.push("/livros");
+                    if (onSuccess) {
+                        onSuccess();
+                    } else {
+                        router.push("/livros");
+                    }
                 },
             },
         );
     }
 
+    function toggleAuthDialog(isOpen: boolean) {
+        setIsOpenAuthDialog(isOpen);
+    }
+
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated, signIn }}>
+        <AuthContext.Provider
+            value={{
+                user,
+                isAuthenticated,
+                signIn,
+                isSignInLoading,
+                isOpenAuthDialog,
+                toggleAuthDialog,
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );

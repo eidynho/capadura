@@ -205,7 +205,7 @@ export function NavBarLoggedComponent() {
                                         <Link href="/entrar">Entrar</Link>
                                     </Button>
                                     <Button asChild size="sm" variant="primary">
-                                        <Link href="/cadastro">Criar conta</Link>
+                                        <Link href="/criar-conta">Criar conta</Link>
                                     </Button>
                                 </div>
                             )}

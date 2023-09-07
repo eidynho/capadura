@@ -239,7 +239,7 @@ export default function Book({ params }: BookProps) {
                                         className="mx-auto rounded-md"
                                     />
                                 ) : (
-                                    <div className="flex h-96 w-full flex-col items-center justify-center rounded-md border border-dark bg-zinc-500/10 opacity-75">
+                                    <div className="flex h-96 w-full flex-col items-center justify-center rounded-md border bg-zinc-500/10 opacity-75">
                                         <ImageOff size={36} strokeWidth={1.6} />
                                         <span className="mt-1 text-sm font-medium text-muted-foreground">
                                             Sem imagem

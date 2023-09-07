@@ -8,7 +8,13 @@ import { Library, Loader2, PencilLine } from "lucide-react";
 import { BookListData } from "@/endpoints/queries/bookListsQueries";
 
 import { Button } from "@/components/ui/Button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/Dialog";
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/Dialog";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Textarea } from "@/components/ui/Textarea";
@@ -109,7 +115,7 @@ export function UpdateBookListDialog({
                             <PencilLine size={16} />
                         </Button>
                     </TooltipTrigger>
-                    <TooltipContent>
+                    <TooltipContent sideOffset={8}>
                         <span>Editar</span>
                     </TooltipContent>
                 </Tooltip>
@@ -205,7 +211,7 @@ export function UpdateBookListDialog({
                                         name="description"
                                         rows={4}
                                         maxLength={600}
-                                        className="mt-2 max-h-40 bg-white dark:bg-dark"
+                                        className="mt-2 max-h-40"
                                     />
                                     {errors.description && (
                                         <span className="mt-1 text-xs font-medium text-destructive">
@@ -232,6 +238,8 @@ export function UpdateBookListDialog({
                             )}
                         </Button>
                     </form>
+
+                    <DialogClose />
                 </DialogContent>
             </Dialog>
         </>

@@ -53,9 +53,9 @@ export function RecentProgress({ username, progressData }: RecentProgressProps) 
                                 <div className="flex items-center gap-1 text-sm font-medium">
                                     <span>{progress.page}</span>
                                 </div>
-                                <div className="relative mx-2 h-5 flex-1 overflow-hidden rounded border-dark bg-white dark:bg-gray-700">
+                                <div className="relative mx-2 h-5 flex-1 overflow-hidden rounded border bg-muted dark:bg-muted-foreground/25">
                                     <div
-                                        className="h-5 bg-primary"
+                                        className="h-5 bg-primary/50"
                                         style={{
                                             width: `${progress.percentage}%` ?? 0,
                                         }}

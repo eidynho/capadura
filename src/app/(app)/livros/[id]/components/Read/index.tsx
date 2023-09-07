@@ -417,7 +417,9 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                             </div>
 
                             {read.reviewContent && (
-                                <p className="text-justify">{read.reviewContent}</p>
+                                <p className="text-justify text-black dark:text-white">
+                                    {read.reviewContent}
+                                </p>
                             )}
 
                             {bookData && (
@@ -452,10 +454,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                 </div>
                                 {read.progress?.length ? (
                                     read.progress.map((progress) => (
-                                        <div
-                                            key={progress.id}
-                                            className="border-t border-dark/20 p-4"
-                                        >
+                                        <div key={progress.id} className="border-t p-4">
                                             <div className="flex items-start justify-between gap-2">
                                                 <div className="flex items-center gap-2">
                                                     {user && <UserHoverCard user={user} />}
@@ -497,7 +496,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                             </div>
 
                                             {progress.description && (
-                                                <p className="mt-2 text-justify">
+                                                <p className="mt-2 text-justify text-black dark:text-white">
                                                     {progress.description}
                                                 </p>
                                             )}
@@ -506,9 +505,9 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                                 <div className="flex items-center gap-1 text-sm font-medium">
                                                     <span>{progress.page}</span>
                                                 </div>
-                                                <div className="relative mx-2 h-5 flex-1 overflow-hidden rounded border-dark bg-white dark:bg-gray-700">
+                                                <div className="relative mx-2 h-5 flex-1 overflow-hidden rounded border bg-muted dark:bg-muted-foreground/25">
                                                     <div
-                                                        className="h-5 bg-primary"
+                                                        className="h-5 bg-primary/50"
                                                         style={{
                                                             width: `${progress.percentage}%` ?? 0,
                                                         }}

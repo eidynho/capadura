@@ -49,7 +49,7 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
 
         createBookList.mutate({
             userId: user.id,
-            currentBooklistCount: bookLists?.length || 0,
+            name: `Lista - ${(bookLists?.length || 0) + 1}`,
         });
     }
 
@@ -89,7 +89,7 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
                     <div className="flex flex-col gap-1">
                         {Array.from({ length: 4 }, (_, index) => (
                             <div key={index} className="py-1 pl-6">
-                                <div className="h-5 w-32 animate-pulse rounded-md bg-gray-200 pl-6"></div>
+                                <div className="h-5 w-32 animate-pulse rounded-md bg-zinc-300 pl-6 dark:bg-accent"></div>
                             </div>
                         ))}
                     </div>

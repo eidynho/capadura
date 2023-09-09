@@ -83,11 +83,10 @@ export function RecentProgress({ username, progressData }: RecentProgressProps) 
                                 olhada em nossa
                                 <Link
                                     href="/livros"
-                                    className="ml-1 font-medium text-black underline"
+                                    className="ml-1 font-medium text-black underline dark:text-white"
                                 >
                                     lista de recomendações
                                 </Link>
-                                ?
                             </span>
                         ) : (
                             `${username} ainda não tem nenhum progresso de leitura.`

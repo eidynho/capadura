@@ -142,7 +142,9 @@ export function UserActivities({ userId }: UserActivitiesProps) {
                     </div>
                 ))
             ) : (
-                <div className="text-black dark:text-white">Nenhuma atividade recente.</div>
+                <div className="text-center text-black dark:text-white">
+                    Nenhuma atividade recente.
+                </div>
             )}
         </div>
     );

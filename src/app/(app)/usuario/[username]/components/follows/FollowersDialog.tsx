@@ -179,10 +179,10 @@ export function FollowersDialog({ username, targetUserId, followersCount }: Foll
                     <>
                         {Array.from({ length: 2 }, (_, index) => (
                             <div key={index} className="flex animate-pulse items-center gap-4">
-                                <div className="h-12 w-12 rounded-full bg-gray-200"></div>
+                                <div className="h-12 w-12 rounded-full bg-zinc-300 dark:bg-accent"></div>
                                 <div className="flex flex-col">
-                                    <div className="h-5 w-36 bg-gray-200"></div>
-                                    <div className="mt-1 h-4 w-28 bg-gray-200"></div>
+                                    <div className="h-5 w-36 bg-zinc-300 dark:bg-accent"></div>
+                                    <div className="mt-1 h-4 w-28 bg-zinc-300 dark:bg-accent"></div>
                                 </div>
                             </div>
                         ))}

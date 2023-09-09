@@ -201,7 +201,7 @@ export default function UserConfigs() {
                                     Essas informações serão exibidas no seu perfil.
                                 </span>
 
-                                <Separator className="mt-6 bg-gray-300" />
+                                <Separator className="mt-6" />
                             </div>
 
                             <div className="flex flex-col">

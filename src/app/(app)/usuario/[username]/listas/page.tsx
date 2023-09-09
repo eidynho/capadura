@@ -148,7 +148,7 @@ export default function UserLists({ params }: UserListsProps) {
                         })}
                     </nav>
                 ) : (
-                    <div className="mx-5">
+                    <div className="mx-5 text-center text-black dark:text-white">
                         <span>Nenhuma lista encontrada.</span>
                     </div>
                 )}
@@ -243,8 +243,8 @@ export default function UserLists({ params }: UserListsProps) {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead className="w-[100px]">#</TableHead>
-                                        <TableHead className="hover:bg-gray-200">Nome</TableHead>
+                                        <TableHead className="w-16">#</TableHead>
+                                        <TableHead>Nome</TableHead>
                                         <TableHead>Autor(a)</TableHead>
                                         <TableHead>Ano de publicação</TableHead>
                                         <TableHead>Páginas</TableHead>
@@ -275,7 +275,7 @@ export default function UserLists({ params }: UserListsProps) {
                                                     <DropdownMenuTrigger asChild>
                                                         <Button
                                                             variant="default"
-                                                            className="flex h-8 w-8 p-0 data-[state=open]:bg-gray-200"
+                                                            className="flex h-8 w-8 p-0 data-[state=open]:bg-zinc-300 dark:data-[state=open]:bg-accent"
                                                         >
                                                             <MoreHorizontal className="h-4 w-4" />
                                                             <span className="sr-only">
@@ -294,7 +294,7 @@ export default function UserLists({ params }: UserListsProps) {
                                                                 )
                                                             }
                                                         >
-                                                            Deletar
+                                                            Remover da lista
                                                         </DropdownMenuItem>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
@@ -315,7 +315,21 @@ export default function UserLists({ params }: UserListsProps) {
                         )}
                     </div>
                 ) : (
-                    <></>
+                    <div className="mt-2 flex h-52 w-full flex-col items-center justify-center rounded-md border bg-white text-center transition-colors dark:bg-dark">
+                        <h2 className="text-base font-semibold text-black dark:text-white">
+                            {isCurrentUser
+                                ? "Nenhuma lista para chamar de sua."
+                                : `${params.username} não possui nenhuma lista.`}
+                        </h2>
+                        <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
+                            Está sem ideias de nomes para listas? Que tal esses:
+                            <ul>
+                                <li>- Meus favoritos</li>
+                                <li>- Para ler neste ano</li>
+                                <li>- Lidos ano passado</li>
+                            </ul>
+                        </p>
+                    </div>
                 )}
             </div>
         </Container>

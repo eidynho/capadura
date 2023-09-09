@@ -145,20 +145,20 @@ export function ApplicationSearch() {
                     />
                     <CommandList>
                         {isFetchingBooks ? (
-                            <div className="flex h-28 w-full animate-pulse items-start gap-4 rounded-md border bg-white/80 px-4 py-3">
-                                <div className="h-[5.6rem] w-16 rounded-sm bg-gray-200"></div>
+                            <div className="flex h-28 w-full animate-pulse items-start gap-4 rounded-md border bg-white/80 px-4 py-3 dark:bg-dark/80">
+                                <div className="h-[5.6rem] w-16 rounded-sm bg-zinc-300 dark:bg-accent"></div>
 
                                 <div className="flex h-full w-full flex-1 flex-col justify-between gap-2">
                                     <div className="flex w-full items-start justify-between gap-2">
                                         <div>
-                                            <div className="mb-1 h-6 w-24 rounded-sm bg-gray-200 font-semibold"></div>
-                                            <div className="h-5 w-36 rounded-sm bg-gray-200"></div>
+                                            <div className="mb-1 h-6 w-24 rounded-sm bg-zinc-300 font-semibold dark:bg-accent"></div>
+                                            <div className="h-5 w-36 rounded-sm bg-zinc-300 dark:bg-accent"></div>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-6">
-                                        <div className="h-5 w-24 rounded-sm bg-gray-200"></div>
+                                        <div className="h-5 w-24 rounded-sm bg-zinc-300 dark:bg-accent"></div>
 
-                                        <div className="flex h-5 w-32 items-center gap-1 rounded-sm bg-gray-200"></div>
+                                        <div className="flex h-5 w-32 items-center gap-1 rounded-sm bg-zinc-300 dark:bg-accent"></div>
                                     </div>
                                 </div>
                             </div>
@@ -166,12 +166,12 @@ export function ApplicationSearch() {
                             <>
                                 {!!searchName && !!books?.items?.length
                                     ? books.items.map((book) => (
-                                          <CommandItem>
+                                          <CommandItem className="!px-0 !py-0">
                                               <Link
                                                   href={`/livros/${book.id}`}
                                                   onClick={() => setIsOpen(false)}
                                                   key={book.id}
-                                                  className="flex gap-4"
+                                                  className="flex w-full gap-4 px-3 py-2"
                                               >
                                                   <BookSearchItem book={book} />
                                               </Link>

@@ -9,7 +9,7 @@ export default async function NotFound() {
             <main className="h-full w-full px-4 lg:w-1/2 lg:px-20">
                 <header className="flex h-full flex-col justify-between pb-20 pt-20">
                     <Link href="/" className="font-medium">
-                        Contopia
+                        Capadura
                     </Link>
                     <div className="flex flex-col gap-4">
                         <span className="text-lg font-bold text-primary">404</span>

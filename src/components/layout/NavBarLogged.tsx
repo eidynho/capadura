@@ -156,14 +156,14 @@ export function NavBarLoggedComponent() {
         <>
             {isMobile ? (
                 <nav className="top-0 z-10 flex w-full items-center justify-between gap-2 border-b bg-light py-4 text-sm transition-colors dark:bg-dark">
-                    <span className="ml-4 inline-block text-black dark:text-white">Contopia</span>
+                    <span className="ml-4 inline-block text-black dark:text-white">Capadura</span>
                 </nav>
             ) : (
                 <nav className="flex w-full items-center justify-center gap-2 border-b bg-light py-4 text-sm transition-colors dark:bg-dark">
                     <div className="max-w-7xl">
                         <div className="flex w-full items-center justify-between gap-1">
                             <span className="mr-4 inline-block text-black dark:text-white">
-                                Contopia
+                                Capadura
                             </span>
 
                             <div className="mr-8 flex gap-8 text-black dark:text-white">

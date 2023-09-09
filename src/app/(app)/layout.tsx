@@ -6,8 +6,8 @@ interface AppLayoutProps {
 
 export const metadata = {
     title: {
-        default: "Contopia",
-        template: "%s | Contopia",
+        default: "Capadura",
+        template: "%s | Capadura",
     },
 };
 

@@ -57,7 +57,7 @@ export default function SignUp() {
                 <header className="pb-20 pt-20">
                     <div className="flex items-center justify-between">
                         <Link href="/" className="font-medium">
-                            Contopia
+                            Capadura
                         </Link>
                         <Link href="/entrar" className="font-medium underline">
                             Entrar

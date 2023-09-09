@@ -15,13 +15,13 @@ type ThemeOptions = "light" | "dark";
 
 export function ThemeToggler() {
     const [theme, setTheme] = useState(() => {
-        const storedTheme = localStorage.getItem("@contopia-theme-v1.0.0");
+        const storedTheme = localStorage.getItem("@capadura-theme-v1.0.0");
 
         return storedTheme || "light";
     });
 
     useEffect(() => {
-        const storedTheme = localStorage.getItem("@contopia-theme-v1.0.0");
+        const storedTheme = localStorage.getItem("@capadura-theme-v1.0.0");
 
         if (storedTheme) {
             setTheme(storedTheme);
@@ -45,7 +45,7 @@ export function ThemeToggler() {
         const isSameTheme = theme === newTheme;
 
         setTheme(newTheme);
-        localStorage.setItem("@contopia-theme-v1.0.0", newTheme);
+        localStorage.setItem("@capadura-theme-v1.0.0", newTheme);
 
         if (!isSameTheme) {
             document.documentElement.classList.toggle("dark");

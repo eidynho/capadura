@@ -39,7 +39,7 @@ export default function Login() {
                 <header className="pb-20 pt-20">
                     <div className="flex items-center justify-between">
                         <Link href="/" className="font-medium">
-                            Contopia
+                            Capadura
                         </Link>
                         <Link href="/criar-conta" className="font-medium underline">
                             Criar conta

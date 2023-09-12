@@ -97,7 +97,7 @@ export function DeleteBookListDialog({
                                     <span>Deletando...</span>
                                 </>
                             ) : (
-                                <span>Deletar</span>
+                                <span>Deletar lista</span>
                             )}
                         </Button>
                     </div>

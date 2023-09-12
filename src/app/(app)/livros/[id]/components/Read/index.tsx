@@ -18,15 +18,17 @@ import {
     useToggleReadStatus,
     useUpdateRead,
 } from "@/endpoints/mutations/readsMutations";
-import { useAddNewProgress, useUpdateProgress } from "@/endpoints/mutations/progressMutations";
+import {
+    useAddNewProgress,
+    useDeleteProgress,
+    useUpdateProgress,
+} from "@/endpoints/mutations/progressMutations";
 
 import { CreateReadReviewDialog } from "./ReadReview/CreateReadReviewDialog";
 import { UpdateReadReviewDialog } from "./ReadReview/UpdateReadReviewDialog";
-import { NewReadProgressDialog } from "./ReadProgress/NewReadProgressDialog";
-import {
-    HandleUpdateProgressProps,
-    UpdateReadProgressDialog,
-} from "./ReadProgress/UpdateReadProgressDialog";
+import { NewProgressDialog } from "./Progress/NewProgressDialog";
+import { DeleteProgressDialog } from "./Progress/DeleteProgressDialog";
+import { HandleUpdateProgressProps, UpdateProgressDialog } from "./Progress/UpdateProgressDialog";
 import { RatingStars } from "@/components/RatingStars";
 import { UserHoverCard } from "@/components/UserHoverCard";
 
@@ -39,14 +41,21 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/DropdownMenu";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs";
+import { Separator } from "@/components/ui/Separator";
+import { Progress } from "./Progress";
 
-interface EditReadData {
+export interface EditReadData {
     readId: string;
     id: string;
     description: string;
     isSpoiler: boolean;
     page: number | null;
     countType: "page" | "percentage";
+}
+
+export interface DeleteProgressData {
+    readId: string;
+    progressId: string;
 }
 
 interface ReadsProgressProps {
@@ -58,7 +67,11 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
     if (!isAuthenticated) return;
 
     const [isOpenUpdateProgressDialog, setIsOpenUpdateProgressDialog] = useState(false);
+    const [isOpenDeleteProgressDialog, setIsOpenDeleteProgressDialog] = useState(false);
+
     const [progressEditData, setProgressEditData] = useState<EditReadData | null>(null);
+    const [progressDeleteData, setProgressDeleteData] = useState<DeleteProgressData | null>(null);
+
     const [currentTab, setCurrentTab] = useState("all");
 
     const { data: userReads } = useFetchUserReadsByBook({
@@ -143,6 +156,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
     const addNewProgress = useAddNewProgress();
     async function handleAddNewProgress({
         readId,
+        description,
         isSpoiler,
         pagesCount,
         countType,
@@ -157,6 +171,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
         await addNewProgress.mutateAsync({
             bookId: bookData.id,
             readId,
+            description,
             isSpoiler,
             pagesCount,
             countType,
@@ -192,6 +207,10 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
         });
     }
 
+    function handleOpenUpdateProgressDialog(value: boolean) {
+        setIsOpenUpdateProgressDialog(value);
+    }
+
     function handleSetProgressEditData({
         readId,
         id,
@@ -212,8 +231,33 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
         setIsOpenUpdateProgressDialog(true);
     }
 
-    function handleOpenUpdateProgressDialog(value = false) {
-        setIsOpenUpdateProgressDialog(value);
+    const deleteProgress = useDeleteProgress();
+    function handleDeleteProgress() {
+        if (!bookData || deleteProgress.isLoading) return;
+
+        if (!progressDeleteData?.readId || !progressDeleteData?.progressId) {
+            toast.error("Erro ao deletar progresso de leitura.");
+            return;
+        }
+
+        deleteProgress.mutate({
+            bookId: bookData.id,
+            readId: progressDeleteData.readId,
+            progressId: progressDeleteData.progressId,
+        });
+    }
+
+    function handleSetProgressDeleteData({ readId, progressId }: DeleteProgressData) {
+        setProgressDeleteData({
+            readId,
+            progressId,
+        });
+
+        setIsOpenDeleteProgressDialog(true);
+    }
+
+    function handleOpenDeleteProgressDialog(value: boolean) {
+        setIsOpenDeleteProgressDialog(value);
     }
 
     function renderReadStatus(status: ReadStatus) {
@@ -319,15 +363,19 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                 <div className="flex items-center gap-2">
                                     {user && <UserHoverCard user={user} />}
 
+                                    {!!read.reviewRating && (
+                                        <Separator
+                                            orientation="vertical"
+                                            className="h-6"
+                                        ></Separator>
+                                    )}
+
                                     {/* Rating stars */}
-                                    <div className="inline-flex items-center gap-2">
-                                        {read.reviewRating && (
-                                            <>
-                                                <div className="mx-1 h-5 w-px bg-dark"></div>
-                                                <div className="inline-flex items-center">
-                                                    <RatingStars rating={read.reviewRating} />
-                                                </div>
-                                            </>
+                                    <div className="ml-1 inline-flex items-center gap-2">
+                                        {!!read.reviewRating && (
+                                            <div className="inline-flex items-center">
+                                                <RatingStars rating={read.reviewRating} />
+                                            </div>
                                         )}
                                     </div>
                                 </div>
@@ -425,7 +473,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                             {bookData && (
                                 <div className="mt-2 flex items-center gap-2">
                                     {read.progress?.[0]?.percentage !== 100 && (
-                                        <NewReadProgressDialog
+                                        <NewProgressDialog
                                             readId={read.id}
                                             bookTitle={bookData?.title}
                                             bookPageCount={bookData?.pageCount ?? 0}
@@ -445,87 +493,13 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                         )}
                                 </div>
                             )}
-                            <div className="mt-2 flex flex-col gap-3 text-black dark:text-white">
-                                <div className="flex items-center justify-between gap-2">
-                                    <h4 className="font-bold">Progressos anteriores</h4>
-                                    <Button size="sm" variant="outline">
-                                        Ver todos
-                                    </Button>
-                                </div>
-                                {read.progress?.length ? (
-                                    read.progress.map((progress) => (
-                                        <div key={progress.id} className="border-t p-4">
-                                            <div className="flex items-start justify-between gap-2">
-                                                <div className="flex items-center gap-2">
-                                                    {user && <UserHoverCard user={user} />}
 
-                                                    <span className="mt-[2px] text-xs font-semibold text-gray-500">
-                                                        {format(
-                                                            parseISO(progress.createdAt.toString()),
-                                                            "dd/MM/yyyy",
-                                                        )}
-                                                    </span>
-                                                </div>
-
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button size="icon-sm" variant="default">
-                                                            <MoreVertical
-                                                                size={16}
-                                                                className="text-black dark:text-white"
-                                                            />
-                                                        </Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end">
-                                                        <DropdownMenuItem
-                                                            onClick={() =>
-                                                                handleSetProgressEditData({
-                                                                    ...progress,
-                                                                    countType: "page",
-                                                                })
-                                                            }
-                                                        >
-                                                            <span>Editar</span>
-                                                        </DropdownMenuItem>
-
-                                                        <DropdownMenuItem className="text-destructive focus:bg-destructive/10 focus:text-destructive">
-                                                            <span>Excluir</span>
-                                                        </DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
-                                            </div>
-
-                                            {progress.description && (
-                                                <p className="mt-2 text-justify text-black dark:text-white">
-                                                    {progress.description}
-                                                </p>
-                                            )}
-
-                                            <div className="mt-4 flex items-center">
-                                                <div className="flex items-center gap-1 text-sm font-medium">
-                                                    <span>{progress.page}</span>
-                                                </div>
-                                                <div className="relative mx-2 h-5 flex-1 overflow-hidden rounded border bg-muted dark:bg-muted-foreground/25">
-                                                    <div
-                                                        className="h-5 bg-primary/50"
-                                                        style={{
-                                                            width: `${progress.percentage}%` ?? 0,
-                                                        }}
-                                                    ></div>
-                                                    <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-semibold text-black">
-                                                        {`${progress.percentage}%`}
-                                                    </span>
-                                                </div>
-                                                <span className="w-8 text-sm font-medium">
-                                                    {bookData?.pageCount}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <span>Nenhum progresso encontrado.</span>
-                                )}
-                            </div>
+                            <Progress
+                                progressList={read.progress}
+                                bookPageCount={bookData?.pageCount ?? 0}
+                                setProgressEditData={handleSetProgressEditData}
+                                setProgressDeleteData={handleSetProgressDeleteData}
+                            />
                         </div>
                     </div>
                 ))
@@ -539,13 +513,21 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                     </p>
                 </div>
             )}
-            <UpdateReadProgressDialog
+
+            <UpdateProgressDialog
                 isOpen={isOpenUpdateProgressDialog}
-                handleOpenUpdateProgressDialog={handleOpenUpdateProgressDialog}
+                setIsOpen={handleOpenUpdateProgressDialog}
                 bookTitle={bookData?.title}
                 bookPageCount={bookData?.pageCount ?? 0}
                 editData={progressEditData}
                 handleUpdateProgress={handleUpdateProgress}
+            />
+
+            <DeleteProgressDialog
+                isOpen={isOpenDeleteProgressDialog}
+                setIsOpen={handleOpenDeleteProgressDialog}
+                deleteProgress={handleDeleteProgress}
+                isDeleteProgressLoading={deleteProgress.isLoading}
             />
         </>
     );

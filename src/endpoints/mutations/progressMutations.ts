@@ -176,3 +176,46 @@ export function useUpdateProgress() {
         },
     });
 }
+
+interface UseDeleteProgressProps {
+    progressId: string;
+    readId: string;
+    bookId: string;
+}
+
+export function useDeleteProgress() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({ progressId }: UseDeleteProgressProps) => {
+            await api.delete(`/progress/${progressId}`);
+        },
+        onSuccess: (_, { progressId, readId, bookId }) => {
+            queryClient.setQueryData<ReadsDataResponse>(
+                ["fetchUserReadsByBook", { bookId }],
+                (prevData) => {
+                    const updatedReads = { ...(prevData || {}) };
+
+                    const read = updatedReads.items?.find((read) => read.id === readId);
+
+                    if (read) {
+                        read.progress = read.progress.filter(
+                            (progress) => progress.id !== progressId,
+                        );
+                    }
+
+                    return {
+                        items: updatedReads.items || [],
+                        total: updatedReads.total || 0,
+                    };
+                },
+            );
+
+            toast.success("Progresso deletado.");
+        },
+        onError: () => {
+            toast.error("Erro ao deletar o progresso de leitura.");
+            throw new Error("Failed on delete read progress.");
+        },
+    });
+}

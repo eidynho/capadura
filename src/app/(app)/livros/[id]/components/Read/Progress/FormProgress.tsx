@@ -20,7 +20,7 @@ export const progressFormSchema = z.object({
 
 export type ProgressFormSchema = z.infer<typeof progressFormSchema>;
 
-interface FormReadProgressProps {
+interface FormProgressProps {
     editData?: {
         readId: string;
         id: string;
@@ -37,7 +37,7 @@ interface FormReadProgressProps {
     }: ProgressFormSchema) => Promise<void>;
 }
 
-export function FormReadProgress({ editData, submitForm }: FormReadProgressProps) {
+export function FormProgress({ editData, submitForm }: FormProgressProps) {
     const {
         register,
         handleSubmit,
@@ -89,12 +89,12 @@ export function FormReadProgress({ editData, submitForm }: FormReadProgressProps
             </div>
 
             <div>
-                <Label htmlFor="page-read-count">Páginas/porcentagem lidas</Label>
+                <Label htmlFor="page-progress-count">Páginas/porcentagem lidas</Label>
                 <div className="flex flex-wrap items-center gap-4">
                     <div className="flex flex-col">
                         <Input
                             {...register("pagesCount")}
-                            id="page-read-count"
+                            id="page-progress-count"
                             name="pagesCount"
                             type="number"
                             placeholder="0"

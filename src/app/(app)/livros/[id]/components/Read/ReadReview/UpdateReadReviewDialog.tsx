@@ -47,7 +47,7 @@ export function UpdateReadReviewDialog({
     return (
         <>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                <DialogTrigger>
+                <DialogTrigger asChild>
                     <Button
                         size="icon-sm"
                         variant="default"

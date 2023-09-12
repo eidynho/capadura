@@ -82,7 +82,7 @@ export function RatingChart({ bookId, userId, username }: RatingChartProps) {
                         <BarChart data={bookRatings.data}>
                             <Tooltip
                                 content={<RenderTooltipContent />}
-                                cursor={<rect fill="#e4e4e7" />}
+                                cursor={<rect fill="#e4e4e780" />}
                                 position={{ x: barGraphData.x, y: barGraphData.y - 30 }}
                                 animationDuration={300}
                             />

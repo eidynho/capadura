@@ -1,6 +1,6 @@
 "use client";
 
-import { FormReadProgress, ProgressFormSchema } from "./FormReadProgress";
+import { FormProgress, ProgressFormSchema } from "./FormProgress";
 import {
     Dialog,
     DialogClose,
@@ -19,9 +19,9 @@ export interface HandleUpdateProgressProps {
     bookPageCount: number;
 }
 
-interface ReadProgressDialogProps {
+interface ProgressDialogProps {
     isOpen: boolean;
-    handleOpenUpdateProgressDialog: (value: boolean) => void;
+    setIsOpen: (value: boolean) => void;
 
     bookTitle?: string;
     bookPageCount: number;
@@ -36,14 +36,14 @@ interface ReadProgressDialogProps {
     handleUpdateProgress: (data: HandleUpdateProgressProps) => Promise<void>;
 }
 
-export function UpdateReadProgressDialog({
+export function UpdateProgressDialog({
     isOpen,
-    handleOpenUpdateProgressDialog,
+    setIsOpen,
     bookTitle,
     bookPageCount,
     editData,
     handleUpdateProgress,
-}: ReadProgressDialogProps) {
+}: ProgressDialogProps) {
     async function updateProgress({
         description,
         isSpoiler,
@@ -65,21 +65,21 @@ export function UpdateReadProgressDialog({
                 bookPageCount,
             });
 
-            handleOpenUpdateProgressDialog(false);
+            setIsOpen(false);
         } catch (err) {
             throw err;
         }
     }
 
     return (
-        <Dialog open={isOpen} onOpenChange={handleOpenUpdateProgressDialog}>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Progresso de leitura - {bookTitle}</DialogTitle>
                 </DialogHeader>
 
                 <div className="px-3 py-2">
-                    <FormReadProgress editData={editData} submitForm={updateProgress} />
+                    <FormProgress editData={editData} submitForm={updateProgress} />
                 </div>
 
                 <DialogClose />

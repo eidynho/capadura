@@ -5,7 +5,7 @@ import { BadgePlus } from "lucide-react";
 
 import { HandleAddNewProgressProps } from "../ReadReview/FormReadReview";
 
-import { FormReadProgress, ProgressFormSchema } from "./FormReadProgress";
+import { FormProgress, ProgressFormSchema } from "./FormProgress";
 import { Button } from "@/components/ui/Button";
 import {
     Dialog,
@@ -16,19 +16,19 @@ import {
     DialogTrigger,
 } from "@/components/ui/Dialog";
 
-interface NewReadProgressDialogProps {
+interface NewProgressDialogProps {
     readId: string;
     bookTitle?: string;
     bookPageCount: number;
     handleAddNewProgress: (data: HandleAddNewProgressProps) => Promise<void>;
 }
 
-export function NewReadProgressDialog({
+export function NewProgressDialog({
     readId,
     bookTitle,
     bookPageCount,
     handleAddNewProgress,
-}: NewReadProgressDialogProps) {
+}: NewProgressDialogProps) {
     const [isOpen, setIsOpen] = useState(false);
 
     async function submitNewProgress({
@@ -56,7 +56,7 @@ export function NewReadProgressDialog({
     return (
         <>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                <DialogTrigger>
+                <DialogTrigger asChild>
                     <Button size="sm" variant="primary">
                         <BadgePlus size={16} />
                         Novo progresso
@@ -68,7 +68,7 @@ export function NewReadProgressDialog({
                     </DialogHeader>
 
                     <div className="px-3 py-2">
-                        <FormReadProgress submitForm={submitNewProgress} />
+                        <FormProgress submitForm={submitNewProgress} />
                     </div>
 
                     <DialogClose />

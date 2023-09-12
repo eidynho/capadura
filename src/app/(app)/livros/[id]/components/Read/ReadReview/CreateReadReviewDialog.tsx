@@ -39,7 +39,7 @@ export function CreateReadReviewDialog({
     return (
         <>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                <DialogTrigger>
+                <DialogTrigger asChild>
                     <Button size="sm" variant="outline">
                         <Star size={16} className="text-yellow-500" />
                         Avaliar

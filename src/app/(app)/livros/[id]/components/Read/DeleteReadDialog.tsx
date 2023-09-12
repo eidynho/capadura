@@ -9,26 +9,26 @@ import {
     DialogTitle,
 } from "@/components/ui/Dialog";
 
-interface DeleteProgressDialogProps {
+interface DeleteReadDialogProps {
     isOpen: boolean;
     setIsOpen: (value: boolean) => void;
-    deleteProgress: () => void;
-    isDeleteProgressLoading: boolean;
+    deleteRead: () => void;
+    isDeleteReadLoading: boolean;
 }
 
-export function DeleteProgressDialog({
+export function DeleteReadDialog({
     isOpen,
     setIsOpen,
-    deleteProgress,
-    isDeleteProgressLoading,
-}: DeleteProgressDialogProps) {
+    deleteRead,
+    isDeleteReadLoading,
+}: DeleteReadDialogProps) {
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Você tem certeza?</DialogTitle>
                     <DialogDescription>
-                        Ao excluir o progresso, essa ação não poderá ser desfeita.
+                        Ao excluir a leitura, essa ação não poderá ser desfeita.
                     </DialogDescription>
                 </DialogHeader>
 
@@ -37,14 +37,14 @@ export function DeleteProgressDialog({
                         Cancelar
                     </Button>
 
-                    <Button size="sm" variant="destructive" onClick={deleteProgress}>
-                        {isDeleteProgressLoading ? (
+                    <Button size="sm" variant="destructive" onClick={deleteRead}>
+                        {isDeleteReadLoading ? (
                             <>
                                 <Loader2 size={22} className="animate-spin" />
                                 <span>Excluindo...</span>
                             </>
                         ) : (
-                            <span>Excluir progresso</span>
+                            <span>Excluir leitura</span>
                         )}
                     </Button>
                 </div>

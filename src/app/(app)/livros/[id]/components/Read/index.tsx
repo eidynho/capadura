@@ -13,6 +13,7 @@ import { HandleAddNewProgressProps, HandleUpdateReadProps } from "./ReadReview/F
 import { useFetchUserReadsByBook } from "@/endpoints/queries/readsQueries";
 import {
     ReadStatus,
+    useDeleteRead,
     useStartNewRead,
     useToggleReadPrivacy,
     useToggleReadStatus,
@@ -26,9 +27,11 @@ import {
 
 import { CreateReadReviewDialog } from "./ReadReview/CreateReadReviewDialog";
 import { UpdateReadReviewDialog } from "./ReadReview/UpdateReadReviewDialog";
+import { DeleteReadDialog } from "./DeleteReadDialog";
 import { NewProgressDialog } from "./Progress/NewProgressDialog";
 import { DeleteProgressDialog } from "./Progress/DeleteProgressDialog";
 import { HandleUpdateProgressProps, UpdateProgressDialog } from "./Progress/UpdateProgressDialog";
+import { Progress } from "./Progress";
 import { RatingStars } from "@/components/RatingStars";
 import { UserHoverCard } from "@/components/UserHoverCard";
 
@@ -42,7 +45,6 @@ import {
 } from "@/components/ui/DropdownMenu";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import { Separator } from "@/components/ui/Separator";
-import { Progress } from "./Progress";
 
 export interface EditReadData {
     readId: string;
@@ -68,9 +70,11 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
 
     const [isOpenUpdateProgressDialog, setIsOpenUpdateProgressDialog] = useState(false);
     const [isOpenDeleteProgressDialog, setIsOpenDeleteProgressDialog] = useState(false);
+    const [isOpenDeleteReadDialog, setIsOpenDeleteReadDialog] = useState(false);
 
     const [progressEditData, setProgressEditData] = useState<EditReadData | null>(null);
     const [progressDeleteData, setProgressDeleteData] = useState<DeleteProgressData | null>(null);
+    const [readIdToDelete, setReadIdToDelete] = useState<string | null>(null);
 
     const [currentTab, setCurrentTab] = useState("all");
 
@@ -126,6 +130,32 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
             reviewIsSpoiler,
             endRead,
         });
+    }
+
+    const deleteRead = useDeleteRead();
+    function handleDeleteRead() {
+        if (!bookData?.id || !readIdToDelete || deleteRead.isLoading) return;
+
+        deleteRead.mutate(
+            {
+                bookId: bookData.id,
+                readId: readIdToDelete,
+            },
+            {
+                onSuccess: () => {
+                    setIsOpenDeleteReadDialog(false);
+                },
+            },
+        );
+    }
+
+    function startDeleteRead(readId: string) {
+        setReadIdToDelete(readId);
+        setIsOpenDeleteReadDialog(true);
+    }
+
+    function handleOpenDeleteReadDialog(value: boolean) {
+        setIsOpenDeleteReadDialog(value);
     }
 
     const toggleReadPrivacy = useToggleReadPrivacy();
@@ -240,11 +270,18 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
             return;
         }
 
-        deleteProgress.mutate({
-            bookId: bookData.id,
-            readId: progressDeleteData.readId,
-            progressId: progressDeleteData.progressId,
-        });
+        deleteProgress.mutate(
+            {
+                bookId: bookData.id,
+                readId: progressDeleteData.readId,
+                progressId: progressDeleteData.progressId,
+            },
+            {
+                onSuccess: () => {
+                    setIsOpenDeleteProgressDialog(false);
+                },
+            },
+        );
     }
 
     function handleSetProgressDeleteData({ readId, progressId }: DeleteProgressData) {
@@ -435,7 +472,10 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                                 </DropdownMenuItem>
                                             )}
 
-                                            <DropdownMenuItem className="text-destructive focus:bg-destructive/10 focus:text-destructive">
+                                            <DropdownMenuItem
+                                                onClick={() => startDeleteRead(read.id)}
+                                                className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+                                            >
                                                 <span>Excluir</span>
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
@@ -528,6 +568,13 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                 setIsOpen={handleOpenDeleteProgressDialog}
                 deleteProgress={handleDeleteProgress}
                 isDeleteProgressLoading={deleteProgress.isLoading}
+            />
+
+            <DeleteReadDialog
+                isOpen={isOpenDeleteReadDialog}
+                setIsOpen={handleOpenDeleteReadDialog}
+                deleteRead={handleDeleteRead}
+                isDeleteReadLoading={deleteRead.isLoading}
             />
         </>
     );

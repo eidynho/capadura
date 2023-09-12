@@ -115,6 +115,42 @@ export function useUpdateRead() {
     });
 }
 
+interface UseDeleteReadProps {
+    bookId: string;
+    readId: string;
+}
+
+export function useDeleteRead() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({ readId }: UseDeleteReadProps) => {
+            await api.delete(`/read/${readId}`);
+        },
+        onSuccess: (_, { bookId, readId }) => {
+            queryClient.setQueryData<ReadsDataResponse>(
+                ["fetchUserReadsByBook", { bookId }],
+                (prevData) => {
+                    const updatedReads = { ...(prevData || {}) };
+
+                    updatedReads.items = updatedReads.items?.filter((read) => read.id !== readId);
+
+                    return {
+                        items: updatedReads.items || [],
+                        total: updatedReads.total || 0,
+                    };
+                },
+            );
+
+            toast.success("Sua leitura foi excluída.");
+        },
+        onError: () => {
+            toast.error("Erro ao deletar leitura.");
+            throw new Error("Failed on delete read.");
+        },
+    });
+}
+
 interface UseToggleReadPrivacyProps {
     bookId: string;
     readId: string;

@@ -9,6 +9,7 @@ import { Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { BookData } from "@/app/(app)/livros/[id]/page";
+import { ReadStatus } from "@/endpoints/mutations/readsMutations";
 
 import { ratingFormat } from "@/utils/rating-format";
 
@@ -33,7 +34,7 @@ export interface HandleAddNewProgressProps {
 
 export interface HandleUpdateReadProps {
     readId: string;
-    status: string;
+    status: ReadStatus;
     reviewContent?: string;
     reviewRating: number | null;
     reviewIsSpoiler: boolean;

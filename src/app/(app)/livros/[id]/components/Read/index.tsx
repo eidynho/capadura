@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { pt } from "date-fns/locale";
 
 import { AuthContext } from "@/contexts/AuthContext";
-import { BookData } from "@/app/(app)/livros/[id]/page";
+import { BookData, ReadData } from "@/app/(app)/livros/[id]/page";
 import { HandleAddNewProgressProps, HandleUpdateReadProps } from "./ReadReview/FormReadReview";
 
 import { useFetchUserReadsByBook } from "@/endpoints/queries/readsQueries";
@@ -74,7 +74,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
 
     const [progressEditData, setProgressEditData] = useState<EditReadData | null>(null);
     const [progressDeleteData, setProgressDeleteData] = useState<DeleteProgressData | null>(null);
-    const [readIdToDelete, setReadIdToDelete] = useState<string | null>(null);
+    const [readToDelete, setReadToDelete] = useState<ReadData | null>(null);
 
     const [currentTab, setCurrentTab] = useState("all");
 
@@ -134,12 +134,13 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
 
     const deleteRead = useDeleteRead();
     function handleDeleteRead() {
-        if (!bookData?.id || !readIdToDelete || deleteRead.isLoading) return;
+        if (!bookData?.id || !readToDelete?.id || deleteRead.isLoading) return;
 
         deleteRead.mutate(
             {
                 bookId: bookData.id,
-                readId: readIdToDelete,
+                readId: readToDelete.id,
+                status: readToDelete.status,
             },
             {
                 onSuccess: () => {
@@ -149,8 +150,8 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
         );
     }
 
-    function startDeleteRead(readId: string) {
-        setReadIdToDelete(readId);
+    function startDeleteRead(read: ReadData) {
+        setReadToDelete(read);
         setIsOpenDeleteReadDialog(true);
     }
 
@@ -473,7 +474,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                             )}
 
                                             <DropdownMenuItem
-                                                onClick={() => startDeleteRead(read.id)}
+                                                onClick={() => startDeleteRead(read)}
                                                 className="text-destructive focus:bg-destructive/10 focus:text-destructive"
                                             >
                                                 <span>Excluir</span>

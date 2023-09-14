@@ -5,6 +5,7 @@ import { api } from "@/lib/api";
 
 import { ReadsDataResponse } from "../queries/readsQueries";
 import { ReadData } from "@/app/(app)/livros/[id]/page";
+import { GetMetadataCount } from "@/app/(app)/livros/[id]/components/BookMetaData";
 
 interface UseStartNewReadProps {
     bookId: string;
@@ -50,7 +51,7 @@ export function useStartNewRead() {
 interface UseUpdateReadProps {
     bookId: string;
     readId: string;
-    status: string;
+    status: ReadStatus;
     reviewContent?: string;
     reviewRating: number | null;
     reviewIsSpoiler: boolean;
@@ -107,6 +108,25 @@ export function useUpdateRead() {
                     };
                 },
             );
+
+            // is status is abount to change for "FINISHED", add total finished read count metadata count by one
+            if (status === "FINISHED") {
+                queryClient.setQueriesData<GetMetadataCount>(
+                    ["getTotalFinishedReadsCountByBook", { bookId }],
+                    (prevData) => {
+                        if (!prevData) {
+                            return {
+                                total: 0,
+                            };
+                        }
+
+                        const updatedCount = prevData.total + 1;
+                        return {
+                            total: updatedCount,
+                        };
+                    },
+                );
+            }
         },
         onError: () => {
             toast.error("Erro ao alterar dados da leitura.");
@@ -118,6 +138,7 @@ export function useUpdateRead() {
 interface UseDeleteReadProps {
     bookId: string;
     readId: string;
+    status: ReadStatus;
 }
 
 export function useDeleteRead() {
@@ -127,7 +148,7 @@ export function useDeleteRead() {
         mutationFn: async ({ readId }: UseDeleteReadProps) => {
             await api.delete(`/read/${readId}`);
         },
-        onSuccess: (_, { bookId, readId }) => {
+        onSuccess: (_, { bookId, readId, status }) => {
             queryClient.setQueryData<ReadsDataResponse>(
                 ["fetchUserReadsByBook", { bookId }],
                 (prevData) => {
@@ -141,6 +162,25 @@ export function useDeleteRead() {
                     };
                 },
             );
+
+            // is read to delete is finished, reduce total finished read count metadata count by one
+            if (status === "FINISHED") {
+                queryClient.setQueriesData<GetMetadataCount>(
+                    ["getTotalFinishedReadsCountByBook", { bookId }],
+                    (prevData) => {
+                        if (!prevData) {
+                            return {
+                                total: 0,
+                            };
+                        }
+
+                        const updatedCount = prevData.total - 1;
+                        return {
+                            total: updatedCount,
+                        };
+                    },
+                );
+            }
 
             toast.success("Sua leitura foi excluída.");
         },

@@ -7,23 +7,20 @@ import { isValid, parse } from "date-fns";
 import { ImageOff } from "lucide-react";
 import { toast } from "react-toastify";
 
-import { publishDateFormat } from "@/utils/publish-date-format";
+import { BookDataFromGoogle } from "@/components/ApplicationSearch";
+import { ReadStatus } from "@/endpoints/mutations/readsMutations";
 
 import { useFetchBook } from "@/endpoints/queries/booksQueries";
 import { useCreateBook, useUpdateBookImage } from "@/endpoints/mutations/booksMutations";
 
 import Loading from "./loading";
-
+import { BookMetaData } from "./components/BookMetaData";
+import { RatingChart } from "@/components/RatingChart";
 import { ReadsProgress } from "./components/Read";
-import { Like } from "./components/Like";
-import { BookListMenu } from "./components/BookListMenu";
+
 import { Container } from "@/components/layout/Container";
 import { Title } from "@/components/Title";
 import { Subtitle } from "@/components/Subtitle";
-import { Separator } from "@/components/ui/Separator";
-import { BookDataFromGoogle } from "@/components/ApplicationSearch";
-import { RatingChart } from "@/components/RatingChart";
-import { LinkUnderline } from "@/components/LinkUnderline";
 
 interface BookImagesDataFromGoogle {
     id: string;
@@ -73,7 +70,7 @@ export interface ReadData {
     reviewContent: string | null;
     reviewRating: number | null;
     reviewIsSpoiler: boolean | null;
-    status: string;
+    status: ReadStatus;
     progress: ProgressData[];
     book?: BookData;
 }
@@ -248,59 +245,7 @@ export default function Book({ params }: BookProps) {
                                 )}
                             </div>
 
-                            {/* Book data */}
-                            <div className="mt-3 rounded-md border pb-4 text-black dark:text-white">
-                                <div className="mx-4 mt-4 flex justify-between text-sm">
-                                    <span className="font-semibold">Escrito por</span>
-
-                                    {!!bookData.authors?.[0] ? (
-                                        <LinkUnderline href="" className="font-semibold">
-                                            {bookData.authors[0]}
-                                        </LinkUnderline>
-                                    ) : (
-                                        <span>-</span>
-                                    )}
-                                </div>
-
-                                <Separator className="my-4" />
-
-                                <div className="mx-4 flex justify-between text-sm">
-                                    <span className="font-semibold">Ano de publicação</span>
-                                    <span>{publishDateFormat(bookData.publishDate)}</span>
-                                </div>
-
-                                <Separator className="my-4" />
-
-                                <div className="mx-4 flex justify-between text-sm">
-                                    <span className="font-semibold">Editora</span>
-
-                                    <span>{bookData.publisher ?? "Sem informação"}</span>
-                                </div>
-
-                                <Separator className="my-4" />
-
-                                <div className="mx-4 flex justify-between text-sm">
-                                    <span className="font-semibold">Idioma</span>
-
-                                    <span>{bookData.language ?? "Sem informação"}</span>
-                                </div>
-
-                                <Separator className="my-4" />
-
-                                <div className="mx-4 flex justify-between text-sm">
-                                    <span className="font-semibold">Páginas</span>
-
-                                    <span>{bookData.pageCount ?? "Sem informação"}</span>
-                                </div>
-
-                                <Separator className="my-4" />
-
-                                {/* Book action buttons */}
-                                <div className="flex w-full items-center justify-center gap-2">
-                                    <BookListMenu bookData={bookData} />
-                                    <Like bookId={bookData.id} />
-                                </div>
-                            </div>
+                            <BookMetaData bookData={bookData} />
 
                             {/* Community rating */}
                             <RatingChart bookId={bookData.id} />

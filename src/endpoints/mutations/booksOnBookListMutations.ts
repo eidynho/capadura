@@ -5,6 +5,7 @@ import { api } from "@/lib/api";
 
 import { BookListData } from "../queries/bookListsQueries";
 import { BookOnBookList, BookOnBookListWithBook } from "@/app/(app)/usuario/[username]/listas/page";
+import { GetMetadataCount } from "@/app/(app)/livros/[id]/components/BookMetaData";
 
 export interface UseAddBookToABookListProps {
     userId: string;
@@ -49,6 +50,23 @@ export function useAddBookToABookList() {
                 queryKey: ["fetchBooksOnBookList", { bookListId }],
                 refetchType: "none",
             });
+
+            // update book metadata total count
+            queryClient.setQueriesData<GetMetadataCount>(
+                ["getTotalListsWithSomeBookCount", { bookId }],
+                (prevData) => {
+                    if (!prevData) {
+                        return {
+                            total: 0,
+                        };
+                    }
+
+                    const updatedCount = prevData.total + 1;
+                    return {
+                        total: updatedCount,
+                    };
+                },
+            );
         },
         onError: () => {
             toast.error("Erro ao adicionar livro na lista.");
@@ -108,6 +126,23 @@ export function useRemoveBookFromBookList() {
                     return updatedBooksOnBookList.filter(
                         (booksOnBookList) => booksOnBookList.bookId !== bookId,
                     );
+                },
+            );
+
+            // update book metadata total count
+            queryClient.setQueriesData<GetMetadataCount>(
+                ["getTotalListsWithSomeBookCount", { bookId }],
+                (prevData) => {
+                    if (!prevData) {
+                        return {
+                            total: 0,
+                        };
+                    }
+
+                    const updatedCount = prevData.total - 1;
+                    return {
+                        total: updatedCount,
+                    };
                 },
             );
         },

@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext } from "react";
-import { Heart } from "lucide-react";
+import { Heart, Loader2 } from "lucide-react";
 
 import { AuthContext } from "@/contexts/AuthContext";
 
@@ -45,6 +45,8 @@ export function Like({ bookId }: LikeProps) {
         }
     }
 
+    const isLoading = addLikeBook.isLoading || dislikeBook.isLoading;
+
     return (
         <>
             <Button
@@ -52,8 +54,9 @@ export function Like({ bookId }: LikeProps) {
                 variant="neobrutalism"
                 onClick={handleToggleLikeBook}
                 className={`${like ? "bg-pink-500 text-black" : ""} hover:bg-pink-500`}
+                disabled={isLoading}
             >
-                <Heart size={16} />
+                {isLoading ? <Loader2 size={22} className="animate-spin" /> : <Heart size={16} />}
                 <span className="font-medium">{like ? "Curtido" : "Curtir"}</span>
             </Button>
         </>

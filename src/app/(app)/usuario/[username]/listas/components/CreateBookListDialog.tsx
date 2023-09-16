@@ -1,11 +1,11 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Library, Loader2, PencilLine, PlusCircle } from "lucide-react";
 
-import { AuthContext } from "@/contexts/AuthContext";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 import { useCreateBookList } from "@/endpoints/mutations/bookListsMutations";
 
@@ -62,7 +62,7 @@ const createBookListFormSchema = z.object({
 type CreateBookListFormSchema = z.infer<typeof createBookListFormSchema>;
 
 export function CreateBookListDialog() {
-    const { user } = useContext(AuthContext);
+    const { user } = useAuthContext();
     const [isOpen, setIsOpen] = useState(false);
 
     const {

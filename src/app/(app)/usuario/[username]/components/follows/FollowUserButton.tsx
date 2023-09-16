@@ -1,8 +1,6 @@
 "use client";
 
-import { useContext } from "react";
-
-import { AuthContext } from "@/contexts/AuthContext";
+import { useAuthContext } from "@/contexts/AuthContext";
 import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";
 
 import {
@@ -20,7 +18,7 @@ interface FollowUserButtonProps {
 }
 
 export function FollowUserButton({ username, targetUserId }: FollowUserButtonProps) {
-    const { user, isAuthenticated } = useContext(AuthContext);
+    const { user, isAuthenticated } = useAuthContext();
 
     const isCurrentUser = isPageUserSameCurrentUser(username);
 

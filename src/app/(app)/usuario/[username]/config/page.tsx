@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -8,7 +8,7 @@ import lodash from "lodash";
 import { toast } from "react-toastify";
 import { Loader2 } from "lucide-react";
 
-import { AuthContext } from "@/contexts/AuthContext";
+import { useAuthContext } from "@/contexts/AuthContext";
 import { signOut } from "@/utils/sign-out";
 
 import { ProfileDataResponse } from "@/endpoints/queries/usersQueries";
@@ -81,7 +81,7 @@ const profileFormSchema = z.object({
 type ProfileFormSchema = z.infer<typeof profileFormSchema>;
 
 export default function UserConfigs() {
-    const { user } = useContext(AuthContext);
+    const { user } = useAuthContext();
     if (!user) {
         return signOut();
     }

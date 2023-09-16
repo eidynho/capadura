@@ -1,8 +1,7 @@
-import { AuthContext } from "@/contexts/AuthContext";
-import { useContext } from "react";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 export function isPageUserSameCurrentUser(username: string) {
-    const { user } = useContext(AuthContext);
+    const { user } = useAuthContext();
 
     if (!user) return false;
 

@@ -1,8 +1,7 @@
-import { useContext } from "react";
 import { format, parseISO } from "date-fns";
 import { MoreVertical } from "lucide-react";
 
-import { AuthContext } from "@/contexts/AuthContext";
+import { useAuthContext } from "@/contexts/AuthContext";
 import { DeleteProgressData, EditReadData } from "..";
 import { ProgressData } from "../../../page";
 
@@ -35,7 +34,7 @@ export function Progress({
     setProgressEditData,
     setProgressDeleteData,
 }: ProgressProps) {
-    const { user } = useContext(AuthContext);
+    const { user } = useAuthContext();
 
     return (
         <div className="mt-2 flex flex-col gap-3 text-black dark:text-white">

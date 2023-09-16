@@ -1,4 +1,4 @@
-import { BookOpen, Heart, List } from "lucide-react";
+import { BookMarked, Heart, List } from "lucide-react";
 
 import { api } from "@/lib/api";
 import { BookData } from "../page";
@@ -95,7 +95,7 @@ export function BookMetaData({ bookData }: BookMetaDataProps) {
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <div className="flex items-center gap-2">
-                                <BookOpen size={16} />
+                                <BookMarked size={16} />
                                 {totalFinishedReadsCountByBook.data.total}
                             </div>
                         </TooltipTrigger>

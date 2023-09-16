@@ -1,12 +1,12 @@
 "use client";
 
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { format, parseISO } from "date-fns";
-import { BookOpen, Lock, MoreVertical, PlusCircle, Undo2, Unlock } from "lucide-react";
+import { BookMarked, Lock, MoreVertical, PlusCircle, Undo2, Unlock } from "lucide-react";
 import { toast } from "react-toastify";
 import { pt } from "date-fns/locale";
 
-import { AuthContext } from "@/contexts/AuthContext";
+import { useAuthContext } from "@/contexts/AuthContext";
 import { BookData, ReadData } from "@/app/(app)/livros/[id]/page";
 import { HandleAddNewProgressProps, HandleUpdateReadProps } from "./ReadReview/FormReadReview";
 
@@ -65,7 +65,7 @@ interface ReadsProgressProps {
 }
 
 export function ReadsProgress({ bookData }: ReadsProgressProps) {
-    const { user, isAuthenticated } = useContext(AuthContext);
+    const { user, isAuthenticated } = useAuthContext();
     if (!isAuthenticated) return;
 
     const [isOpenUpdateProgressDialog, setIsOpenUpdateProgressDialog] = useState(false);
@@ -333,7 +333,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                 <ul className="-mb-px flex flex-wrap items-center justify-between text-center text-sm font-medium">
                     <div className="flex flex-wrap items-center py-1">
                         <div className="flex items-center gap-2 pl-2 pr-4 text-black dark:text-white">
-                            <BookOpen size={16} />
+                            <BookMarked size={16} />
                             <h3 className="font-semibold">Leituras</h3>
                         </div>
 

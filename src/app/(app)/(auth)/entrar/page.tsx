@@ -1,11 +1,10 @@
 "use client";
 
-import { useContext } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { GoogleLogo } from "phosphor-react";
 
-import { AuthContext } from "@/contexts/AuthContext";
+import { useAuthContext } from "@/contexts/AuthContext";
 import getGoogleOAuthURL from "@/utils/get-google-url";
 
 import { Button } from "@/components/ui/Button";
@@ -24,7 +23,7 @@ export type LoginFormSchema = z.infer<typeof loginFormSchema>;
 
 export default function Login() {
     const { register, handleSubmit } = useForm<LoginFormSchema>();
-    const { signIn } = useContext(AuthContext);
+    const { signIn } = useAuthContext();
 
     function handleSignIn({ email, password }: LoginFormSchema) {
         signIn({

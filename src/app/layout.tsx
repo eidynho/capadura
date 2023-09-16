@@ -1,17 +1,17 @@
 "use client";
 
 import "@/styles/global.css";
+import "react-toastify/dist/ReactToastify.css";
+
 import { ReactNode } from "react";
 import { Manrope } from "@next/font/google";
+import { ToastContainer } from "react-toastify";
 
 import { Providers } from "@/contexts/Providers";
 
-import { NavBarLoggedComponent } from "@/components/layout/NavBarLogged";
-import { MainContainer } from "@/components/layout/MainContainer";
-
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { AppNavBar } from "@/components/layout/AppNavBar";
 import { AuthDialog } from "@/components/AuthDialog";
+import { MainContainer } from "@/components/layout/MainContainer";
 
 export const manrope = Manrope({
     subsets: ["latin"],
@@ -36,7 +36,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 <div className={`${manrope.variable} mx-auto max-w-[120rem] font-manrope`}>
                     <Providers>
                         <div className="flex flex-col">
-                            <NavBarLoggedComponent />
+                            <AppNavBar />
                             <MainContainer>{children}</MainContainer>
                         </div>
 

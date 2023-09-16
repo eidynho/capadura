@@ -1,8 +1,8 @@
 "use client";
 
-import { useContext, useState } from "react";
+import { useState } from "react";
 
-import { AuthContext } from "@/contexts/AuthContext";
+import { useAuthContext } from "@/contexts/AuthContext";
 import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";
 
 import {
@@ -32,7 +32,7 @@ interface FollowingDialogProps {
 }
 
 export function FollowingDialog({ username, targetUserId, followingCount }: FollowingDialogProps) {
-    const { user } = useContext(AuthContext);
+    const { user } = useAuthContext();
 
     const isCurrentUser = isPageUserSameCurrentUser(username);
 

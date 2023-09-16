@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { formatDistance } from "date-fns";
 import { pt } from "date-fns/locale";
-import { BookOpen, CircleDashed, CircleSlash, Heart, Star, Undo2 } from "lucide-react";
+import { BookMarked, CircleDashed, CircleSlash, Heart, Star, Undo2 } from "lucide-react";
 
 import {
     FetchUserActivitiesResponse,
@@ -63,7 +63,7 @@ export function UserActivities({ userId }: UserActivitiesProps) {
                 if (!book || !bookId) return;
                 return (
                     <>
-                        <BookOpen size={15} className="text-violet-500" />
+                        <BookMarked size={15} className="text-violet-500" />
                         <div className="flex-1 text-muted-foreground">
                             <span className="mr-1">Iniciou a leitura de</span>
                             {BookLink}

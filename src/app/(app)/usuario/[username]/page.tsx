@@ -207,25 +207,27 @@ export default function Profile({ params }: ProfileProps) {
                     )}
                 </div>
 
-                <div className="flex w-full flex-col gap-8 sm:flex-row lg:w-72 lg:flex-col">
-                    <div className="w-full sm:w-1/2 lg:w-full">
-                        <h3 className="font-semibold text-black dark:text-white">Calendário</h3>
-                        <Calendar
-                            mode="single"
-                            selected={date}
-                            onSelect={setDate}
-                            className="mt-2 rounded-md border bg-white transition-colors dark:bg-dark"
-                        />
+                <div className="w-full lg:w-72">
+                    <div className="flex w-full flex-col gap-8 sm:flex-row lg:flex-col">
+                        <div className="w-full sm:w-1/2 lg:w-full">
+                            <h3 className="font-semibold text-black dark:text-white">Calendário</h3>
+                            <Calendar
+                                mode="single"
+                                selected={date}
+                                onSelect={setDate}
+                                className="mt-2 rounded-md border bg-white transition-colors dark:bg-dark"
+                            />
+                        </div>
+
+                        <div className="w-full sm:w-1/2 lg:w-full">
+                            <h3 className="font-semibold text-black dark:text-white">Avaliações</h3>
+                            {targetUser?.id && (
+                                <RatingChart userId={targetUser.id} username={params.username} />
+                            )}
+                        </div>
                     </div>
 
-                    <div className="w-full sm:w-1/2 lg:w-full">
-                        <h3 className="font-semibold text-black dark:text-white">Avaliações</h3>
-                        {targetUser?.id && (
-                            <RatingChart userId={targetUser.id} username={params.username} />
-                        )}
-                    </div>
-
-                    <div className="w-full sm:w-1/2 lg:w-full">
+                    <div className="mt-8 w-full">
                         <h3 className="font-semibold text-black dark:text-white">Atividades</h3>
                         {targetUser?.id && <UserActivities userId={targetUser.id} />}
                     </div>

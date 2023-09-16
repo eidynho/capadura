@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, ArrowRight, BookOpen, ImageOff, Search, User } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookMarked, ImageOff, Search, User } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { useDebounce } from "@/hooks/useDebounce";
@@ -136,7 +136,7 @@ export default function Books() {
                                                     {item.volumeInfo.authors?.[0]}
                                                 </span>
                                                 <span className="flex items-center gap-2 text-sm">
-                                                    <BookOpen size={20} />
+                                                    <BookMarked size={20} />
                                                     {item.volumeInfo.pageCount}
                                                 </span>
                                             </div>

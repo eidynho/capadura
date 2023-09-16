@@ -126,12 +126,12 @@ export function ApplicationSearch() {
                 size="sm"
                 variant="outline"
                 onClick={() => setIsOpen(true)}
-                className="relative h-[42px] w-56 justify-start pl-2 text-sm text-muted-foreground sm:pr-12"
+                className="relative h-[42px] justify-start text-sm text-muted-foreground sm:w-40 sm:px-2 md:w-56 md:pr-12"
             >
                 <Search size={18} />
-                <span>Procurar livro...</span>
+                <span className="hidden sm:block">Procurar livro...</span>
 
-                <kbd className="pointer-events-none absolute right-1.5 top-2.5 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-xs font-medium opacity-100 transition-colors sm:flex">
+                <kbd className="pointer-events-none absolute right-1.5 top-2.5 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-xs font-medium opacity-100 transition-colors md:flex">
                     Ctrl + K
                 </kbd>
             </Button>

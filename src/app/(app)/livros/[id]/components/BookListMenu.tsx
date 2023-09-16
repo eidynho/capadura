@@ -1,11 +1,11 @@
 "use client";
 
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { ChevronDown, Check, List } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { BookData } from "../page";
-import { AuthContext } from "@/contexts/AuthContext";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 import { useFetchUserBookListsIncludeBook } from "@/endpoints/queries/bookListsQueries";
 import { useCreateBookList } from "@/endpoints/mutations/bookListsMutations";
@@ -29,7 +29,7 @@ interface BookListMenuProps {
 }
 
 export function BookListMenu({ bookData }: BookListMenuProps) {
-    const { user } = useContext(AuthContext);
+    const { user } = useAuthContext();
     if (!user) return null;
 
     const [isOpen, setIsOpen] = useState(false);

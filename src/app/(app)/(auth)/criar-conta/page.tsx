@@ -1,12 +1,11 @@
 "use client";
 
-import { useContext } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { GoogleLogo } from "phosphor-react";
 
-import { AuthContext } from "@/contexts/AuthContext";
+import { useAuthContext } from "@/contexts/AuthContext";
 import getGoogleOAuthURL from "@/utils/get-google-url";
 
 import { useRegisterUser } from "@/endpoints/mutations/usersMutations";
@@ -30,7 +29,7 @@ export type SignUpFormSchema = z.infer<typeof signUpFormSchema>;
 
 export default function SignUp() {
     const { register, handleSubmit } = useForm<SignUpFormSchema>();
-    const { signIn } = useContext(AuthContext);
+    const { signIn } = useAuthContext();
 
     const registerUser = useRegisterUser();
     function handleSignUp({ username, email, password }: SignUpFormSchema) {

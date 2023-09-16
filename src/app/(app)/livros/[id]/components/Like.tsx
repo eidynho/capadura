@@ -1,9 +1,8 @@
 "use client";
 
-import { useContext } from "react";
 import { Heart, Loader2 } from "lucide-react";
 
-import { AuthContext } from "@/contexts/AuthContext";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 import { useGetUserLikedBook } from "@/endpoints/queries/likeBookQueries";
 import { useAddLikeBook, useDislikeBook } from "@/endpoints/mutations/likeBookMutation";
@@ -15,7 +14,7 @@ interface LikeProps {
 }
 
 export function Like({ bookId }: LikeProps) {
-    const { isAuthenticated, toggleAuthDialog } = useContext(AuthContext);
+    const { isAuthenticated, toggleAuthDialog } = useAuthContext();
 
     const { data: like } = useGetUserLikedBook({
         bookId,

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/Button";
 
 export default async function NotFound() {
     return (
-        <div className="flex h-[calc(100dvh-76px)] w-full text-black dark:text-white">
+        <div className="flex h-[100dvh] w-full text-black dark:text-white">
             <main className="h-full w-full px-4 lg:w-1/2 lg:px-20">
                 <header className="flex h-full flex-col justify-between pb-20 pt-20">
                     <Link href="/" className="font-medium">

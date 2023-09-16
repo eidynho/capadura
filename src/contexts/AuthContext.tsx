@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 import { useRouter } from "next/navigation";
 import { setCookie, parseCookies } from "nookies";
 
@@ -29,7 +29,7 @@ interface AuthProviderProps {
     children: ReactNode;
 }
 
-export const AuthContext = createContext({} as AuthContextType);
+const AuthContext = createContext({} as AuthContextType);
 
 export function AuthProvider({ children }: AuthProviderProps) {
     const [isOpenAuthDialog, setIsOpenAuthDialog] = useState(false);
@@ -102,4 +102,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
             {children}
         </AuthContext.Provider>
     );
+}
+
+export function useAuthContext() {
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error("useAuthContext must be used within a AuthContext.Provider");
+    }
+
+    return context;
 }

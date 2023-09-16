@@ -1,10 +1,11 @@
-import { useContext } from "react";
+"use client";
+
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { Loader2 } from "lucide-react";
 import { GoogleLogo } from "phosphor-react";
 
-import { AuthContext } from "@/contexts/AuthContext";
+import { useAuthContext } from "@/contexts/AuthContext";
 import getGoogleOAuthURL from "@/utils/get-google-url";
 import { LoginFormSchema } from "@/app/(app)/(auth)/entrar/page";
 
@@ -14,10 +15,9 @@ import { Input } from "@/components/ui/Input";
 import { Separator } from "@/components/ui/Separator";
 
 export function AuthDialog() {
-    const { isOpenAuthDialog, toggleAuthDialog } = useContext(AuthContext);
+    const { signIn, isSignInLoading, isOpenAuthDialog, toggleAuthDialog } = useAuthContext();
 
     const { register, handleSubmit } = useForm<LoginFormSchema>();
-    const { signIn, isSignInLoading } = useContext(AuthContext);
 
     function handleSignIn({ email, password }: LoginFormSchema) {
         signIn({

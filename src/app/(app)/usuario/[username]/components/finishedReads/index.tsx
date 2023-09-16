@@ -1,5 +1,8 @@
+import Image from "next/image";
+import Link from "next/link";
 import { format, parseISO } from "date-fns";
 import { pt } from "date-fns/locale";
+import { ImageIcon } from "lucide-react";
 
 import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";
 import { ReadData } from "@/app/(app)/livros/[id]/page";
@@ -25,7 +28,25 @@ export function FinishedReads({ username, readsData }: FinishedReadsProps) {
             {!!readsData.items?.length ? (
                 readsData.items.map((read) => (
                     <div className="flex gap-4 border-t py-4 last:border-b">
-                        <div className="h-28 w-20 rounded-md border border-dark"></div>
+                        <div className="h-24 w-20 overflow-hidden rounded-sm">
+                            {read?.book?.imageUrl ? (
+                                <Link href={`/livros/${read.bookId}`}>
+                                    <Image
+                                        src={read.book.imageUrl}
+                                        alt={`Capa do livro ${read.book.title}`}
+                                        width={80}
+                                        height={96}
+                                        quality={100}
+                                        className="w-full overflow-hidden"
+                                    />
+                                </Link>
+                            ) : (
+                                <div className="flex h-full items-center justify-center rounded-sm border">
+                                    <ImageIcon size={20} className="text-muted-foreground" />
+                                </div>
+                            )}
+                        </div>
+
                         <div className="w-full">
                             <div className="flex items-start justify-between gap-2">
                                 <div className="flex items-center gap-2">

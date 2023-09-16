@@ -1,11 +1,13 @@
+import Link from "next/link";
+import Image from "next/image";
 import { format, parseISO } from "date-fns";
 import { pt } from "date-fns/locale";
+import { ImageIcon } from "lucide-react";
 
 import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";
 import { ProgressData } from "@/app/(app)/livros/[id]/page";
 
 import { LinkUnderline } from "@/components/LinkUnderline";
-import Link from "next/link";
 
 interface RecentProgressProps {
     username: string;
@@ -25,7 +27,25 @@ export function RecentProgress({ username, progressData }: RecentProgressProps) 
             {!!progressData?.items?.length ? (
                 progressData.items.map((progress) => (
                     <div className="flex gap-4 border-t py-4 last:border-b">
-                        <div className="h-28 w-20 rounded-md border border-dark"></div>
+                        <div className="h-24 w-20 overflow-hidden rounded-sm">
+                            {progress.read?.book?.imageUrl ? (
+                                <Link href={`/livros/${progress.read.bookId}`}>
+                                    <Image
+                                        src={progress.read.book.imageUrl}
+                                        alt={`Capa do livro ${progress.read.book.title}`}
+                                        width={80}
+                                        height={96}
+                                        quality={100}
+                                        className="w-full overflow-hidden"
+                                    />
+                                </Link>
+                            ) : (
+                                <div className="flex h-full items-center justify-center rounded-sm border">
+                                    <ImageIcon size={20} className="text-muted-foreground" />
+                                </div>
+                            )}
+                        </div>
+
                         <div className="w-full">
                             <div className="flex items-start justify-between gap-2">
                                 <div className="flex items-center gap-2">

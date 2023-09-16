@@ -48,7 +48,7 @@ export function CardFavoriteBook({
                         />
                     </Link>
                 ) : (
-                    <div className="flex h-full items-center justify-center rounded-sm border border-zinc-500">
+                    <div className="flex h-full items-center justify-center rounded-sm border">
                         <ImageIcon size={20} className="text-muted-foreground" />
                     </div>
                 )}

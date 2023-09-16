@@ -16,15 +16,7 @@ interface ThemeProviderProps {
 const ThemeContext = createContext({} as ThemeContextType);
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-    const [theme, setTheme] = useState<ThemeVariants>(() => {
-        const storedTheme = localStorage.getItem("@capadura-theme-v1.0.0") ?? "dark";
-
-        if (storedTheme === "light" || storedTheme === "dark") {
-            return storedTheme;
-        }
-
-        return "dark";
-    });
+    const [theme, setTheme] = useState<ThemeVariants>("dark");
 
     useEffect(() => {
         const storedTheme = localStorage.getItem("@capadura-theme-v1.0.0");

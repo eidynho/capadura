@@ -1,6 +1,6 @@
 "use client";
 
-import { ElementType, Fragment } from "react";
+import { ElementType, Fragment, useEffect, useState } from "react";
 import Link from "next/link";
 import {
     BookMarked,
@@ -63,8 +63,13 @@ const mobileDropdownRoutes: routeProps[] = [
 ];
 
 export function AppNavBar() {
-    const { user } = useAuthContext();
+    const [mounted, setMounted] = useState(false);
+    const { user, isFetchingCurrentUser } = useAuthContext();
     const { theme, toggleTheme } = useThemeContext();
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const profileRoutes: routeProps[] = user
         ? [
@@ -76,11 +81,13 @@ export function AppNavBar() {
               {
                   name: "Minhas leituras",
                   path: `/@${user.username}/leituras`,
+                  disabled: true,
                   icon: BookMarked,
               },
               {
                   name: "Linha do tempo",
                   path: `/@${user.username}/linha-do-tempo`,
+                  disabled: true,
                   icon: CalendarClock,
               },
               {
@@ -95,6 +102,7 @@ export function AppNavBar() {
               {
                   name: "Seja membro",
                   path: "/seja-membro",
+                  disabled: true,
                   icon: Hexagon,
               },
               {
@@ -110,15 +118,17 @@ export function AppNavBar() {
           ]
         : [];
 
+    if (!mounted) return;
+
     function routesTree(routes: routeProps[]) {
         return (
             <>
-                {routes.map(({ name, path, icon: Icon }) => (
+                {routes.map(({ name, path, disabled, icon: Icon }) => (
                     <Fragment key={path}>
                         {name === "Separator" ? (
                             <DropdownMenuSeparator />
                         ) : (
-                            <DropdownMenuItem asChild>
+                            <DropdownMenuItem asChild disabled={disabled}>
                                 <Link href={path} className="flex items-center gap-2">
                                     {Icon && <Icon size={16} />}
                                     {name}
@@ -131,9 +141,23 @@ export function AppNavBar() {
         );
     }
 
+    if (isFetchingCurrentUser) {
+        return (
+            <div className="fixed left-1/2 top-2 z-10 flex h-[3.75rem] w-[calc(100%-16px)] max-w-5xl -translate-x-1/2 animate-pulse items-center justify-between rounded-lg border bg-light/75 px-3 py-4 backdrop-blur-sm transition-colors dark:bg-dark/80">
+                <div className="h-6 w-24 rounded-md bg-zinc-300"></div>
+
+                <div className="flex items-center gap-2">
+                    <div className="h-10 w-11 rounded-md bg-zinc-300 sm:w-40 md:w-56"></div>
+                    <div className="h-10 w-28 rounded-md bg-zinc-300"></div>
+                    <div className="block h-10 w-11 rounded-md bg-zinc-300 sm:hidden"></div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="fixed left-1/2 top-2 z-10 w-[calc(100%-16px)] max-w-5xl -translate-x-1/2 rounded-lg border bg-light/75 backdrop-blur-sm transition-colors dark:bg-dark/80">
-            <nav className="mx-auto flex max-w-5xl items-center justify-center gap-2 px-3 py-2 text-sm transition-colors">
+            <div className="mx-auto flex max-w-5xl items-center justify-center gap-2 px-3 py-2 text-sm transition-colors">
                 <div className="flex w-full items-center justify-between gap-1">
                     <div className="flex items-center gap-8">
                         <span className="mr-4 inline-block text-black dark:text-white">
@@ -245,7 +269,7 @@ export function AppNavBar() {
                         </div>
                     </div>
                 </div>
-            </nav>
+            </div>
         </div>
     );
 }

@@ -27,7 +27,7 @@ export function FinishedReads({ username, readsData }: FinishedReadsProps) {
 
             {!!readsData.items?.length ? (
                 readsData.items.map((read) => (
-                    <div className="flex gap-4 border-t py-4 last:border-b">
+                    <div key={read.id} className="flex gap-4 border-t py-4 last:border-b">
                         <div className="h-24 w-20 overflow-hidden rounded-sm">
                             {read?.book?.imageUrl ? (
                                 <Link href={`/livros/${read.bookId}`}>

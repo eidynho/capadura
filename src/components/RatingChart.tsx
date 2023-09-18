@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { SVGProps, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Star, StarHalf } from "phosphor-react";
 import { BarChart, Bar, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { toast } from "react-toastify";
+import { Star, StarHalf } from "phosphor-react";
 
 import { useFetchReadsRating } from "@/endpoints/queries/readsQueries";
 
@@ -25,6 +25,12 @@ interface RatingChartProps {
     userId?: string;
     username?: string;
 }
+
+const CustomTooltipCursor = (props: SVGProps<SVGElement>) => {
+    const { x, y, width, height } = props;
+    return <rect fill="#e4e4e780" x={x} y={y} rx="4" width={width} height={height} />;
+};
+
 export function RatingChart({ bookId, userId, username }: RatingChartProps) {
     if (!bookId && !userId) return;
 
@@ -82,7 +88,7 @@ export function RatingChart({ bookId, userId, username }: RatingChartProps) {
                         <BarChart data={bookRatings.data}>
                             <Tooltip
                                 content={<RenderTooltipContent />}
-                                cursor={<rect fill="#e4e4e780" />}
+                                cursor={<CustomTooltipCursor />}
                                 position={{ x: barGraphData.x, y: barGraphData.y - 30 }}
                                 animationDuration={300}
                             />
@@ -96,7 +102,7 @@ export function RatingChart({ bookId, userId, username }: RatingChartProps) {
                                 {bookRatings.data.map((entry) => (
                                     <Cell
                                         cursor="pointer"
-                                        key={`cell-${entry.rating}`}
+                                        key={entry.rating}
                                         className="fill-primary"
                                     />
                                 ))}

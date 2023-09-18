@@ -26,7 +26,7 @@ export function RecentProgress({ username, progressData }: RecentProgressProps) 
 
             {!!progressData?.items?.length ? (
                 progressData.items.map((progress) => (
-                    <div className="flex gap-4 border-t py-4 last:border-b">
+                    <div key={progress.id} className="flex gap-4 border-t py-4 last:border-b">
                         <div className="h-24 w-20 overflow-hidden rounded-sm">
                             {progress.read?.book?.imageUrl ? (
                                 <Link href={`/livros/${progress.read.bookId}`}>

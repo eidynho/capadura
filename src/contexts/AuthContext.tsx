@@ -12,6 +12,7 @@ import { signOut } from "@/utils/sign-out";
 
 interface AuthContextType {
     user?: ProfileDataResponse;
+    isFetchingCurrentUser: boolean;
     isAuthenticated: boolean;
     signIn: (data: SignInRequestProps) => void;
     isSignInLoading: boolean;
@@ -38,7 +39,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     const { token } = parseCookies();
 
-    const { data: user, isError } = useFetchCurrentUser({
+    const {
+        data: user,
+        isFetching: isFetchingCurrentUser,
+        isError,
+    } = useFetchCurrentUser({
         enabled: !!token,
     });
 
@@ -92,6 +97,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         <AuthContext.Provider
             value={{
                 user,
+                isFetchingCurrentUser,
                 isAuthenticated,
                 signIn,
                 isSignInLoading,

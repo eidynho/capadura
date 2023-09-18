@@ -253,7 +253,7 @@ export default function UserLists({ params }: UserListsProps) {
                                 </TableHeader>
                                 <TableBody>
                                     {booksOnBookList?.map((bookOnBookList, index) => (
-                                        <TableRow>
+                                        <TableRow key={bookOnBookList.id}>
                                             <TableCell className="font-medium">
                                                 {index + 1}
                                             </TableCell>
@@ -321,14 +321,14 @@ export default function UserLists({ params }: UserListsProps) {
                                 ? "Nenhuma lista para chamar de sua."
                                 : `${params.username} não possui nenhuma lista.`}
                         </h2>
-                        <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
+                        <div className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
                             Está sem ideias de nomes para listas? Que tal esses:
                             <ul>
                                 <li>- Meus favoritos</li>
                                 <li>- Para ler neste ano</li>
                                 <li>- Lidos ano passado</li>
                             </ul>
-                        </p>
+                        </div>
                     </div>
                 )}
             </div>

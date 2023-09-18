@@ -166,7 +166,7 @@ export function ApplicationSearch() {
                             <>
                                 {!!searchName && !!books?.items?.length
                                     ? books.items.map((book) => (
-                                          <CommandItem className="!px-0 !py-0">
+                                          <CommandItem key={book.id} className="!px-0 !py-0">
                                               <Link
                                                   href={`/livros/${book.id}`}
                                                   onClick={() => setIsOpen(false)}

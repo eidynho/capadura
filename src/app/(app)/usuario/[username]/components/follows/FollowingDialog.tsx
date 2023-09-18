@@ -189,7 +189,7 @@ export function FollowingDialog({ username, targetUserId, followingCount }: Foll
                     </>
                 ) : !!following?.length ? (
                     following.map((item) => (
-                        <div className="flex items-center gap-4 text-sm">
+                        <div key={item.followingId} className="flex items-center gap-4 text-sm">
                             <Avatar className="h-12 w-12">
                                 <AvatarImage src={item.following.imageUrl} />
                                 <AvatarFallback>
@@ -213,7 +213,9 @@ export function FollowingDialog({ username, targetUserId, followingCount }: Foll
                                 <div className="ml-auto">
                                     <Button
                                         size="sm"
-                                        variant="outline"
+                                        variant={
+                                            item.isFollowedByCurrentUser ? "primary" : "outline"
+                                        }
                                         onClick={
                                             item.isFollowedByCurrentUser
                                                 ? () => handleUnfollowUser(item.followingId)

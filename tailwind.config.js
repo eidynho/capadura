@@ -1,7 +1,5 @@
 /** @type {import('tailwindcss').Config} */
 
-import tailwindcss from "@headlessui/tailwindcss";
-
 module.exports = {
     mode: "jit",
     darkMode: ["class"],

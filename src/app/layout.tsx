@@ -4,7 +4,7 @@ import "@/styles/global.css";
 import "react-toastify/dist/ReactToastify.css";
 
 import { ReactNode } from "react";
-import { Manrope } from "@next/font/google";
+import { Manrope } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 
 import { Providers } from "@/contexts/Providers";
@@ -36,7 +36,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 <div className={`${manrope.variable} mx-auto max-w-[120rem] font-manrope`}>
                     <Providers>
                         <div className="flex flex-col">
-                            <AppNavBar />
+                            {typeof window !== "undefined" && <AppNavBar />}
                             <MainContainer>{children}</MainContainer>
                         </div>
 

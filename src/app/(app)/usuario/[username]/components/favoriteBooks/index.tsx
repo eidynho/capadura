@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { isValid, parse } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
@@ -201,7 +201,7 @@ export function FavoriteBooks({ username }: FavoriteBooksProps) {
 
                 <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
                     {favoriteBooks.map((item, index) => (
-                        <>
+                        <Fragment key={index}>
                             {item ? (
                                 <CardFavoriteBook
                                     currentBook={{
@@ -229,7 +229,7 @@ export function FavoriteBooks({ username }: FavoriteBooksProps) {
                                     </div>
                                 )
                             )}
-                        </>
+                        </Fragment>
                     ))}
 
                     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -270,9 +270,12 @@ export function FavoriteBooks({ username }: FavoriteBooksProps) {
                                                 </div>
                                             ) : (
                                                 <>
-                                                    {books?.items?.length ? (
-                                                        books.items.map((book) => (
-                                                            <CommandItem className="!px-0 !py-0">
+                                                    {!!books?.items?.length ? (
+                                                        books.items.map((book, index) => (
+                                                            <CommandItem
+                                                                key={`${book.id}-${index}`}
+                                                                className="!px-0 !py-0"
+                                                            >
                                                                 <div
                                                                     onClick={() =>
                                                                         updateCurrentBookWithGoogleBook(

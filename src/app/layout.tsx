@@ -9,7 +9,7 @@ import { ToastContainer } from "react-toastify";
 
 import { Providers } from "@/contexts/Providers";
 
-import { AppNavBar } from "@/components/layout/AppNavBar";
+import { AppNavBar } from "@/components/AppNavBar";
 import { AuthDialog } from "@/components/AuthDialog";
 import { MainContainer } from "@/components/layout/MainContainer";
 
@@ -27,6 +27,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     return (
         <html lang="pt">
             <head>
+                <title>A rede social de livros | Capadura</title>
                 <meta
                     name="description"
                     content="Conecte-se com apaixonados por livros, descubra recomendações, compartilhe leituras e explore um mundo literário colaborativo. Junte-se a nós!"

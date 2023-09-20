@@ -76,7 +76,7 @@ export function UserActivities({ userId }: UserActivitiesProps) {
                 if (!book || !bookId) return;
                 return (
                     <>
-                        <CircleSlash size={15} className="text-red-500" />
+                        <CircleSlash size={15} className="text-destructive" />
                         <div className="flex-1 text-muted-foreground">
                             <span className="mr-1">Pausou a leitura de</span>
                             {BookLink}

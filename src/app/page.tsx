@@ -1,13 +1,20 @@
-import { Header } from "@/components/layout/Header";
+"use client";
 
-export const metadata = {
-    title: "A rede social de livros que conecta leitores, recomendações e descobertas literárias.",
-};
+import { Container } from "@/components/layout/Container";
+import { Header } from "@/components/layout/Header";
+import { FeatureSection } from "@/components/layout/FeatureSection";
+import { FAQSection } from "@/components/layout/FAQSection";
+import { CTASection } from "@/components/layout/CTASection";
+import { Footer } from "@/components/layout/Footer";
 
 export default function Home() {
     return (
-        <>
+        <Container>
             <Header />
-        </>
+            <FeatureSection />
+            <FAQSection />
+            <CTASection />
+            <Footer />
+        </Container>
     );
 }

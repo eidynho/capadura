@@ -24,8 +24,8 @@ import {
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useThemeContext } from "@/contexts/ThemeContext";
 
-import { ApplicationSearch } from "../ApplicationSearch";
-import { LinkUnderline } from "../LinkUnderline";
+import { ApplicationSearch } from "./ApplicationSearch";
+import { LinkUnderline } from "./LinkUnderline";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
@@ -143,7 +143,7 @@ export function AppNavBar() {
 
     if (isFetchingCurrentUser) {
         return (
-            <div className="fixed left-1/2 top-2 z-10 flex h-[3.75rem] w-[calc(100%-16px)] max-w-5xl -translate-x-1/2 animate-pulse items-center justify-between rounded-lg border bg-light/75 px-3 py-4 backdrop-blur-sm transition-colors dark:bg-dark/80">
+            <div className="fixed left-1/2 top-2 z-50 flex h-[3.75rem] w-[calc(100%-16px)] max-w-5xl -translate-x-1/2 animate-pulse items-center justify-between rounded-lg border bg-light/75 px-3 py-4 backdrop-blur-sm transition-colors dark:bg-dark/80">
                 <div className="h-6 w-24 rounded-md bg-zinc-300"></div>
 
                 <div className="flex items-center gap-2">
@@ -156,7 +156,7 @@ export function AppNavBar() {
     }
 
     return (
-        <div className="fixed left-1/2 top-2 z-10 w-[calc(100%-16px)] max-w-5xl -translate-x-1/2 rounded-lg border bg-light/75 backdrop-blur-sm transition-colors dark:bg-dark/80">
+        <div className="fixed left-1/2 top-2 z-50 w-[calc(100%-16px)] max-w-5xl -translate-x-1/2 rounded-lg border bg-light/75 backdrop-blur-sm transition-colors dark:bg-dark/80">
             <div className="mx-auto flex max-w-5xl items-center justify-center gap-2 px-3 py-2 text-sm transition-colors">
                 <div className="flex w-full items-center justify-between gap-1">
                     <div className="flex items-center gap-8">

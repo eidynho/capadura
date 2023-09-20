@@ -3,7 +3,7 @@ import { MoveLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
 
-export default async function NotFound() {
+export default function NotFound() {
     return (
         <div className="flex h-[100dvh] w-full text-black dark:text-white">
             <main className="h-full w-full px-4 lg:w-1/2 lg:px-20">
@@ -12,7 +12,11 @@ export default async function NotFound() {
                         Capadura
                     </Link>
                     <div className="flex flex-col gap-4">
-                        <span className="text-lg font-bold text-primary">404</span>
+                        <div>
+                            <span className="inline-block rounded-md bg-red-200 px-1 text-base font-semibold leading-7 text-black">
+                                404
+                            </span>
+                        </div>
 
                         <h1 className="mb-1 text-5xl font-bold leading-snug">
                             Página não encontrada

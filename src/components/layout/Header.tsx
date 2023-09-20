@@ -1,27 +1,23 @@
-"use client";
-
 import Link from "next/link";
 
 import { Button } from "@/components/ui/Button";
 
 export function Header() {
     return (
-        <header className="mx-auto flex min-h-[100dvh] w-full max-w-[100rem] items-center justify-center">
-            <div className="ml-8 w-1/2 max-w-3xl">
-                <div className="mb-8 flex">
-                    <div className="rounded-full px-4 py-2 text-sm leading-6 text-muted-foreground ring-1 ring-border/50 hover:ring-border">
-                        Anunciando o lançamento da versão beta
-                    </div>
+        <header className="mx-auto mt-20 flex min-h-[100dvh] flex-col items-center lg:mt-0 lg:flex-row lg:justify-center">
+            <div className="z-10 max-w-3xl lg:ml-8 lg:w-1/2">
+                <div className="mb-8 inline-block rounded-md bg-yellow-200 px-1 text-base font-semibold leading-7 text-black">
+                    Anunciando o lançamento da versão beta
                 </div>
                 <div>
                     <span className="text-4xl font-bold tracking-tight text-black dark:text-white sm:text-6xl">
                         Sua rede social de livros
                     </span>
-                    <h1 className="mt-6 text-lg leading-8 text-muted-foreground">
+                    <h1 className="mt-6 break-words text-lg leading-8 text-muted-foreground">
                         Conecte-se com apaixonados por livros, descubra recomendações, compartilhe
                         leituras e explore um mundo literário colaborativo. Junte-se a nós!
                     </h1>
-                    <div className="mt-10 flex items-center gap-x-6">
+                    <div className="mt-10 flex items-center gap-x-4">
                         <Button asChild size="md" variant="primary">
                             <Link href="/criar-conta">Começar agora</Link>
                         </Button>
@@ -37,7 +33,7 @@ export function Header() {
             <div className="mr-8 w-1/2">
                 <div className="relative isolate">
                     <div
-                        className="absolute inset-x-0 -right-16 -top-[34rem] -z-10 transform-gpu overflow-hidden blur-3xl"
+                        className="absolute inset-x-0 -top-[34rem] right-0 -z-10 transform-gpu overflow-hidden blur-3xl"
                         aria-hidden="true"
                     >
                         <div

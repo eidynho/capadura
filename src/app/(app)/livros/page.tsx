@@ -12,9 +12,11 @@ import { fetchGoogleBooks } from "@/utils/fetch-google-books";
 import { GoogleAPIData } from "@/components/ApplicationSearch";
 
 import { Container } from "@/components/layout/Container";
-import { Title } from "@/components/Title";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { Separator } from "@/components/ui/Separator";
+import { Subtitle } from "@/components/Subtitle";
+import { Title } from "@/components/Title";
 
 export default function Books() {
     const [isLoading, setIsFetchingBooks] = useState(true);
@@ -58,9 +60,12 @@ export default function Books() {
 
     return (
         <Container>
-            <div className="flex flex-col justify-center">
-                <Title>Biblioteca</Title>
+            <Title>Livros</Title>
+            <Subtitle>Encontre os livros mais procurados da comunidade.</Subtitle>
 
+            <Separator className="my-6" />
+
+            <div className="flex flex-col justify-center">
                 <div className="w-full overflow-x-auto sm:rounded-md">
                     <div className="mb-4">
                         <label htmlFor="search-books" className="sr-only">

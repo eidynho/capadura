@@ -7,6 +7,8 @@ import { Link as LinkIcon, MapPin, Twitter } from "lucide-react";
 import { ProgressData, ReadData } from "../../livros/[id]/page";
 import { ProfileDataResponse } from "@/endpoints/queries/usersQueries";
 
+import { useWindowSize } from "@/hooks/useWindowSize";
+
 import { useFetchUserByUsername } from "@/endpoints/queries/usersQueries";
 import { useGetUsersFollowsCount } from "@/endpoints/queries/followsQueries";
 import { useFetchUserReadsByUser } from "@/endpoints/queries/readsQueries";
@@ -55,6 +57,8 @@ interface ProfileProps {
 
 export default function Profile({ params }: ProfileProps) {
     const [date, setDate] = useState<Date | undefined>(new Date());
+
+    const { width } = useWindowSize();
 
     // ----- queries ----- //
     const {
@@ -162,7 +166,14 @@ export default function Profile({ params }: ProfileProps) {
             <div className="flex flex-col items-start justify-center md:flex-row">
                 <div className="flex items-start gap-8">
                     <Avatar className="h-28 w-28 md:h-40 md:w-40">
-                        <AvatarImage src={targetUser?.imageUrl} />
+                        <AvatarImage
+                            src={targetUser?.imageUrl}
+                            width={160}
+                            height={160}
+                            loading="eager"
+                            alt={`Foto de perfil dea ${targetUser?.username}`}
+                            title={`Foto de perfil de ${targetUser?.username}`}
+                        />
                         <AvatarFallback className="text-2xl">
                             {targetUser?.username[0]?.toUpperCase()}
                         </AvatarFallback>
@@ -170,9 +181,9 @@ export default function Profile({ params }: ProfileProps) {
                     <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-4 md:flex-row md:items-start">
                             <div>
-                                <h2 className="text-xl font-bold leading-relaxed tracking-tight text-black dark:text-white">
+                                <span className="block text-xl font-bold leading-relaxed tracking-tight text-black dark:text-white">
                                     {targetUser?.name}
-                                </h2>
+                                </span>
                                 <span className="font-medium text-black dark:text-white">
                                     @{targetUser?.username}
                                 </span>
@@ -187,11 +198,11 @@ export default function Profile({ params }: ProfileProps) {
                             )}
                         </div>
 
-                        <div className="hidden md:block">{ProfileHeader()}</div>
+                        {!!width && width >= 768 && <ProfileHeader />}
                     </div>
                 </div>
 
-                <div className="block md:hidden">{ProfileHeader()}</div>
+                {!!width && width < 768 && <ProfileHeader />}
             </div>
 
             <div className="mt-8 flex flex-col justify-center gap-8 lg:flex-row">
@@ -210,7 +221,7 @@ export default function Profile({ params }: ProfileProps) {
                 <div className="w-full lg:w-72">
                     <div className="flex w-full flex-col gap-8 sm:flex-row lg:flex-col">
                         <div className="w-full sm:w-1/2 lg:w-full">
-                            <h3 className="font-semibold text-black dark:text-white">Calendário</h3>
+                            <h2 className="font-semibold text-black dark:text-white">Calendário</h2>
                             <Calendar
                                 mode="single"
                                 selected={date}
@@ -220,7 +231,7 @@ export default function Profile({ params }: ProfileProps) {
                         </div>
 
                         <div className="w-full sm:w-1/2 lg:w-full">
-                            <h3 className="font-semibold text-black dark:text-white">Avaliações</h3>
+                            <h2 className="font-semibold text-black dark:text-white">Avaliações</h2>
                             {targetUser?.id && (
                                 <RatingChart userId={targetUser.id} username={params.username} />
                             )}
@@ -228,7 +239,7 @@ export default function Profile({ params }: ProfileProps) {
                     </div>
 
                     <div className="mt-8 w-full">
-                        <h3 className="font-semibold text-black dark:text-white">Atividades</h3>
+                        <h2 className="font-semibold text-black dark:text-white">Atividades</h2>
                         {targetUser?.id && <UserActivities userId={targetUser.id} />}
                     </div>
                 </div>

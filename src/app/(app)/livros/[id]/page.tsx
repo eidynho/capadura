@@ -14,13 +14,12 @@ import { useFetchBook } from "@/endpoints/queries/booksQueries";
 import { useCreateBook, useUpdateBookImage } from "@/endpoints/mutations/booksMutations";
 
 import Loading from "./loading";
+import { BookGradient } from "./components/BookGradient";
+import { BookHeader } from "./components/BookHeader";
 import { BookMetaData } from "./components/BookMetaData";
+import { Container } from "@/components/layout/Container";
 import { RatingChart } from "@/components/RatingChart";
 import { ReadsProgress } from "./components/Read";
-
-import { Container } from "@/components/layout/Container";
-import { Title } from "@/components/Title";
-import { Subtitle } from "@/components/Subtitle";
 
 interface BookImagesDataFromGoogle {
     id: string;
@@ -78,12 +77,6 @@ export interface ReadData {
 interface BookProps {
     params: {
         id: string;
-    };
-}
-
-export async function generateMetadata({ params }: BookProps) {
-    return {
-        title: params.id,
     };
 }
 
@@ -205,69 +198,70 @@ export default function Book({ params }: BookProps) {
         return <Loading />;
     }
 
-    function bookHeader() {
-        return (
-            <div className="mb-3 flex flex-col items-center gap-2 md:items-start">
-                <Title>{bookData?.title ?? ""}</Title>
-                {bookData?.subtitle && <Subtitle>{bookData?.subtitle ?? ""}</Subtitle>}
-            </div>
-        );
-    }
-
     return (
         <Container>
-            <div className="mt-5 flex flex-col justify-center">
-                <div className="flex flex-col">
-                    <div className="flex flex-col items-start justify-center gap-8 md:flex-row">
-                        <div className="w-full md:w-[19.5rem]">
-                            {/* Book header */}
-                            <div className="block md:hidden">{bookHeader()}</div>
+            <BookGradient bookImageUrl={bookFetchedFromDb?.imageUrl} />
 
-                            {/* Book image */}
-                            <div className="flex w-full gap-6">
-                                {bookData.imageUrl ? (
-                                    <Image
-                                        src={bookData.imageUrl}
-                                        alt=""
-                                        width={312}
-                                        height={468}
-                                        quality={100}
-                                        priority
-                                        className="mx-auto rounded-md"
-                                    />
-                                ) : (
-                                    <div className="flex h-96 w-full flex-col items-center justify-center rounded-md border bg-zinc-500/10 opacity-75">
-                                        <ImageOff size={36} strokeWidth={1.6} />
-                                        <span className="mt-1 text-sm font-medium text-muted-foreground">
-                                            Sem imagem
-                                        </span>
-                                    </div>
-                                )}
+            <div className="mt-5 flex flex-col items-start justify-center gap-8 md:flex-row">
+                <div className="z-10 w-full md:w-[19.5rem]">
+                    {/* Book header */}
+                    <BookHeader
+                        title={bookData.title}
+                        subtitle={bookData.subtitle}
+                        device="mobile"
+                    />
+
+                    {/* Book image */}
+                    <div className="flex w-full gap-6">
+                        <canvas id="canvas" className="hidden"></canvas>
+                        {bookData.imageUrl ? (
+                            <Image
+                                id="book-principal-image"
+                                src={bookData.imageUrl}
+                                width={312}
+                                height={468}
+                                quality={100}
+                                loading="eager"
+                                priority
+                                alt={`Capa do livro ${bookData.title}`}
+                                title={`Capa do livro ${bookData.title}`}
+                                className="mx-auto rounded-md"
+                            />
+                        ) : (
+                            <div className="flex h-96 w-full flex-col items-center justify-center rounded-md border bg-zinc-500/10 opacity-75">
+                                <ImageOff size={36} strokeWidth={1.6} />
+                                <span className="mt-1 text-sm font-medium text-muted-foreground">
+                                    Sem imagem
+                                </span>
                             </div>
+                        )}
+                    </div>
 
-                            <BookMetaData bookData={bookData} />
+                    <BookMetaData bookData={bookData} />
 
-                            {/* Community rating */}
-                            <RatingChart bookId={bookData.id} />
-                        </div>
+                    {/* Community rating */}
+                    <RatingChart bookId={bookData.id} />
+                </div>
 
-                        <div className="flex w-full flex-col md:w-[calc(100%-344px)]">
-                            {/* Book header */}
-                            <div className="hidden md:block">{bookHeader()}</div>
+                <div className="z-10 flex w-full flex-col md:w-[calc(100%-344px)]">
+                    {/* Book header */}
+                    <BookHeader
+                        title={bookData.title}
+                        subtitle={bookData.subtitle}
+                        device="desktop"
+                    />
 
-                            <div className="flex w-full flex-col gap-8 xl:flex-row">
-                                <div className="flex w-full flex-col gap-2">
-                                    {/* Book content */}
-                                    <p
-                                        className="text-justify text-sm leading-7 text-black dark:text-muted-foreground"
-                                        dangerouslySetInnerHTML={{
-                                            __html: bookData.description ?? "",
-                                        }}
-                                    ></p>
+                    <div className="flex w-full flex-col gap-8 xl:flex-row">
+                        <div className="flex w-full flex-col gap-2">
+                            {/* Book content */}
+                            <p
+                                className="text-justify text-sm leading-7 text-black dark:text-muted-foreground"
+                                dangerouslySetInnerHTML={{
+                                    __html: bookData.description ?? "",
+                                }}
+                            ></p>
 
-                                    <ReadsProgress bookData={bookData} />
-                                </div>
-                            </div>
+                            <ReadsProgress bookData={bookData} />
                         </div>
                     </div>
                 </div>

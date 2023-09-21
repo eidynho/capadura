@@ -16,6 +16,6 @@ export function generateMetadata({ params }: MeLayout) {
     };
 }
 
-export default function MeLayout({ children }: MeLayoutProps) {
+export default async function MeLayout({ children }: MeLayoutProps) {
     return <div>{children}</div>;
 }

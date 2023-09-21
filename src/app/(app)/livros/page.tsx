@@ -101,10 +101,16 @@ export default function Books() {
                                                         "edge=curl",
                                                         "",
                                                     )}
-                                                    alt=""
                                                     width={110}
                                                     height={160}
+                                                    loading="eager"
                                                     quality={100}
+                                                    alt={`Capa do livro ${
+                                                        item.volumeInfo.title || ""
+                                                    }`}
+                                                    title={`Capa do livro ${
+                                                        item.volumeInfo.title || ""
+                                                    }`}
                                                     className="w-full overflow-hidden"
                                                 />
                                             ) : (

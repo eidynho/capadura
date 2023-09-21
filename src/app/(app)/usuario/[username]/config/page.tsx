@@ -290,6 +290,11 @@ export default function UserConfigs() {
                                                                   )
                                                                 : user.imageUrl
                                                         }
+                                                        width={64}
+                                                        height={64}
+                                                        loading="eager"
+                                                        alt={`Foto de perfil de ${user.username}`}
+                                                        title={`Foto de perfil de ${user.username}`}
                                                     />
                                                     <AvatarFallback>
                                                         {user.username[0].toUpperCase() || "-"}

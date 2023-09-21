@@ -11,6 +11,6 @@ export const metadata = {
     },
 };
 
-export default function AppLayout({ children }: AppLayoutProps) {
+export default async function AppLayout({ children }: AppLayoutProps) {
     return <>{children}</>;
 }

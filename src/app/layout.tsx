@@ -1,5 +1,3 @@
-"use client";
-
 import "@/styles/global.css";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -9,7 +7,6 @@ import { ToastContainer } from "react-toastify";
 
 import { Providers } from "@/contexts/Providers";
 
-import { AppNavBar } from "@/components/AppNavBar";
 import { AuthDialog } from "@/components/AuthDialog";
 import { MainContainer } from "@/components/layout/MainContainer";
 
@@ -23,11 +20,14 @@ interface RootLayoutProps {
     children: ReactNode;
 }
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export const metadata = {
+    title: "A rede social de livros | Capadura",
+};
+
+export default async function RootLayout({ children }: RootLayoutProps) {
     return (
         <html lang="pt">
             <head>
-                <title>A rede social de livros | Capadura</title>
                 <meta
                     name="description"
                     content="Conecte-se com apaixonados por livros, descubra recomendações, compartilhe leituras e explore um mundo literário colaborativo. Junte-se a nós!"
@@ -37,7 +37,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 <div className={`${manrope.variable} mx-auto max-w-[120rem] font-manrope`}>
                     <Providers>
                         <div className="flex flex-col">
-                            {typeof window !== "undefined" && <AppNavBar />}
                             <MainContainer>{children}</MainContainer>
                         </div>
 

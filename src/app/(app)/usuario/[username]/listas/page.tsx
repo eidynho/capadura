@@ -181,9 +181,12 @@ export default function UserLists({ params }: UserListsProps) {
                                 {bookLists[activeBookList].imageUrl ? (
                                     <Image
                                         src={bookLists[activeBookList].imageUrl as string}
-                                        alt=""
                                         width={224}
                                         height={224}
+                                        quality={100}
+                                        loading="eager"
+                                        alt={`Capa da lista ${bookLists[activeBookList].name}`}
+                                        title={`Capa da lista ${bookLists[activeBookList].name}`}
                                         className="rounded-md"
                                     />
                                 ) : (
@@ -305,9 +308,9 @@ export default function UserLists({ params }: UserListsProps) {
                             </Table>
                         ) : (
                             <div className="mt-2 flex h-36 w-full flex-col items-center justify-center rounded-md border bg-white text-center transition-colors dark:bg-dark">
-                                <h2 className="text-base font-semibold text-black dark:text-white">
+                                <span className="text-base font-semibold text-black dark:text-white">
                                     Nenhum livro na lista.
-                                </h2>
+                                </span>
                                 <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
                                     Vamos adicionar livros para organizar sua leitura?
                                 </p>
@@ -316,11 +319,11 @@ export default function UserLists({ params }: UserListsProps) {
                     </div>
                 ) : (
                     <div className="mt-2 flex h-52 w-full flex-col items-center justify-center rounded-md border bg-white text-center transition-colors dark:bg-dark">
-                        <h2 className="text-base font-semibold text-black dark:text-white">
+                        <span className="text-base font-semibold text-black dark:text-white">
                             {isCurrentUser
                                 ? "Nenhuma lista para chamar de sua."
                                 : `${params.username} não possui nenhuma lista.`}
-                        </h2>
+                        </span>
                         <div className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
                             Está sem ideias de nomes para listas? Que tal esses:
                             <ul>

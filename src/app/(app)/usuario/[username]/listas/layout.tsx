@@ -4,6 +4,6 @@ interface UserListsLayoutProps {
     children: ReactNode;
 }
 
-export default function UserListsLayout({ children }: UserListsLayoutProps) {
+export default async function UserListsLayout({ children }: UserListsLayoutProps) {
     return <div>{children}</div>;
 }

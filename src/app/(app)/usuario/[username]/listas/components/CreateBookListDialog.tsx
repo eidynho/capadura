@@ -136,9 +136,12 @@ export function CreateBookListDialog() {
                                                             src={URL.createObjectURL(
                                                                 selectedImage[0],
                                                             )}
-                                                            alt=""
                                                             width={176}
                                                             height={176}
+                                                            quality={100}
+                                                            loading="eager"
+                                                            alt="Capa da lista"
+                                                            title="Capa da lista"
                                                             className="rounded-md transition-all group-hover:brightness-50"
                                                         />
                                                     ) : (

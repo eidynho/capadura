@@ -334,7 +334,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                     <div className="flex flex-wrap items-center py-1">
                         <div className="flex items-center gap-2 pl-2 pr-4 text-black dark:text-white">
                             <BookMarked size={16} />
-                            <h3 className="font-semibold">Leituras</h3>
+                            <h2 className="font-semibold">Leituras</h2>
                         </div>
 
                         <Tabs
@@ -546,9 +546,9 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                 ))
             ) : (
                 <div className="mt-2 flex h-36 w-full flex-col items-center justify-center rounded-md border bg-white text-center dark:bg-dark">
-                    <h2 className="text-base font-semibold text-black dark:text-white">
+                    <span className="text-base font-semibold text-black dark:text-white">
                         Nenhuma leitura {tabNoReadsFoundType}.
-                    </h2>
+                    </span>
                     <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
                         Que tal iniciar a leitura desse livro?
                     </p>

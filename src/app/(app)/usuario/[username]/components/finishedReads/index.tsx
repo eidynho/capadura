@@ -23,7 +23,7 @@ export function FinishedReads({ username, readsData }: FinishedReadsProps) {
 
     return (
         <div className="flex flex-col text-black dark:text-white">
-            <h3 className="font-semibold">Leituras finalizadas</h3>
+            <h2 className="font-semibold">Leituras finalizadas</h2>
 
             {!!readsData.items?.length ? (
                 readsData.items.map((read) => (
@@ -33,10 +33,12 @@ export function FinishedReads({ username, readsData }: FinishedReadsProps) {
                                 <Link href={`/livros/${read.bookId}`}>
                                     <Image
                                         src={read.book.imageUrl}
-                                        alt={`Capa do livro ${read.book.title}`}
                                         width={80}
                                         height={96}
+                                        loading="eager"
                                         quality={100}
+                                        alt={`Capa do livro ${read.book.title}`}
+                                        title={`Capa do livro ${read.book.title}`}
                                         className="w-full overflow-hidden"
                                     />
                                 </Link>
@@ -84,9 +86,9 @@ export function FinishedReads({ username, readsData }: FinishedReadsProps) {
                 ))
             ) : (
                 <div className="mt-2 flex h-36 flex-col items-center justify-center rounded-md border bg-white text-center transition-colors dark:bg-dark">
-                    <h2 className="text-base font-semibold text-black dark:text-white">
+                    <span className="text-base font-semibold text-black dark:text-white">
                         Nenhuma leitura finalizada.
-                    </h2>
+                    </span>
                     <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
                         {isCurrentUser
                             ? "Você ainda não terminou de ler um livro, vamos registar algum?"

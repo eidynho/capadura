@@ -16,10 +16,12 @@ export function BookSearchItem({ book }: BookSearchItemProps) {
                 {book.volumeInfo.imageLinks?.thumbnail ? (
                     <Image
                         src={book.volumeInfo.imageLinks?.thumbnail?.replace("edge=curl", "")}
-                        alt=""
                         width={48}
                         height={64}
                         quality={100}
+                        loading="eager"
+                        alt={`Capa do livro ${book.volumeInfo.title || ""}`}
+                        title={`Capa do livro ${book.volumeInfo.title || ""}`}
                         className="w-full overflow-hidden"
                     />
                 ) : (

@@ -68,8 +68,7 @@ export function RatingChart({ bookId, userId, username }: RatingChartProps) {
 
     return (
         <div className="mt-2 flex flex-col justify-center rounded-md border bg-white px-4 pb-6 pt-4 text-sm transition-colors dark:bg-dark">
-            <div className="my-1 flex items-center justify-between">
-                <h3 className="font-semibold text-black dark:text-white">Avaliações</h3>
+            <div className="my-1 flex items-center justify-end">
                 <div className="flex items-center gap-1">
                     <Star size={14} weight="fill" className="text-black dark:text-white" />
                     <p className="text-sm font-medium text-gray-900 dark:text-white">

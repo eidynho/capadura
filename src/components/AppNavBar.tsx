@@ -190,7 +190,14 @@ export function AppNavBar() {
                                 <DropdownMenuTrigger asChild>
                                     <Button size="sm" variant="outline">
                                         <Avatar className="h-6 w-6">
-                                            <AvatarImage src={user.imageUrl} />
+                                            <AvatarImage
+                                                src={user.imageUrl}
+                                                width={24}
+                                                height={24}
+                                                loading="eager"
+                                                alt={`Foto de perfil de ${user.username}`}
+                                                title={`Foto de perfil de ${user.username}`}
+                                            />
                                             <AvatarFallback>
                                                 {user.username[0].toUpperCase() || ""}
                                             </AvatarFallback>

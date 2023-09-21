@@ -40,10 +40,12 @@ export function CardFavoriteBook({
                     <Link href={`/livros/${currentBook.id}`}>
                         <Image
                             src={currentBook.imageUrl}
-                            alt={`Capa do livro ${currentBook.title}`}
                             width={64}
                             height={90}
+                            loading="eager"
                             quality={100}
+                            alt={`Capa do livro ${currentBook.title}`}
+                            title={`Capa do livro ${currentBook.title}`}
                             className="w-full overflow-hidden"
                         />
                     </Link>

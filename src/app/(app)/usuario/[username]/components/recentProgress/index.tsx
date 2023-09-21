@@ -22,7 +22,7 @@ export function RecentProgress({ username, progressData }: RecentProgressProps) 
 
     return (
         <div className="flex flex-col text-black dark:text-white">
-            <h3 className="font-semibold">Progressos recentes</h3>
+            <h2 className="font-semibold">Progressos recentes</h2>
 
             {!!progressData?.items?.length ? (
                 progressData.items.map((progress) => (
@@ -32,10 +32,12 @@ export function RecentProgress({ username, progressData }: RecentProgressProps) 
                                 <Link href={`/livros/${progress.read.bookId}`}>
                                     <Image
                                         src={progress.read.book.imageUrl}
-                                        alt={`Capa do livro ${progress.read.book.title}`}
                                         width={80}
                                         height={96}
+                                        loading="eager"
                                         quality={100}
+                                        alt={`Capa do livro ${progress.read.book.title}`}
+                                        title={`Capa do livro ${progress.read.book.title}`}
                                         className="w-full overflow-hidden"
                                     />
                                 </Link>
@@ -93,9 +95,9 @@ export function RecentProgress({ username, progressData }: RecentProgressProps) 
                 ))
             ) : (
                 <div className="mt-2 flex h-36 flex-col items-center justify-center rounded-md border bg-white text-center transition-colors dark:bg-dark">
-                    <h2 className="text-base font-semibold text-black dark:text-white">
+                    <span className="text-base font-semibold text-black dark:text-white">
                         Nenhum progresso recente.
-                    </h2>
+                    </span>
                     <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
                         {isCurrentUser ? (
                             <span>

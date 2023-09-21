@@ -191,7 +191,14 @@ export function FollowingDialog({ username, targetUserId, followingCount }: Foll
                     following.map((item) => (
                         <div key={item.followingId} className="flex items-center gap-4 text-sm">
                             <Avatar className="h-12 w-12">
-                                <AvatarImage src={item.following.imageUrl} />
+                                <AvatarImage
+                                    src={item.following.imageUrl}
+                                    width={48}
+                                    height={48}
+                                    loading="eager"
+                                    alt="Foto de perfil do usuário seguido"
+                                    title="Foto de perfil do usuário seguido"
+                                />
                                 <AvatarFallback>
                                     {item.following.username[0].toUpperCase()}
                                 </AvatarFallback>

@@ -150,9 +150,12 @@ export function UpdateBookListDialog({
                                                                       )
                                                                     : bookList.imageUrl || ""
                                                             }
-                                                            alt=""
                                                             width={176}
                                                             height={176}
+                                                            quality={100}
+                                                            loading="eager"
+                                                            alt={`Capa da lista ${bookList.name}`}
+                                                            title={`Capa da lista ${bookList.name}`}
                                                             className="rounded-md transition-all group-hover:brightness-50"
                                                         />
                                                     ) : (

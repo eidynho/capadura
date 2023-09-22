@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Library, MoreHorizontal } from "lucide-react";
 
-import { BookData } from "@/app/(app)/livros/[id]/page";
+import { BookData } from "@/endpoints/queries/booksQueries";
 import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";
 import { publishDateFormat } from "@/utils/publish-date-format";
 

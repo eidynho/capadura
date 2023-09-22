@@ -3,7 +3,7 @@ import { MoreVertical } from "lucide-react";
 
 import { useAuthContext } from "@/contexts/AuthContext";
 import { DeleteProgressData, EditReadData } from "..";
-import { ProgressData } from "../../../page";
+import { ProgressData } from "@/endpoints/queries/progressQueries";
 
 import { Button } from "@/components/ui/Button";
 import {

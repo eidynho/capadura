@@ -4,15 +4,14 @@ import { useState } from "react";
 import { notFound } from "next/navigation";
 import { Link as LinkIcon, MapPin, Twitter } from "lucide-react";
 
-import { ProgressData, ReadData } from "../../livros/[id]/page";
 import { ProfileDataResponse } from "@/endpoints/queries/usersQueries";
 
 import { useWindowSize } from "@/hooks/useWindowSize";
 
 import { useFetchUserByUsername } from "@/endpoints/queries/usersQueries";
 import { useGetUsersFollowsCount } from "@/endpoints/queries/followsQueries";
-import { useFetchUserReadsByUser } from "@/endpoints/queries/readsQueries";
-import { useFetchUserProgress } from "@/endpoints/queries/progressQueries";
+import { ReadData, useFetchUserReadsByUser } from "@/endpoints/queries/readsQueries";
+import { ProgressData, useFetchUserProgress } from "@/endpoints/queries/progressQueries";
 
 import Loading from "./loading";
 import { FavoriteBooks } from "./components/favoriteBooks";

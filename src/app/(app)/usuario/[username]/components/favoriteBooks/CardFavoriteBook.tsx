@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { FileText, ImageIcon, MoreVertical } from "lucide-react";
 
-import { BookData } from "@/app/(app)/livros/[id]/page";
+import { BookData } from "@/endpoints/queries/booksQueries";
 
 import { publishDateFormat } from "@/utils/publish-date-format";
 

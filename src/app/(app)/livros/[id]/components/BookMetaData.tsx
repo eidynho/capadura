@@ -1,7 +1,9 @@
+"use client";
+
 import { BookMarked, Heart, List } from "lucide-react";
 
 import { api } from "@/lib/api";
-import { BookData } from "../page";
+import { BookData } from "@/endpoints/queries/booksQueries";
 import { publishDateFormat } from "@/utils/publish-date-format";
 
 import { useQueries } from "@tanstack/react-query";

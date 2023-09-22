@@ -20,10 +20,6 @@ interface RootLayoutProps {
     children: ReactNode;
 }
 
-export const metadata = {
-    title: "A rede social de livros | Capadura",
-};
-
 export default async function RootLayout({ children }: RootLayoutProps) {
     return (
         <html lang="pt">

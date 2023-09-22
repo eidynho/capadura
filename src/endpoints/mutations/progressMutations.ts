@@ -3,8 +3,8 @@ import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";
 
+import { ProgressData } from "../queries/progressQueries";
 import { ReadsDataResponse } from "../queries/readsQueries";
-import { ProgressData } from "@/app/(app)/livros/[id]/page";
 
 interface UseAddNewProgressProps {
     bookId: string;

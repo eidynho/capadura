@@ -5,7 +5,7 @@ import { pt } from "date-fns/locale";
 import { ImageIcon } from "lucide-react";
 
 import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";
-import { ReadData } from "@/app/(app)/livros/[id]/page";
+import { ReadData } from "@/endpoints/queries/readsQueries";
 
 import { LinkUnderline } from "@/components/LinkUnderline";
 import { RatingStars } from "@/components/RatingStars";

@@ -1,3 +1,5 @@
+"use client";
+
 import { useColorPalette } from "@/hooks/useColorPalette";
 
 interface BookGradientProps {

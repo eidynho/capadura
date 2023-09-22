@@ -6,7 +6,7 @@ import { Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { BookDataFromGoogle, GoogleAPIData } from "@/components/ApplicationSearch";
-import { BookData } from "@/app/(app)/livros/[id]/page";
+import { BookData } from "@/endpoints/queries/booksQueries";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useDidMountEffect } from "@/hooks/useDidMountEffect";
 import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";

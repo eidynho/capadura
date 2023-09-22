@@ -7,10 +7,10 @@ import { toast } from "react-toastify";
 import { pt } from "date-fns/locale";
 
 import { useAuthContext } from "@/contexts/AuthContext";
-import { BookData, ReadData } from "@/app/(app)/livros/[id]/page";
 import { HandleAddNewProgressProps, HandleUpdateReadProps } from "./ReadReview/FormReadReview";
 
-import { useFetchUserReadsByBook } from "@/endpoints/queries/readsQueries";
+import { BookData } from "@/endpoints/queries/booksQueries";
+import { ReadData, useFetchUserReadsByBook } from "@/endpoints/queries/readsQueries";
 import {
     ReadStatus,
     useDeleteRead,
@@ -66,7 +66,6 @@ interface ReadsProgressProps {
 
 export function ReadsProgress({ bookData }: ReadsProgressProps) {
     const { user, isAuthenticated } = useAuthContext();
-    if (!isAuthenticated) return;
 
     const [isOpenUpdateProgressDialog, setIsOpenUpdateProgressDialog] = useState(false);
     const [isOpenDeleteProgressDialog, setIsOpenDeleteProgressDialog] = useState(false);
@@ -326,6 +325,8 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
             : currentTab === "active"
             ? " em andamento"
             : " finalizada";
+
+    if (!isAuthenticated) return;
 
     return (
         <>

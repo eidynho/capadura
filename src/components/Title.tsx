@@ -1,4 +1,5 @@
 import { HTMLAttributes } from "react";
+
 import { cn } from "@/utils/cn";
 
 interface TitleProps extends HTMLAttributes<HTMLHeadingElement> {

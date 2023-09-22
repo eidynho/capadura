@@ -1,7 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
-import { ProgressData } from "@/app/(app)/livros/[id]/page";
+import { ReadData } from "./readsQueries";
+
+export interface ProgressData {
+    id: string;
+    readId: string;
+    createdAt: Date | string;
+    description: string;
+    isSpoiler: boolean;
+    page: number | null;
+    percentage: number | null;
+    read?: ReadData;
+}
 
 export interface ProgressDataResponse {
     items: ProgressData[];

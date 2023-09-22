@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
-import { BookData } from "@/app/(app)/livros/[id]/page";
+import { BookData } from "@/endpoints/queries/booksQueries";
 
 export interface UseCreateBookProps {
     bookId: string;

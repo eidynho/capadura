@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ChevronDown, Check, List } from "lucide-react";
 import { toast } from "react-toastify";
 
-import { BookData } from "../page";
+import { BookData } from "@/endpoints/queries/booksQueries";
 import { useAuthContext } from "@/contexts/AuthContext";
 
 import { useFetchUserBookListsIncludeBook } from "@/endpoints/queries/bookListsQueries";
@@ -30,14 +30,13 @@ interface BookListMenuProps {
 
 export function BookListMenu({ bookData }: BookListMenuProps) {
     const { user } = useAuthContext();
-    if (!user) return null;
 
     const [isOpen, setIsOpen] = useState(false);
 
     const { data: bookLists, isFetching } = useFetchUserBookListsIncludeBook({
-        userId: user.id,
+        userId: user?.id || "",
         bookId: bookData.id,
-        enabled: isOpen,
+        enabled: isOpen && !!user?.id,
     });
 
     const createBookList = useCreateBookList();
@@ -81,6 +80,8 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
             bookOnBookListId,
         });
     }
+
+    if (!user) return null;
 
     function renderBookLists() {
         return (

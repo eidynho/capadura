@@ -1,7 +1,23 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
-import { ReadData } from "@/app/(app)/livros/[id]/page";
+import { BookData } from "./booksQueries";
+import { ProgressData } from "./progressQueries";
+
+export type ReadStatus = "ACTIVE" | "FINISHED" | "CANCELLED" | "DELETED";
+export interface ReadData {
+    id: string;
+    bookId: string;
+    startDate: Date | string;
+    endDate: Date | string | null;
+    isPrivate: boolean;
+    reviewContent: string | null;
+    reviewRating: number | null;
+    reviewIsSpoiler: boolean | null;
+    status: ReadStatus;
+    progress: ProgressData[];
+    book?: BookData;
+}
 
 export interface ReadsDataResponse {
     items: ReadData[];

@@ -8,7 +8,7 @@ import { Star, StarHalf } from "phosphor-react";
 import { Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 
-import { BookData } from "@/app/(app)/livros/[id]/page";
+import { BookData } from "@/endpoints/queries/booksQueries";
 import { ReadStatus } from "@/endpoints/mutations/readsMutations";
 
 import { ratingFormat } from "@/utils/rating-format";

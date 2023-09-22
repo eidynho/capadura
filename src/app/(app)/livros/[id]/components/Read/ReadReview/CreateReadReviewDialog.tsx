@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Star } from "lucide-react";
 
-import { BookData } from "@/app/(app)/livros/[id]/page";
+import { BookData } from "@/endpoints/queries/booksQueries";
 
 import { FormReadReview, HandleAddNewProgressProps, HandleUpdateReadProps } from "./FormReadReview";
 import { Button } from "@/components/ui/Button";

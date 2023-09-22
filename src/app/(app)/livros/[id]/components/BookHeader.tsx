@@ -1,3 +1,5 @@
+"use client";
+
 import { useWindowSize } from "@/hooks/useWindowSize";
 
 import { Subtitle } from "@/components/Subtitle";

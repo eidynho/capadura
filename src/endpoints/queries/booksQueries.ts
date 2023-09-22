@@ -1,7 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
-import { BookData } from "@/app/(app)/livros/[id]/page";
+
+export interface BookData {
+    id: string;
+    title: string;
+    subtitle?: string | null;
+    authors: string[];
+    publisher?: string | null;
+    publishDate?: Date | null;
+    language?: string | null;
+    pageCount?: number | null;
+    description?: string | null;
+    imageKey?: string | null;
+    imageUrl?: string;
+}
 
 interface UseFetchBookProps {
     bookId: string;

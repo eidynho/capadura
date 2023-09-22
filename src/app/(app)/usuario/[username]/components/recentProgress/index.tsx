@@ -4,8 +4,9 @@ import { format, parseISO } from "date-fns";
 import { pt } from "date-fns/locale";
 import { ImageIcon } from "lucide-react";
 
+import { ProgressData } from "@/endpoints/queries/progressQueries";
+
 import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";
-import { ProgressData } from "@/app/(app)/livros/[id]/page";
 
 import { LinkUnderline } from "@/components/LinkUnderline";
 

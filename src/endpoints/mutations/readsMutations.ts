@@ -3,8 +3,7 @@ import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";
 
-import { ReadsDataResponse } from "../queries/readsQueries";
-import { ReadData } from "@/app/(app)/livros/[id]/page";
+import { ReadData, ReadsDataResponse } from "../queries/readsQueries";
 import { GetMetadataCount } from "@/app/(app)/livros/[id]/components/BookMetaData";
 
 interface UseStartNewReadProps {

@@ -1,78 +1,18 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import { Metadata } from "next";
 import Image from "next/image";
-import axios from "axios";
-import { isValid, parse } from "date-fns";
 import { ImageOff } from "lucide-react";
-import { toast } from "react-toastify";
 
-import { BookDataFromGoogle } from "@/components/ApplicationSearch";
-import { ReadStatus } from "@/endpoints/mutations/readsMutations";
+import { BASE_URL } from "@/constants/api";
 
-import { useFetchBook } from "@/endpoints/queries/booksQueries";
-import { useCreateBook, useUpdateBookImage } from "@/endpoints/mutations/booksMutations";
+import { BookData } from "@/endpoints/queries/booksQueries";
 
-import Loading from "./loading";
 import { BookGradient } from "./components/BookGradient";
 import { BookHeader } from "./components/BookHeader";
 import { BookMetaData } from "./components/BookMetaData";
 import { Container } from "@/components/layout/Container";
 import { RatingChart } from "@/components/RatingChart";
 import { ReadsProgress } from "./components/Read";
-
-interface BookImagesDataFromGoogle {
-    id: string;
-    volumeInfo: {
-        title: string;
-        imageLinks?: {
-            smallThumbnail?: string;
-            thumbnail?: string;
-            small?: string;
-            medium?: string;
-            large?: string;
-            extraLarge?: string;
-        };
-    };
-}
-
-export interface BookData {
-    id: string;
-    title: string;
-    subtitle?: string | null;
-    authors: string[];
-    publisher?: string | null;
-    publishDate?: Date | null;
-    language?: string | null;
-    pageCount?: number | null;
-    description?: string | null;
-    imageKey?: string | null;
-    imageUrl?: string;
-}
-
-export interface ProgressData {
-    id: string;
-    readId: string;
-    createdAt: Date | string;
-    description: string;
-    isSpoiler: boolean;
-    page: number | null;
-    percentage: number | null;
-    read?: ReadData;
-}
-export interface ReadData {
-    id: string;
-    bookId: string;
-    startDate: Date | string;
-    endDate: Date | string | null;
-    isPrivate: boolean;
-    reviewContent: string | null;
-    reviewRating: number | null;
-    reviewIsSpoiler: boolean | null;
-    status: ReadStatus;
-    progress: ProgressData[];
-    book?: BookData;
-}
+import { notFound } from "next/navigation";
 
 interface BookProps {
     params: {
@@ -80,127 +20,31 @@ interface BookProps {
     };
 }
 
-export default function Book({ params }: BookProps) {
-    const [isMounted, setIsMounted] = useState(false);
-    const [bookData, setBookData] = useState<BookData | null>(null);
+export async function generateMetadata({ params }: BookProps): Promise<Metadata> {
+    try {
+        const response = await fetch(`${BASE_URL}/api/book/${params.id}`);
+        const { data: bookData }: { data: BookData } = await response.json();
 
-    const { data: bookFetchedFromDb, isFetched: isFetchedBook } = useFetchBook({
-        bookId: params.id,
-        enabled: !!params.id,
+        return {
+            title: bookData?.title || "Livro",
+        };
+    } catch (err) {
+        notFound();
+    }
+}
+
+export default async function Book({ params }: BookProps) {
+    const response = await fetch(`${BASE_URL}/api/book/${params.id}`, {
+        cache: "force-cache",
+        next: {
+            revalidate: 60 * 60 * 24 * 7, // 7 days
+        },
     });
-
-    const createBook = useCreateBook();
-    const updateBookImage = useUpdateBookImage();
-
-    async function fetchBookFromGoogle() {
-        try {
-            const { data } = await axios.get<BookDataFromGoogle>(
-                `https://www.googleapis.com/books/v1/volumes/${params.id}`,
-            );
-
-            const {
-                title,
-                subtitle,
-                authors,
-                publisher,
-                publishedDate,
-                language,
-                pageCount,
-                description,
-                imageLinks,
-            } = data.volumeInfo;
-
-            const parsedDate = parse(publishedDate, "yyyy-MM-dd", new Date());
-
-            createBook.mutate(
-                {
-                    bookId: params.id,
-                    title,
-                    subtitle,
-                    authors,
-                    publisher,
-                    publishDate: isValid(parsedDate) ? parsedDate : undefined,
-                    language,
-                    pageCount,
-                    description,
-                    imageLink: imageLinks?.medium?.replace("&edge=curl", ""),
-                },
-                {
-                    onSuccess: (createdBook) => {
-                        setBookData(createdBook);
-                    },
-                },
-            );
-        } catch (err) {
-            toast.error("Erro ao carregar os dados do livro.");
-            throw err;
-        }
-    }
-    useEffect(() => {
-        if (!isFetchedBook) return;
-
-        async function fetchBook() {
-            setIsMounted(false);
-
-            try {
-                if (!bookFetchedFromDb) {
-                    await fetchBookFromGoogle();
-                } else {
-                    setBookData(bookFetchedFromDb);
-
-                    if (!bookFetchedFromDb.imageKey) {
-                        // get image from google and update db
-                        const googleImageResponse = await axios.get<BookImagesDataFromGoogle>(
-                            `https://www.googleapis.com/books/v1/volumes/${params.id}?fields=id,volumeInfo(title,imageLinks)`,
-                        );
-
-                        const imageLinkFromGoogle =
-                            googleImageResponse.data?.volumeInfo?.imageLinks?.medium?.replace(
-                                "&edge=curl",
-                                "",
-                            );
-
-                        if (imageLinkFromGoogle) {
-                            updateBookImage.mutate(
-                                {
-                                    bookId: params.id,
-                                    imageLink: imageLinkFromGoogle,
-                                },
-                                {
-                                    onSuccess: (updatedBookData) => {
-                                        setBookData((prev) => {
-                                            if (!prev) return bookFetchedFromDb;
-
-                                            return {
-                                                ...prev,
-                                                imageKey: updatedBookData.imageKey,
-                                                imageUrl: updatedBookData.imageUrl,
-                                            };
-                                        });
-                                    },
-                                },
-                            );
-                        }
-                    }
-                }
-            } catch (err) {
-                toast.error("Erro ao carregar os dados do livro.");
-                throw err;
-            } finally {
-                setIsMounted(true);
-            }
-        }
-
-        fetchBook();
-    }, [params.id, isFetchedBook]);
-
-    if (!isMounted || !bookData) {
-        return <Loading />;
-    }
+    const { data: bookData }: { data: BookData } = await response.json();
 
     return (
         <Container>
-            <BookGradient bookImageUrl={bookFetchedFromDb?.imageUrl} />
+            <BookGradient bookImageUrl={bookData.imageUrl} />
 
             <div className="mt-5 flex flex-col items-start justify-center gap-8 md:flex-row">
                 <div className="z-10 w-full md:w-[19.5rem]">
@@ -254,12 +98,12 @@ export default function Book({ params }: BookProps) {
                     <div className="flex w-full flex-col gap-8 xl:flex-row">
                         <div className="flex w-full flex-col gap-2">
                             {/* Book content */}
-                            <p
+                            <div
                                 className="text-justify text-sm leading-7 text-black dark:text-muted-foreground"
                                 dangerouslySetInnerHTML={{
-                                    __html: bookData.description ?? "",
+                                    __html: bookData.description || "",
                                 }}
-                            ></p>
+                            ></div>
 
                             <ReadsProgress bookData={bookData} />
                         </div>

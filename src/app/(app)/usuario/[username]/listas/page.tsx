@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Library, MoreHorizontal } from "lucide-react";
@@ -15,11 +16,11 @@ import { useFetchBooksOnBookList } from "@/endpoints/queries/booksOnBookListQuer
 import { useDeleteBookList, useUpdateBookList } from "@/endpoints/mutations/bookListsMutations";
 import { useRemoveBookFromBookList } from "@/endpoints/mutations/booksOnBookListMutations";
 
-import Loading from "./loading";
-
 import { CreateBookListDialog } from "./components/CreateBookListDialog";
 import { UpdateBookListDialog } from "./components/UpdateBookListDialog";
 import { DeleteBookListDialog } from "./components/DeleteBookListDialog";
+
+import Loading from "./loading";
 
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/layout/Container";
@@ -59,12 +60,11 @@ interface UserListsProps {
 }
 
 export default function UserLists({ params }: UserListsProps) {
-    const [isMounted, setIsMounted] = useState(false);
     const [activeBookList, setActiveBookList] = useState(0);
 
     const isCurrentUser = isPageUserSameCurrentUser(params.username);
 
-    const { data: targetUser, isError } = useFetchUserByUsername({
+    const { data: targetUser, isFetched } = useFetchUserByUsername({
         username: params.username,
     });
 
@@ -121,10 +121,13 @@ export default function UserLists({ params }: UserListsProps) {
         setActiveBookList(index);
     }
 
-    // render loading
-    // if (!isMounted) {
-    //     return <Loading />;
-    // }
+    if (!targetUser && isFetched) {
+        notFound();
+    }
+
+    if (isFetchingUserBookLists || isFetchingBooksOnBookList) {
+        return <Loading />;
+    }
 
     function renderBookLists() {
         return (

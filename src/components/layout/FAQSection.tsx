@@ -1,3 +1,5 @@
+"use client";
+
 import {
     Accordion,
     AccordionContent,
@@ -48,7 +50,7 @@ export function FAQSection() {
             </h2>
             <Accordion type="single" collapsible className="w-full">
                 {questions.map((question) => (
-                    <AccordionItem value={question.question}>
+                    <AccordionItem key={question.question} value={question.question}>
                         <AccordionTrigger>{question.question}</AccordionTrigger>
                         <AccordionContent>{question.answer}</AccordionContent>
                     </AccordionItem>

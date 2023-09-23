@@ -4,9 +4,8 @@ import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import lodash from "lodash";
 import { toast } from "react-toastify";
-import { Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2, XCircle } from "lucide-react";
 
 import { useAuthContext } from "@/contexts/AuthContext";
 import { signOut } from "@/utils/sign-out";
@@ -23,6 +22,7 @@ import { Separator } from "@/components/ui/Separator";
 import { Subtitle } from "@/components/Subtitle";
 import { Textarea } from "@/components/ui/Textarea";
 import { Title } from "@/components/Title";
+import { api } from "@/lib/api";
 
 const configTabs = ["Perfil"];
 
@@ -42,7 +42,7 @@ const profileFormSchema = z.object({
     email: z
         .string()
         .max(200, { message: "Máximo 200 caracteres." })
-        .email({ message: "E-mail inválido" }),
+        .email({ message: "E-mail inválido." }),
     image: z
         .any()
         .refine(
@@ -72,7 +72,7 @@ const profileFormSchema = z.object({
     description: z.string().max(600, { message: "Máximo 600 caracteres." }).optional().nullable(),
     location: z.string().max(50, { message: "Máximo 50 caracteres." }).optional().nullable(),
     website: z
-        .union([z.literal(""), z.string().trim().url({ message: "URL inválida" })])
+        .union([z.literal(""), z.string().trim().url({ message: "URL inválida." })])
         .optional()
         .nullable(),
     twitter: z.string().optional().nullable(),
@@ -82,15 +82,17 @@ type ProfileFormSchema = z.infer<typeof profileFormSchema>;
 
 export default function UserConfigs() {
     const { user } = useAuthContext();
-    if (!user) {
-        return signOut();
-    }
 
-    const [userData, setUserData] = useState<ProfileDataResponse | null>(null);
+    const [isValidatingUsername, setIsValidatingUsername] = useState(false);
+    const [containsInvalidChars, setContainsInvalidChars] = useState(false);
+    const [usernameAlreadyExists, setUsernameAlreadyExists] = useState(false);
     const [currentTab, setCurrentTab] = useState(0);
 
     useEffect(() => {
-        setUserData(user);
+        if (!user) {
+            signOut();
+            return;
+        }
 
         setValue("id", user.id);
         setValue("name", user.name);
@@ -114,6 +116,7 @@ export default function UserConfigs() {
     });
 
     const selectedImage = watch("image");
+    const typedUsername = watch("username");
 
     const updateUserData = useUpdateUserData();
     function submitProfile(data: ProfileFormSchema) {
@@ -121,19 +124,16 @@ export default function UserConfigs() {
             return signOut();
         }
 
-        const { id, name, username, email, image, description, location, website, twitter } = data;
+        if (isInvalidUsername) return;
 
-        if (lodash.isEqual(userData, { ...data, createdAt: user.createdAt })) {
-            toast.success("O perfil está atualizado.");
-            return;
-        }
+        const { id, name, username, image, description, location, website, twitter } = data;
 
         // TODO: BE ABLE TO UPDATE USERNAME AND E-MAIL (UNIQUE)
         updateUserData.mutate(
             {
                 id,
                 name,
-                username: user.username,
+                username: usernameAlreadyExists ? user.username : username,
                 email: user.email,
                 image: image[0],
                 description: description ?? undefined,
@@ -142,7 +142,7 @@ export default function UserConfigs() {
                 twitter: twitter ?? undefined,
             },
             {
-                onSuccess: (updatedUser) => {
+                onSuccess: () => {
                     if (!description) {
                         setValue("description", "");
                     }
@@ -156,12 +156,48 @@ export default function UserConfigs() {
                         setValue("twitter", "");
                     }
 
-                    setUserData(updatedUser);
                     toast.success("Seu perfil foi atualizado.");
                 },
             },
         );
     }
+
+    async function verifyUsername() {
+        if (!user) return;
+
+        setIsValidatingUsername(true);
+
+        // letters, numbers, dot and underscore
+        const validCharactersRgx = /^[a-zA-Z0-9._]+$/;
+
+        if (!validCharactersRgx.test(typedUsername)) {
+            setContainsInvalidChars(true);
+            setIsValidatingUsername(false);
+            return;
+        }
+        setContainsInvalidChars(false);
+
+        if (typedUsername.trim() === user.username) {
+            setIsValidatingUsername(false);
+            return;
+        }
+
+        try {
+            const { data } = await api.get<ProfileDataResponse>(`users/${typedUsername.trim()}`);
+            const existsUsername = !!data.username;
+
+            setUsernameAlreadyExists(existsUsername);
+        } catch {
+            throw new Error("Failed on verify user username.");
+        } finally {
+            setIsValidatingUsername(false);
+        }
+    }
+
+    if (!user) return;
+
+    const isInvalidUsername =
+        !typedUsername || containsInvalidChars || usernameAlreadyExists || !!errors.username;
 
     return (
         <Container>
@@ -226,24 +262,43 @@ export default function UserConfigs() {
 
                             <div className="flex flex-col">
                                 <Label htmlFor="config-profile-username">Usuário*</Label>
-                                <Input
-                                    {...register("username")}
-                                    id="config-profile-username"
-                                    name="username"
-                                    type="text"
-                                    maxLength={50}
-                                    disabled
-                                    placeholder="harry"
-                                    className={`${
-                                        errors.username ? "border-destructive" : ""
-                                    } mt-2 w-2/3 lg:w-1/4`}
-                                />
-                                <span className="mt-1 text-xs text-muted-foreground">
-                                    Não é possível alterar o usuário no momento.
-                                </span>
-                                {errors.username && (
+                                <div className="relative mt-2 flex w-2/3 lg:w-1/4">
+                                    <Input
+                                        {...register("username")}
+                                        id="config-profile-username"
+                                        name="username"
+                                        type="text"
+                                        maxLength={50}
+                                        placeholder="harry"
+                                        className={`${
+                                            isInvalidUsername ? "border-destructive" : ""
+                                        } w-full pr-9`}
+                                        onBlur={verifyUsername}
+                                    />
+                                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                        {isValidatingUsername ? (
+                                            <Loader2
+                                                size={16}
+                                                className="animate-spin text-muted-foreground"
+                                            />
+                                        ) : isInvalidUsername ? (
+                                            <XCircle size={16} className="text-destructive" />
+                                        ) : (
+                                            <CheckCircle2 size={16} className="text-green-500" />
+                                        )}
+                                    </div>
+                                </div>
+                                {isInvalidUsername && (
                                     <span className="mt-1 text-xs font-medium text-destructive">
-                                        {errors.username.message}
+                                        {!typedUsername
+                                            ? "Campo obrigatório."
+                                            : containsInvalidChars
+                                            ? "Contém caracteres inválidos."
+                                            : usernameAlreadyExists
+                                            ? "O nome de usuário já existe."
+                                            : errors.username
+                                            ? errors.username.message
+                                            : ""}
                                     </span>
                                 )}
                             </div>
@@ -411,7 +466,7 @@ export default function UserConfigs() {
                                 size="md"
                                 variant="primary"
                                 type="submit"
-                                disabled={isSubmitting}
+                                disabled={isSubmitting || isInvalidUsername}
                             >
                                 {isSubmitting ? (
                                     <>

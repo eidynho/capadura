@@ -88,7 +88,7 @@ export default function Profile({ params }: ProfileProps) {
     const isMounting =
         !isFetchedUser || !isFetchedFollowsCount || !isFetchedUserReads || !isFetchedUserProgress;
 
-    if (isErrorFetchUser) {
+    if ((isFetchedUser && !targetUser) || isErrorFetchUser) {
         notFound();
     }
 

@@ -19,7 +19,7 @@ import { Subtitle } from "@/components/Subtitle";
 import { Title } from "@/components/Title";
 
 export default function Books() {
-    const [isLoading, setIsFetchingBooks] = useState(true);
+    const [isFetchingBooks, setIsFetchingBooks] = useState(true);
     const [books, setBooks] = useState<GoogleAPIData>({
         items: [],
         totalItems: 0,
@@ -57,6 +57,8 @@ export default function Books() {
 
         setIsFetchingBooks(true);
     }, [searchName]);
+
+    if (isFetchingBooks) return;
 
     return (
         <Container>

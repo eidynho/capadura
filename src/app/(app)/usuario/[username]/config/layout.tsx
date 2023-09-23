@@ -10,7 +10,7 @@ export default async function ConfigLayout({ children }: ConfigLayoutProps) {
     const cookies = NextCookies();
     const token = cookies.get("token");
 
-    if (!token) {
+    if (!!cookies && !token) {
         redirect("/entrar");
     } else {
         return <>{children}</>;

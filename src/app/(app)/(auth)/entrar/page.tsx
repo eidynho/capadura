@@ -1,7 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { GoogleLogo } from "phosphor-react";
 
 import { useAuthContext } from "@/contexts/AuthContext";
@@ -9,21 +13,30 @@ import getGoogleOAuthURL from "@/utils/get-google-url";
 
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { z } from "zod";
+import { Label } from "@/components/ui/Label";
 
-export const loginFormSchema = z.object({
+const loginFormSchema = z.object({
     email: z
         .string()
         .max(200, { message: "Máximo 200 caracteres." })
-        .email({ message: "E-mail inválido" }),
-    password: z.string(),
+        .email({ message: "E-mail inválido." }),
+    password: z.string().min(1, { message: "Campo obrigatório" }),
 });
 
-export type LoginFormSchema = z.infer<typeof loginFormSchema>;
+type LoginFormSchema = z.infer<typeof loginFormSchema>;
 
 export default function Login() {
-    const { register, handleSubmit } = useForm<LoginFormSchema>();
     const { signIn } = useAuthContext();
+
+    const [showPassword, setShowPassword] = useState(false);
+
+    const {
+        formState: { isSubmitting, errors },
+        register,
+        handleSubmit,
+    } = useForm<LoginFormSchema>({
+        resolver: zodResolver(loginFormSchema),
+    });
 
     function handleSignIn({ email, password }: LoginFormSchema) {
         signIn({
@@ -66,21 +79,59 @@ export default function Login() {
                     </div>
 
                     <form onSubmit={handleSubmit(handleSignIn)} className="flex flex-col gap-8">
-                        <label className="w-full">
-                            <span className="mb-2 block font-medium">Email</span>
-                            <Input {...register("email")} type="text" />
-                        </label>
-                        <label className="w-full">
-                            <div className="flex items-center justify-between">
-                                <span className="mb-2 block font-medium">Senha</span>
-                                <Link href="#" className="font-medium underline">
-                                    Esqueci minha senha
-                                </Link>
-                            </div>
-                            <Input {...register("password")} type="password" />
-                        </label>
+                        <div>
+                            <Label htmlFor="sign-in-email">Email</Label>
+                            <Input
+                                {...register("email")}
+                                id="sign-in-email"
+                                type="text"
+                                className={`${errors.email ? "border-destructive" : ""} mt-2`}
+                            />
+                            {errors.email && (
+                                <span className="mt-1 text-xs font-medium text-destructive">
+                                    {errors.email.message}
+                                </span>
+                            )}
+                        </div>
 
-                        <Button variant="primary">Entrar</Button>
+                        <div>
+                            <Label htmlFor="sign-in-password">Senha</Label>
+                            <div className="relative">
+                                <Input
+                                    {...register("password")}
+                                    id="sign-in-password"
+                                    type={showPassword ? "text" : "password"}
+                                    className={`${
+                                        errors.password ? "border-destructive" : ""
+                                    } mt-2`}
+                                />
+                                <Button
+                                    size="icon"
+                                    variant="outline"
+                                    type="button"
+                                    className="absolute right-0 top-1/2 -translate-y-1/2 text-muted-foreground"
+                                    onClick={() => setShowPassword((prev) => !prev)}
+                                >
+                                    {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+                                </Button>
+                            </div>
+                            {errors.password && (
+                                <span className="mt-1 text-xs font-medium text-destructive">
+                                    {errors.password.message}
+                                </span>
+                            )}
+                        </div>
+
+                        <Button size="md" variant="primary" disabled={isSubmitting}>
+                            {isSubmitting ? (
+                                <>
+                                    <Loader2 size={22} className="animate-spin" />
+                                    <span>Entrando...</span>
+                                </>
+                            ) : (
+                                <span>Entrar</span>
+                            )}
+                        </Button>
                     </form>
                 </div>
             </main>

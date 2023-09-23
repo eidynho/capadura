@@ -2,17 +2,27 @@
 
 import Link from "next/link";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { Loader2 } from "lucide-react";
 import { GoogleLogo } from "phosphor-react";
 
 import { useAuthContext } from "@/contexts/AuthContext";
 import getGoogleOAuthURL from "@/utils/get-google-url";
-import { LoginFormSchema } from "@/app/(app)/(auth)/entrar/page";
 
 import { Button } from "@/components/ui/Button";
 import { Dialog, DialogContent } from "@/components/ui/Dialog";
 import { Input } from "@/components/ui/Input";
 import { Separator } from "@/components/ui/Separator";
+
+const loginFormSchema = z.object({
+    email: z
+        .string()
+        .max(200, { message: "Máximo 200 caracteres." })
+        .email({ message: "E-mail inválido." }),
+    password: z.string(),
+});
+
+type LoginFormSchema = z.infer<typeof loginFormSchema>;
 
 export function AuthDialog() {
     const { signIn, isSignInLoading, isOpenAuthDialog, toggleAuthDialog } = useAuthContext();

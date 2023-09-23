@@ -2,19 +2,13 @@ import "@/styles/global.css";
 import "react-toastify/dist/ReactToastify.css";
 
 import { ReactNode } from "react";
-import { Manrope } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 
 import { Providers } from "@/contexts/Providers";
+import { manrope } from "@/constants/fonts";
 
 import { AuthDialog } from "@/components/AuthDialog";
 import { MainContainer } from "@/components/layout/MainContainer";
-
-export const manrope = Manrope({
-    subsets: ["latin"],
-    weight: ["200", "300", "400", "500", "600", "700", "800"],
-    variable: "--font-manrope",
-});
 
 interface RootLayoutProps {
     children: ReactNode;

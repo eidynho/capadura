@@ -3,7 +3,7 @@ import { MoveLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
 
-export default function NotFound() {
+export default async function NotFound() {
     return (
         <div className="flex h-[100dvh] w-full text-black dark:text-white">
             <main className="h-full w-full px-4 lg:w-1/2 lg:px-20">

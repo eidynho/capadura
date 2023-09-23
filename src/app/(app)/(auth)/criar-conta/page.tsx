@@ -1,19 +1,25 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { CheckCircle2, Eye, EyeOff, Loader2, XCircle } from "lucide-react";
 import { GoogleLogo } from "phosphor-react";
 
+import { api } from "@/lib/api";
 import { useAuthContext } from "@/contexts/AuthContext";
 import getGoogleOAuthURL from "@/utils/get-google-url";
+import { ProfileDataResponse } from "@/endpoints/queries/usersQueries";
 
 import { useRegisterUser } from "@/endpoints/mutations/usersMutations";
 
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
 
-export const signUpFormSchema = z.object({
+const signUpFormSchema = z.object({
     username: z
         .string()
         .min(1, { message: "Campo obrigatório." })
@@ -21,18 +27,35 @@ export const signUpFormSchema = z.object({
     email: z
         .string()
         .max(200, { message: "Máximo 200 caracteres." })
-        .email({ message: "E-mail inválido" }),
-    password: z.string(),
+        .email({ message: "E-mail inválido." }),
+    password: z.string().min(6, { message: "Mínimo 6 caracteres" }),
 });
 
-export type SignUpFormSchema = z.infer<typeof signUpFormSchema>;
+type SignUpFormSchema = z.infer<typeof signUpFormSchema>;
 
 export default function SignUp() {
-    const { register, handleSubmit } = useForm<SignUpFormSchema>();
     const { signIn } = useAuthContext();
+
+    const [showPassword, setShowPassword] = useState(false);
+    const [isValidatingUsername, setIsValidatingUsername] = useState(false);
+    const [containsInvalidChars, setContainsInvalidChars] = useState(false);
+    const [usernameAlreadyExists, setUsernameAlreadyExists] = useState(false);
+
+    const {
+        formState: { isSubmitting, errors },
+        register,
+        handleSubmit,
+        watch,
+    } = useForm<SignUpFormSchema>({
+        resolver: zodResolver(signUpFormSchema),
+    });
+
+    const typedUsername = watch("username");
 
     const registerUser = useRegisterUser();
     function handleSignUp({ username, email, password }: SignUpFormSchema) {
+        if (isInvalidUsername) return;
+
         registerUser.mutate(
             {
                 username,
@@ -49,6 +72,35 @@ export default function SignUp() {
             },
         );
     }
+
+    async function verifyUsername() {
+        if (!typedUsername) return;
+
+        setIsValidatingUsername(true);
+
+        // letters, numbers, dot and underscore
+        const validCharactersRgx = /^[a-zA-Z0-9._]+$/;
+
+        if (!validCharactersRgx.test(typedUsername)) {
+            setContainsInvalidChars(true);
+            setIsValidatingUsername(false);
+            return;
+        }
+        setContainsInvalidChars(false);
+
+        try {
+            const { data } = await api.get<ProfileDataResponse>(`users/${typedUsername.trim()}`);
+            const existsUsername = !!data.username;
+
+            setUsernameAlreadyExists(existsUsername);
+        } catch {
+            throw new Error("Failed on verify user username.");
+        } finally {
+            setIsValidatingUsername(false);
+        }
+    }
+
+    const isInvalidUsername = containsInvalidChars || usernameAlreadyExists || !!errors.username;
 
     return (
         <div className="flex w-full text-black dark:text-white">
@@ -84,20 +136,105 @@ export default function SignUp() {
                     </div>
 
                     <form onSubmit={handleSubmit(handleSignUp)} className="flex flex-col gap-8">
-                        <label className="w-full">
-                            <span className="mb-2 block font-medium">Nome do usuário</span>
-                            <Input {...register("username")} type="text" />
-                        </label>
-                        <label className="w-full">
-                            <span className="mb-2 block font-medium">Email</span>
-                            <Input {...register("email")} type="text" />
-                        </label>
-                        <label className="w-full">
-                            <span className="mb-2 block font-medium">Senha</span>
-                            <Input {...register("password")} type="password" />
-                        </label>
-                        <Button size="md" variant="primary">
-                            Criar conta
+                        <div>
+                            <Label htmlFor="sign-up-username">Nome do usuário</Label>
+                            <div className="relative mt-2 w-full">
+                                <Input
+                                    {...register("username")}
+                                    id="sign-up-username"
+                                    type="text"
+                                    maxLength={50}
+                                    className={`${
+                                        isInvalidUsername ? "border-destructive" : ""
+                                    } w-full pr-9`}
+                                    onBlur={verifyUsername}
+                                />
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                    {isValidatingUsername ? (
+                                        <Loader2
+                                            size={16}
+                                            className="animate-spin text-muted-foreground"
+                                        />
+                                    ) : isInvalidUsername ? (
+                                        <XCircle size={16} className="text-destructive" />
+                                    ) : (
+                                        <CheckCircle2 size={16} className="text-green-500" />
+                                    )}
+                                </div>
+                            </div>
+                            {isInvalidUsername && (
+                                <span className="mt-1 text-xs font-medium text-destructive">
+                                    {!typedUsername
+                                        ? "Campo obrigatório."
+                                        : containsInvalidChars
+                                        ? "Contém caracteres inválidos."
+                                        : usernameAlreadyExists
+                                        ? "O nome de usuário já existe."
+                                        : errors.username
+                                        ? errors.username.message
+                                        : ""}
+                                </span>
+                            )}
+                        </div>
+
+                        <div>
+                            <Label htmlFor="sign-up-email">
+                                Email
+                                <Input
+                                    {...register("email")}
+                                    id="sign-up-email"
+                                    type="text"
+                                    className={`${errors.email ? "border-destructive" : ""} mt-2`}
+                                />
+                                {errors.email && (
+                                    <span className="mt-1 text-xs font-medium text-destructive">
+                                        {errors.email.message}
+                                    </span>
+                                )}
+                            </Label>
+                        </div>
+
+                        <div>
+                            <Label htmlFor="sign-up-password">Senha</Label>
+                            <div className="relative">
+                                <Input
+                                    {...register("password")}
+                                    id="sign-up-password"
+                                    type={showPassword ? "text" : "password"}
+                                    className={`${
+                                        errors.password ? "border-destructive" : ""
+                                    } mt-2`}
+                                />
+                                <Button
+                                    size="icon"
+                                    variant="outline"
+                                    type="button"
+                                    className="absolute right-0 top-1/2 -translate-y-1/2 text-muted-foreground"
+                                    onClick={() => setShowPassword((prev) => !prev)}
+                                >
+                                    {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+                                </Button>
+                            </div>
+                            {errors.password && (
+                                <span className="mt-1 text-xs font-medium text-destructive">
+                                    {errors.password.message}
+                                </span>
+                            )}
+                        </div>
+
+                        <Button
+                            size="md"
+                            variant="primary"
+                            disabled={isSubmitting || isInvalidUsername}
+                        >
+                            {isSubmitting ? (
+                                <>
+                                    <Loader2 size={22} className="animate-spin" />
+                                    <span>Criando conta...</span>
+                                </>
+                            ) : (
+                                <span>Criar conta</span>
+                            )}
                         </Button>
                     </form>
                     <span className="mb-8 block font-medium">

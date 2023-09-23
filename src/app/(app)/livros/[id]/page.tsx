@@ -1,8 +1,9 @@
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 import Image from "next/image";
 import { ImageOff } from "lucide-react";
 
-import { BASE_URL } from "@/constants/api";
+import { API_BASE_URL, BASE_URL } from "@/constants/api";
 
 import { BookData } from "@/endpoints/queries/booksQueries";
 
@@ -12,12 +13,20 @@ import { BookMetaData } from "./components/BookMetaData";
 import { Container } from "@/components/layout/Container";
 import { RatingChart } from "@/components/RatingChart";
 import { ReadsProgress } from "./components/Read";
-import { notFound } from "next/navigation";
 
 interface BookProps {
     params: {
         id: string;
     };
+}
+
+export async function generateStaticParams() {
+    const response = await fetch(`${API_BASE_URL}/books?page=1&perPage=18`);
+    const data: BookData[] = await response.json();
+
+    return data.map((book) => ({
+        id: book.id,
+    }));
 }
 
 export async function generateMetadata({ params }: BookProps): Promise<Metadata> {
@@ -26,7 +35,10 @@ export async function generateMetadata({ params }: BookProps): Promise<Metadata>
         const { data: bookData }: { data: BookData } = await response.json();
 
         return {
-            title: bookData?.title || "Livro",
+            title: bookData.title,
+            alternates: {
+                canonical: `${BASE_URL}/livros/${params.id}`,
+            },
         };
     } catch (err) {
         notFound();
@@ -34,12 +46,7 @@ export async function generateMetadata({ params }: BookProps): Promise<Metadata>
 }
 
 export default async function Book({ params }: BookProps) {
-    const response = await fetch(`${BASE_URL}/api/book/${params.id}`, {
-        cache: "force-cache",
-        next: {
-            revalidate: 60 * 60 * 24 * 7, // 7 days
-        },
-    });
+    const response = await fetch(`${BASE_URL}/api/book/${params.id}`);
     const { data: bookData }: { data: BookData } = await response.json();
 
     return (

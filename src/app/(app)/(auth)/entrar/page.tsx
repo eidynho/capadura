@@ -26,12 +26,12 @@ const loginFormSchema = z.object({
 type LoginFormSchema = z.infer<typeof loginFormSchema>;
 
 export default function Login() {
-    const { signIn } = useAuthContext();
+    const { signIn, isSignInLoading } = useAuthContext();
 
     const [showPassword, setShowPassword] = useState(false);
 
     const {
-        formState: { isSubmitting, errors },
+        formState: { errors },
         register,
         handleSubmit,
     } = useForm<LoginFormSchema>({
@@ -122,8 +122,8 @@ export default function Login() {
                             )}
                         </div>
 
-                        <Button size="md" variant="primary" disabled={isSubmitting}>
-                            {isSubmitting ? (
+                        <Button size="md" variant="primary" disabled={isSignInLoading}>
+                            {isSignInLoading ? (
                                 <>
                                     <Loader2 size={22} className="animate-spin" />
                                     <span>Entrando...</span>

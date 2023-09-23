@@ -112,7 +112,7 @@ export function AppNavBar() {
               },
               {
                   name: "Configurações",
-                  path: `/@${user.username}/config`,
+                  path: `/config`,
                   icon: Settings,
               },
           ]

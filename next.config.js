@@ -25,12 +25,29 @@ const nextConfig = {
                 destination: "/usuario/:username",
             },
             {
-                source: "/@:username/config",
-                destination: "/usuario/:username/config",
-            },
-            {
                 source: "/@:username/listas",
                 destination: "/usuario/:username/listas",
+            },
+
+            {
+                source: "/config",
+                missing: [
+                    {
+                        type: "cookie",
+                        key: "token",
+                    },
+                ],
+                destination: "/entrar",
+            },
+            {
+                source: "/convide-e-ganhe",
+                missing: [
+                    {
+                        type: "cookie",
+                        key: "token",
+                    },
+                ],
+                destination: "/entrar",
             },
         ];
     },

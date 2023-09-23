@@ -89,10 +89,7 @@ export default function UserConfigs() {
     const [currentTab, setCurrentTab] = useState(0);
 
     useEffect(() => {
-        if (!user) {
-            signOut();
-            return;
-        }
+        if (!user) return;
 
         setValue("id", user.id);
         setValue("name", user.name);

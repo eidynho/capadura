@@ -7,7 +7,7 @@ export function Footer() {
     return (
         <footer className="flex flex-col items-center justify-center bg-light dark:bg-dark">
             <Separator className="mb-8" />
-            <span className="text-lg font-semibold">Capadura</span>
+            <span className="text-lg font-semibold text-black dark:text-white">Capadura</span>
 
             <div className="mt-4 flex items-center gap-6">
                 <div className="fill-muted-foreground hover:fill-black">

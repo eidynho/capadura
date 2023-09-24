@@ -20,6 +20,15 @@ interface BookProps {
     };
 }
 
+export async function generateStaticParams() {
+    const response = await fetch(`${API_BASE_URL}/books?page=1&perPage=18`);
+    const data: BookData[] = await response.json();
+
+    return data.map((book) => ({
+        id: book.id,
+    }));
+}
+
 export async function generateMetadata({ params }: BookProps): Promise<Metadata> {
     try {
         const response = await fetch(`${BASE_URL}/api/book/${params.id}`);

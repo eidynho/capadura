@@ -118,9 +118,10 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
         reviewIsSpoiler,
         endRead,
     }: HandleUpdateReadProps) {
-        if (!bookData?.id || updateRead.isLoading) return;
+        if (!user?.id || !bookData?.id || updateRead.isLoading) return;
 
         await updateRead.mutateAsync({
+            userId: user.id,
             bookId: bookData.id,
             readId,
             status,

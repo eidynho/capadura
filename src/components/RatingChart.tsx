@@ -2,13 +2,14 @@
 
 import { SVGProps, useState } from "react";
 import { useRouter } from "next/navigation";
-import { BarChart, Bar, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, Cell, Tooltip as RechartsTooltip, ResponsiveContainer } from "recharts";
 import { toast } from "react-toastify";
 import { Star, StarHalf } from "phosphor-react";
 
 import { useFetchReadsRating } from "@/endpoints/queries/readsQueries";
 
 import { RatingStars } from "./RatingStars";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/Tooltip";
 
 export interface ratingsDataChart {
     data: {
@@ -68,13 +69,40 @@ export function RatingChart({ bookId, userId, username }: RatingChartProps) {
 
     return (
         <div className="mt-2 flex flex-col justify-center rounded-md border bg-white px-4 pb-6 pt-4 text-sm transition-colors dark:bg-dark">
-            <div className="my-1 flex items-center justify-end">
-                <div className="flex items-center gap-1">
-                    <Star size={14} weight="fill" className="text-black dark:text-white" />
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">
-                        {bookRatings.averageRating.toFixed(2)} ({bookRatings.total})
-                    </p>
-                </div>
+            <div className="my-1 flex items-center justify-between">
+                <TooltipProvider delayDuration={400} skipDelayDuration={0}>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div>
+                                <span className="mr-1 font-semibold">Total:</span>
+                                <span>{bookRatings.total}</span>
+                            </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <span>Total de avaliações</span>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+
+                <TooltipProvider delayDuration={400} skipDelayDuration={0}>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div className="flex items-center gap-1">
+                                <Star
+                                    size={14}
+                                    weight="fill"
+                                    className="text-black dark:text-white"
+                                />
+                                <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                    {bookRatings.averageRating.toFixed(2)}
+                                </p>
+                            </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <span>Média das avaliações</span>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
             </div>
 
             {bookRatings.total > 0 ? (
@@ -85,7 +113,7 @@ export function RatingChart({ bookId, userId, username }: RatingChartProps) {
 
                     <ResponsiveContainer width="100%" height={96}>
                         <BarChart data={bookRatings.data}>
-                            <Tooltip
+                            <RechartsTooltip
                                 content={<RenderTooltipContent />}
                                 cursor={<CustomTooltipCursor />}
                                 position={{ x: barGraphData.x, y: barGraphData.y - 30 }}

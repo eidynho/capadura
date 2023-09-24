@@ -38,7 +38,7 @@ export function useFetchUserReadsByUser({
     enabled = true,
 }: UseFetchUserReadsByUserProps) {
     return useQuery({
-        queryKey: ["fetchUserReadsByUser", { userId, page, perPage }],
+        queryKey: ["fetchUserReadsByUser", { userId }],
         queryFn: async () => {
             const { data } = await api.get(
                 `/user-reads?userId=${userId}&status=FINISHED&page=${page}&perPage=${perPage}`,
@@ -59,7 +59,7 @@ export function useFetchUserReadsByBook({ bookId, enabled = true }: UseFetchUser
     return useQuery({
         queryKey: ["fetchUserReadsByBook", { bookId }],
         queryFn: async () => {
-            const { data } = await api.get(`/user-reads?bookId=${bookId}`);
+            const { data } = await api.get(`/user-reads/book/${bookId}`);
 
             return data as ReadsDataResponse;
         },

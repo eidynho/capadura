@@ -48,6 +48,7 @@ export function useStartNewRead() {
 }
 
 interface UseUpdateReadProps {
+    userId: string;
     bookId: string;
     readId: string;
     status: ReadStatus;
@@ -82,30 +83,48 @@ export function useUpdateRead() {
         },
         onSuccess: (
             _,
-            { bookId, readId, status, reviewContent, reviewRating, reviewIsSpoiler, endRead },
+            {
+                userId,
+                bookId,
+                readId,
+                status,
+                reviewContent,
+                reviewRating,
+                reviewIsSpoiler,
+                endRead,
+            },
         ) => {
+            const updateReadsQueryData = (prevData?: ReadsDataResponse) => {
+                const updatedReads = { ...(prevData || {}) };
+
+                const read = updatedReads.items?.find((read) => read.id === readId);
+                if (read) {
+                    read.status = status;
+                    read.reviewContent = reviewContent || null;
+                    read.reviewRating = reviewRating;
+                    read.reviewIsSpoiler = reviewIsSpoiler;
+
+                    if (endRead) {
+                        read.endDate = new Date().toISOString();
+                    }
+                }
+
+                return {
+                    items: updatedReads.items || [],
+                    total: updatedReads.total || 0,
+                };
+            };
+
+            // user reads in book page
             queryClient.setQueryData<ReadsDataResponse>(
                 ["fetchUserReadsByBook", { bookId }],
-                (prevData) => {
-                    const updatedReads = { ...(prevData || {}) };
+                (prevData) => updateReadsQueryData(prevData),
+            );
 
-                    const read = updatedReads.items?.find((read) => read.id === readId);
-                    if (read) {
-                        read.status = status;
-                        read.reviewContent = reviewContent || null;
-                        read.reviewRating = reviewRating;
-                        read.reviewIsSpoiler = reviewIsSpoiler;
-
-                        if (endRead) {
-                            read.endDate = new Date().toISOString();
-                        }
-                    }
-
-                    return {
-                        items: updatedReads.items || [],
-                        total: updatedReads.total || 0,
-                    };
-                },
+            // user reads in user profile
+            queryClient.setQueryData<ReadsDataResponse>(
+                ["fetchUserReadsByUser", { userId }],
+                (prevData) => updateReadsQueryData(prevData),
             );
 
             // is status is abount to change for "FINISHED", add total finished read count metadata count by one

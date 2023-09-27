@@ -46,23 +46,16 @@ export default function Login() {
     }
 
     return (
-        <div className="flex w-full text-black dark:text-white">
-            <main className="w-full px-4 lg:w-3/5 lg:px-20">
-                <header className="pb-20 pt-20">
-                    <div className="flex items-center justify-between">
-                        <Link href="/" className="font-medium">
-                            Capadura
-                        </Link>
-                        <Link href="/criar-conta" className="font-medium underline">
-                            Criar conta
-                        </Link>
-                    </div>
-                    <h1 className="mt-20 text-justify text-4xl font-medium leading-snug">
-                        Bem-vindo(a) de volta.
-                    </h1>
-                </header>
-                <div className="flex w-full flex-col gap-8">
-                    <Button asChild size="md" variant="outline">
+        <div className="mt-20 flex min-h-[80dvh] w-full items-center justify-center text-black dark:text-white">
+            <div className="mx-4 w-full sm:mx-0 sm:max-w-sm">
+                <div className="text-center">
+                    <span className="font-medium">Capadura</span>
+                </div>
+                <h1 className="mt-6 text-center text-xl font-bold leading-9 tracking-tight">
+                    Bem-vindo de volta
+                </h1>
+                <div className="mt-12 flex w-full flex-col gap-4">
+                    <Button asChild size="sm" variant="outline">
                         <Link href={getGoogleOAuthURL()}>
                             <GoogleLogo size={18} weight="bold" />
                             Conectar com Google
@@ -78,7 +71,7 @@ export default function Login() {
                         <span className="text-muted-foreground">ou</span>
                     </div>
 
-                    <form onSubmit={handleSubmit(handleSignIn)} className="flex flex-col gap-8">
+                    <form onSubmit={handleSubmit(handleSignIn)} className="flex flex-col gap-4">
                         <div>
                             <Label htmlFor="sign-in-email">Email</Label>
                             <Input
@@ -107,7 +100,7 @@ export default function Login() {
                                 />
                                 <Button
                                     size="icon"
-                                    variant="outline"
+                                    variant="default"
                                     type="button"
                                     className="absolute right-0 top-1/2 -translate-y-1/2 text-muted-foreground"
                                     onClick={() => setShowPassword((prev) => !prev)}
@@ -122,7 +115,7 @@ export default function Login() {
                             )}
                         </div>
 
-                        <Button size="md" variant="primary" disabled={isSignInLoading}>
+                        <Button size="sm" variant="primary" disabled={isSignInLoading}>
                             {isSignInLoading ? (
                                 <>
                                     <Loader2 size={22} className="animate-spin" />
@@ -132,12 +125,19 @@ export default function Login() {
                                 <span>Entrar</span>
                             )}
                         </Button>
+
+                        <div className="text-center">
+                            <span className="mr-1">Não é um membro ainda?</span>
+                            <Link
+                                href="/criar-conta"
+                                className="text-yellow-700 hover:underline dark:text-primary"
+                            >
+                                Comece agora, é grátis.
+                            </Link>
+                        </div>
                     </form>
                 </div>
-            </main>
-            <aside className="hidden lg:block lg:w-2/5">
-                <div className="h-screen w-full bg-dark"></div>
-            </aside>
+            </div>
         </div>
     );
 }

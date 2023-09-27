@@ -103,23 +103,16 @@ export default function SignUp() {
     const isInvalidUsername = containsInvalidChars || usernameAlreadyExists || !!errors.username;
 
     return (
-        <div className="flex w-full text-black dark:text-white">
-            <main className="w-full px-4 lg:w-3/5 lg:px-20">
-                <header className="pb-20 pt-20">
-                    <div className="flex items-center justify-between">
-                        <Link href="/" className="font-medium">
-                            Capadura
-                        </Link>
-                        <Link href="/entrar" className="font-medium underline">
-                            Entrar
-                        </Link>
-                    </div>
-                    <h1 className="mt-20 text-justify text-4xl font-medium leading-snug">
-                        Faça parte de uma comunidade que ama livros.
-                    </h1>
-                </header>
-                <div className="flex w-full flex-col gap-8">
-                    <Button asChild size="md" variant="outline">
+        <div className="mt-20 flex min-h-[84dvh] w-full items-center justify-center text-black dark:text-white">
+            <div className="mx-4 w-full sm:mx-0 sm:max-w-sm">
+                <div className="text-center">
+                    <span className="font-medium">Capadura</span>
+                </div>
+                <h1 className="mt-6 text-center text-xl font-bold leading-9 tracking-tight">
+                    Bem-vindo a Capadura
+                </h1>
+                <div className="mt-12 flex w-full flex-col gap-4">
+                    <Button asChild size="sm" variant="outline">
                         <Link href={getGoogleOAuthURL()}>
                             <GoogleLogo size={18} weight="bold" />
                             Conectar com Google
@@ -135,7 +128,7 @@ export default function SignUp() {
                         <span className="text-muted-foreground">ou</span>
                     </div>
 
-                    <form onSubmit={handleSubmit(handleSignUp)} className="flex flex-col gap-8">
+                    <form onSubmit={handleSubmit(handleSignUp)} className="flex flex-col gap-4">
                         <div>
                             <Label htmlFor="sign-up-username">Nome do usuário</Label>
                             <div className="relative mt-2 w-full">
@@ -149,18 +142,20 @@ export default function SignUp() {
                                     } w-full pr-9`}
                                     onBlur={verifyUsername}
                                 />
-                                <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                                    {isValidatingUsername ? (
-                                        <Loader2
-                                            size={16}
-                                            className="animate-spin text-muted-foreground"
-                                        />
-                                    ) : isInvalidUsername ? (
-                                        <XCircle size={16} className="text-destructive" />
-                                    ) : (
-                                        <CheckCircle2 size={16} className="text-green-500" />
-                                    )}
-                                </div>
+                                {!!typedUsername && (
+                                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                        {isValidatingUsername ? (
+                                            <Loader2
+                                                size={16}
+                                                className="animate-spin text-muted-foreground"
+                                            />
+                                        ) : isInvalidUsername ? (
+                                            <XCircle size={16} className="text-destructive" />
+                                        ) : (
+                                            <CheckCircle2 size={16} className="text-green-500" />
+                                        )}
+                                    </div>
+                                )}
                             </div>
                             {isInvalidUsername && (
                                 <span className="mt-1 text-xs font-medium text-destructive">
@@ -207,7 +202,7 @@ export default function SignUp() {
                                 />
                                 <Button
                                     size="icon"
-                                    variant="outline"
+                                    variant="default"
                                     type="button"
                                     className="absolute right-0 top-1/2 -translate-y-1/2 text-muted-foreground"
                                     onClick={() => setShowPassword((prev) => !prev)}
@@ -223,7 +218,7 @@ export default function SignUp() {
                         </div>
 
                         <Button
-                            size="md"
+                            size="sm"
                             variant="primary"
                             disabled={isSubmitting || isInvalidUsername}
                         >
@@ -237,22 +232,19 @@ export default function SignUp() {
                             )}
                         </Button>
                     </form>
-                    <span className="mb-8 block font-medium">
+                    <span className="block text-muted-foreground">
                         Você concorda com nossos{" "}
-                        <Link href="" className="underline">
+                        <Link href="" className="text-yellow-700 hover:underline dark:text-primary">
                             Termos de Uso
                         </Link>{" "}
                         e{" "}
-                        <Link href="" className="underline">
+                        <Link href="" className="text-yellow-700 hover:underline dark:text-primary">
                             Política de Privacidade
                         </Link>
                         .
                     </span>
                 </div>
-            </main>
-            <aside className="hidden lg:block lg:w-2/5">
-                <div className="h-screen w-full bg-dark"></div>
-            </aside>
+            </div>
         </div>
     );
 }

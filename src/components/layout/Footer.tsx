@@ -5,7 +5,7 @@ import { X } from "@/components/icons/X";
 
 export function Footer() {
     return (
-        <footer className="flex flex-col items-center justify-center bg-light dark:bg-dark">
+        <footer className="flex flex-col items-center justify-center bg-light transition-colors dark:bg-dark">
             <Separator className="mb-8" />
             <span className="text-lg font-semibold text-black dark:text-white">Capadura</span>
 

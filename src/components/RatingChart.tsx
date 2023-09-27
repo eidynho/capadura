@@ -69,13 +69,13 @@ export function RatingChart({ bookId, userId, username }: RatingChartProps) {
 
     return (
         <div className="mt-2 flex flex-col justify-center rounded-md border bg-white px-4 pb-6 pt-4 text-sm transition-colors dark:bg-dark">
-            <div className="my-1 flex items-center justify-between">
+            <div className="my-1 flex items-center justify-between text-sm">
                 <TooltipProvider delayDuration={400} skipDelayDuration={0}>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <div>
-                                <span className="mr-1 font-semibold">Total:</span>
-                                <span>{bookRatings.total}</span>
+                            <div className="text-black dark:text-white">
+                                <span className="mr-1">Total:</span>
+                                <span className="font-medium">{bookRatings.total}</span>
                             </div>
                         </TooltipTrigger>
                         <TooltipContent>
@@ -93,7 +93,7 @@ export function RatingChart({ bookId, userId, username }: RatingChartProps) {
                                     weight="fill"
                                     className="text-black dark:text-white"
                                 />
-                                <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                <p className="font-medium text-black dark:text-white">
                                     {bookRatings.averageRating.toFixed(2)}
                                 </p>
                             </div>

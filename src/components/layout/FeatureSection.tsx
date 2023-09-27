@@ -29,7 +29,7 @@ const features = [
 
 export function FeatureSection() {
     return (
-        <div className="bg-light py-12 dark:bg-dark lg:py-16">
+        <div className="bg-light py-12 transition-colors dark:bg-dark lg:py-16">
             <div className="mx-auto max-w-7xl">
                 <div className="mx-auto max-w-2xl lg:text-center">
                     <h2 className="inline-block rounded-md bg-yellow-200 px-1 text-base font-semibold leading-7 text-black">

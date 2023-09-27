@@ -13,6 +13,7 @@ import { BookMetaData } from "./components/BookMetaData";
 import { Container } from "@/components/layout/Container";
 import { RatingChart } from "@/components/RatingChart";
 import { ReadsProgress } from "./components/Read";
+import { BookDescription } from "./BookDescription";
 
 interface BookProps {
     params: {
@@ -20,11 +21,25 @@ interface BookProps {
     };
 }
 
-export async function generateStaticParams() {
-    const response = await fetch(`${API_BASE_URL}/books?page=1&perPage=18`);
-    const data: BookData[] = await response.json();
+interface BookIdData {
+    id: string;
+}
 
-    return data.map((book) => ({
+export async function generateStaticParams() {
+    let bookIdList: BookIdData[] = [];
+    for (let i = 1; i <= 100; i++) {
+        const response = await fetch(`${API_BASE_URL}/book-ids?page=${i}&perPage=10000`);
+        const data = await response.json();
+
+        if (!data.length) {
+            break;
+        }
+
+        bookIdList.push(data);
+    }
+    bookIdList = bookIdList.flat();
+
+    return bookIdList.map((book) => ({
         id: book.id,
     }));
 }
@@ -35,7 +50,7 @@ export async function generateMetadata({ params }: BookProps): Promise<Metadata>
         const { data: bookData }: { data: BookData } = await response.json();
 
         return {
-            title: bookData.title,
+            title: `${bookData.title} ${bookData.authors[0] ? ` - ${bookData.authors[0]}` : ""}`,
             alternates: {
                 canonical: `${BASE_URL}/livros/${params.id}`,
             },
@@ -59,7 +74,7 @@ export default async function Book({ params }: BookProps) {
         <Container>
             <BookGradient bookImageUrl={bookData.imageUrl} />
 
-            <div className="mt-5 flex flex-col items-start justify-center gap-8 md:flex-row">
+            <div className="mt-5 flex flex-col items-start gap-8 md:flex-row">
                 <div className="z-10 w-full md:w-[19.5rem]">
                     {/* Book header */}
                     <BookHeader
@@ -110,13 +125,7 @@ export default async function Book({ params }: BookProps) {
 
                     <div className="flex w-full flex-col gap-8 xl:flex-row">
                         <div className="flex w-full flex-col gap-2">
-                            {/* Book content */}
-                            <div
-                                className="text-justify text-sm leading-7 text-black dark:text-muted-foreground"
-                                dangerouslySetInnerHTML={{
-                                    __html: bookData.description || "",
-                                }}
-                            ></div>
+                            <BookDescription description={bookData.description} />
 
                             <ReadsProgress bookData={bookData} />
                         </div>

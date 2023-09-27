@@ -13,6 +13,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/DropdownMenu";
 import { UserHoverCard } from "@/components/UserHoverCard";
+import { pt } from "date-fns/locale";
 
 interface ProgressProps {
     progressList?: ProgressData[];
@@ -39,7 +40,7 @@ export function Progress({
     return (
         <div className="mt-2 flex flex-col gap-3 text-black dark:text-white">
             <div className="flex items-center justify-between gap-2">
-                <h4 className="font-bold">Progressos anteriores</h4>
+                <h4 className="font-bold">Progressos recentes</h4>
                 <Button size="sm" variant="outline">
                     Ver todos
                 </Button>
@@ -51,8 +52,12 @@ export function Progress({
                             <div className="flex items-center gap-2">
                                 {user && <UserHoverCard user={user} />}
 
-                                <span className="mt-[2px] text-xs font-semibold text-gray-500">
-                                    {format(parseISO(progress.createdAt.toString()), "dd/MM/yyyy")}
+                                <span className="mt-[2px] text-xs text-muted-foreground">
+                                    {format(
+                                        parseISO(progress.createdAt.toString()),
+                                        "dd 'de' MMMM 'de' yyyy",
+                                        { locale: pt },
+                                    )}
                                 </span>
                             </div>
 

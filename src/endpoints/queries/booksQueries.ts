@@ -8,7 +8,7 @@ export interface BookData {
     subtitle?: string | null;
     authors: string[];
     publisher?: string | null;
-    publishDate?: Date | null;
+    publishDate?: Date | string | null;
     language?: string | null;
     pageCount?: number | null;
     description?: string | null;

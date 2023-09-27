@@ -64,6 +64,7 @@ const mobileDropdownRoutes: routeProps[] = [
 
 export function AppNavBar() {
     const [mounted, setMounted] = useState(false);
+
     const { user, isFetchingCurrentUser } = useAuthContext();
     const { theme, toggleTheme } = useThemeContext();
 
@@ -147,9 +148,9 @@ export function AppNavBar() {
                 <div className="h-6 w-24 rounded-md bg-zinc-300"></div>
 
                 <div className="flex items-center gap-2">
-                    <div className="h-10 w-11 rounded-md bg-zinc-300 sm:w-40 md:w-56"></div>
+                    <div className="h-10 w-11 rounded-md bg-zinc-300 md:w-40 md:w-56"></div>
                     <div className="h-10 w-28 rounded-md bg-zinc-300"></div>
-                    <div className="block h-10 w-11 rounded-md bg-zinc-300 sm:hidden"></div>
+                    <div className="block h-10 w-11 rounded-md bg-zinc-300 md:hidden"></div>
                 </div>
             </div>
         );
@@ -160,11 +161,11 @@ export function AppNavBar() {
             <div className="mx-auto flex max-w-5xl items-center justify-center gap-2 px-3 py-2 text-sm transition-colors">
                 <div className="flex w-full items-center justify-between gap-1">
                     <div className="flex items-center gap-8">
-                        <span className="mr-4 inline-block text-black dark:text-white">
+                        <Link href="/" className="mr-4 inline-block text-black dark:text-white">
                             Capadura
-                        </span>
+                        </Link>
 
-                        <div className="mr-8 hidden gap-8 text-black dark:text-white sm:flex">
+                        <div className="mr-8 hidden gap-8 text-black dark:text-white md:flex">
                             <LinkUnderline href="/inicio" className="font-medium">
                                 Início
                             </LinkUnderline>
@@ -211,6 +212,45 @@ export function AppNavBar() {
                                 <DropdownMenuContent align="end" className="w-48">
                                     {routesTree(profileRoutes)}
 
+                                    <DropdownMenuItem>
+                                        <Link href="/sair" className="flex items-center gap-2">
+                                            <LogOut size={16} />
+                                            Sair
+                                        </Link>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        ) : (
+                            <div className="flex items-center gap-2">
+                                <Button asChild size="sm" variant="outline">
+                                    <Link href="/entrar">Entrar</Link>
+                                </Button>
+                                <Button asChild size="sm" variant="primary">
+                                    <Link href="/criar-conta">Criar conta</Link>
+                                </Button>
+                            </div>
+                        )}
+
+                        <Button
+                            size="icon"
+                            variant="outline"
+                            onClick={() => toggleTheme(theme === "dark" ? "light" : "dark")}
+                            className="hidden h-[42px] md:flex"
+                        >
+                            {theme === "light" && <Sun size={16} />}
+                            {theme === "dark" && <Moon size={16} />}
+                        </Button>
+
+                        <div className="block md:hidden">
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button size="sm" variant="outline" className="h-[42px]">
+                                        <Menu size={16} />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-36">
+                                    {routesTree(mobileDropdownRoutes)}
+
                                     <DropdownMenuSub>
                                         <DropdownMenuSubTrigger className="flex items-center gap-2">
                                             {theme === "light" && <Sun size={16} />}
@@ -234,41 +274,12 @@ export function AppNavBar() {
                                     </DropdownMenuSub>
 
                                     <DropdownMenuItem>
-                                        <Link href="/sair" className="flex items-center gap-2">
-                                            <LogOut size={16} />
-                                            Sair
-                                        </Link>
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        ) : (
-                            <div className="flex items-center gap-2">
-                                <Button asChild size="sm" variant="outline">
-                                    <Link href="/entrar">Entrar</Link>
-                                </Button>
-                                <Button asChild size="sm" variant="primary">
-                                    <Link href="/criar-conta">Criar conta</Link>
-                                </Button>
-                            </div>
-                        )}
-
-                        <div className="block sm:hidden">
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button size="sm" variant="outline" className="h-[42px]">
-                                        <Menu size={16} />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-36">
-                                    {routesTree(mobileDropdownRoutes)}
-
-                                    <DropdownMenuItem>
                                         <Link href="#" className="flex items-center gap-2">
                                             <Newspaper size={16} />
                                             Blog
                                         </Link>
                                         <DropdownMenuShortcut>
-                                            <ExternalLink size={16} />
+                                            <ExternalLink size={14} />
                                         </DropdownMenuShortcut>
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>

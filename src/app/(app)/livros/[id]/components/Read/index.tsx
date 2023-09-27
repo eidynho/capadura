@@ -298,7 +298,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
         setIsOpenDeleteProgressDialog(value);
     }
 
-    function renderReadStatus(status: ReadStatus) {
+    function ReadStatusBadge({ status }: { status: ReadStatus }) {
         let message = "";
         let variant: "green" | "sky" | "yellow" | "red" | "default" = "default";
 
@@ -331,48 +331,42 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
 
     return (
         <>
-            <div className="mt-2">
-                <ul className="-mb-px flex flex-wrap items-center justify-between text-center text-sm font-medium">
-                    <div className="flex flex-wrap items-center py-1">
-                        <div className="flex items-center gap-2 pl-2 pr-4 text-black dark:text-white">
-                            <BookMarked size={16} />
-                            <h2 className="font-semibold">Leituras</h2>
-                        </div>
-
-                        <Tabs
-                            value={currentTab}
-                            onValueChange={setCurrentTab}
-                            defaultValue="account"
-                        >
-                            <TabsList>
-                                <TabsTrigger value="all">Todas</TabsTrigger>
-                                <TabsTrigger value="active">Em andamento</TabsTrigger>
-                                <TabsTrigger value="finished">Finalizadas</TabsTrigger>
-                            </TabsList>
-                        </Tabs>
+            <div className="-mb-px mt-2 flex flex-wrap items-center justify-between text-center text-sm font-medium">
+                <div className="flex flex-wrap items-center gap-y-2 py-1">
+                    <div className="flex items-center gap-2 pl-2 pr-4 text-black dark:text-white">
+                        <BookMarked size={16} />
+                        <h2 className="font-semibold">Minhas leituras</h2>
                     </div>
 
-                    {(!userReads?.items?.length || userReads.items[0].status === "FINISHED") && (
-                        <div className="flex flex-col items-center gap-2">
-                            <div className="flex flex-col items-center justify-center gap-2 lg:flex-row">
-                                <Button size="sm" variant="outline" onClick={handleStartNewRead}>
-                                    <PlusCircle size={16} />
-                                    Nova leitura
-                                </Button>
+                    <Tabs value={currentTab} onValueChange={setCurrentTab} defaultValue="account">
+                        <TabsList>
+                            <TabsTrigger value="all">Todas</TabsTrigger>
+                            <TabsTrigger value="active">Em andamento</TabsTrigger>
+                            <TabsTrigger value="finished">Finalizadas</TabsTrigger>
+                        </TabsList>
+                    </Tabs>
+                </div>
 
-                                {(!userReads || !userReads.items.length) && (
-                                    <CreateReadReviewDialog
-                                        bookData={bookData}
-                                        handleStartNewRead={handleStartNewRead}
-                                        handleUpdateRead={handleUpdateRead}
-                                        handleAddNewProgress={handleAddNewProgress}
-                                        isReviewWithoutProgress
-                                    />
-                                )}
-                            </div>
+                {(!userReads?.items?.length || userReads.items[0].status === "FINISHED") && (
+                    <div className="flex flex-col items-center gap-2">
+                        <div className="flex flex-col items-center justify-center gap-2 lg:flex-row">
+                            <Button size="sm" variant="outline" onClick={handleStartNewRead}>
+                                <PlusCircle size={16} />
+                                Nova leitura
+                            </Button>
+
+                            {(!userReads || !userReads.items.length) && (
+                                <CreateReadReviewDialog
+                                    bookData={bookData}
+                                    handleStartNewRead={handleStartNewRead}
+                                    handleUpdateRead={handleUpdateRead}
+                                    handleAddNewProgress={handleAddNewProgress}
+                                    isReviewWithoutProgress
+                                />
+                            )}
                         </div>
-                    )}
-                </ul>
+                    </div>
+                )}
             </div>
 
             {!!filteredReads?.length ? (
@@ -421,7 +415,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                    {renderReadStatus(read.status as ReadStatus)}
+                                    {<ReadStatusBadge status={read.status} />}
 
                                     {/* Privacy badge */}
                                     <Badge variant="default">

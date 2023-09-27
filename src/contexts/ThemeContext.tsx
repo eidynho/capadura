@@ -25,7 +25,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
             setTheme(storedTheme);
 
             if (storedTheme === "dark") {
-                document.documentElement.classList.toggle("dark");
+                document.documentElement.classList.add("dark");
             }
         } else {
             const userPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -34,7 +34,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
             setTheme(newTheme);
 
             if (newTheme === "dark") {
-                document.documentElement.classList.toggle("dark");
+                document.documentElement.classList.add("dark");
             }
         }
     }, []);

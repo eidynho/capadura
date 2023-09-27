@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { ProfileDataResponse } from "@/endpoints/queries/usersQueries";
 
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/Avatar";
@@ -40,7 +42,12 @@ export function UserHoverCard({ user }: UserHoverCardProps) {
                     <AvatarFallback>{user.username[0]?.toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <div className="space-y-1">
-                    <h4 className="text-sm font-semibold">@{user.username}</h4>
+                    <Link
+                        href={`@${user.username}`}
+                        className="text-sm font-semibold hover:underline"
+                    >
+                        @{user.username}
+                    </Link>
                     <p className="text-sm">{user.description}</p>
                     <div className="flex items-center gap-2 pt-2">
                         <LinkUnderline href="" className="text-sm">

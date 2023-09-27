@@ -26,7 +26,7 @@ const CircleEffect = () => (
 
 export function CTASection() {
     return (
-        <div className="mx-auto max-w-7xl bg-light py-12 dark:bg-dark lg:px-8 lg:py-16">
+        <div className="mx-auto max-w-7xl bg-light py-12 transition-colors dark:bg-dark lg:px-8 lg:py-16">
             <div className="relative isolate overflow-hidden rounded-2xl bg-black px-6 pb-16 pt-16 shadow-2xl sm:rounded-3xl sm:px-16 lg:flex lg:gap-x-20 lg:px-20 lg:pb-0 lg:pt-0">
                 <CircleEffect />
                 <div className="mx-auto max-w-lg lg:flex-auto lg:py-32 lg:text-center">

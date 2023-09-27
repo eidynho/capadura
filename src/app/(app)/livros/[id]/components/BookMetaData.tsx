@@ -136,7 +136,7 @@ export function BookMetaData({ bookData }: BookMetaDataProps) {
                 </TooltipProvider>
             </div>
 
-            <div className="rounded-md border pb-4 text-black dark:text-white">
+            <div className="rounded-md border bg-white pb-4 text-black dark:bg-dark dark:text-white">
                 <div className="mx-4 mt-4 flex justify-between text-sm">
                     <span className="font-semibold">Escrito por</span>
 

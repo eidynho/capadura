@@ -1,10 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";
 
 import { LikeBook } from "../queries/likeBookQueries";
 import { GetMetadataCount } from "@/app/(app)/livros/[id]/components/BookMetaData";
+
+import { useToast } from "@/components/ui/UseToast";
 
 export interface UseAddLikeBookProps {
     bookId: string;
@@ -12,6 +13,8 @@ export interface UseAddLikeBookProps {
 
 export function useAddLikeBook() {
     const queryClient = useQueryClient();
+
+    const { toast } = useToast();
 
     return useMutation({
         mutationFn: async ({ bookId }: UseAddLikeBookProps) => {
@@ -45,7 +48,12 @@ export function useAddLikeBook() {
             );
         },
         onError: () => {
-            toast.error("Erro ao curtir livro.");
+            toast({
+                title: "Erro ao curtir livro.",
+                description: "Tente novamente mais tarde.",
+                variant: "destructive",
+            });
+
             throw new Error("Failed on like book.");
         },
     });
@@ -58,6 +66,8 @@ export interface UseDislikeBookProps {
 
 export function useDislikeBook() {
     const queryClient = useQueryClient();
+
+    const { toast } = useToast();
 
     return useMutation({
         mutationFn: async ({ likeId }: UseDislikeBookProps) => {
@@ -86,7 +96,12 @@ export function useDislikeBook() {
             );
         },
         onError: () => {
-            toast.error("Erro ao descurtir livro.");
+            toast({
+                title: "Erro ao descurtir livro.",
+                description: "Tente novamente mais tarde.",
+                variant: "destructive",
+            });
+
             throw new Error("Failed on dislike book.");
         },
     });

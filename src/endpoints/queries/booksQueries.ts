@@ -14,6 +14,7 @@ export interface BookData {
     description?: string | null;
     imageKey?: string | null;
     imageUrl?: string;
+    isbn13?: string;
 }
 
 interface UseFetchBookProps {

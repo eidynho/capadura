@@ -1,9 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";
 
 import { FavoriteBooksData } from "../queries/favoriteBooksQueries";
+
+import { useToast } from "@/components/ui/UseToast";
 
 interface UseCreateFavoriteBookProps {
     username: string;
@@ -13,6 +14,8 @@ interface UseCreateFavoriteBookProps {
 
 export function useCreateFavoriteBook() {
     const queryClient = useQueryClient();
+
+    const { toast } = useToast();
 
     return useMutation({
         mutationFn: async ({ order, bookId }: UseCreateFavoriteBookProps) => {
@@ -36,10 +39,17 @@ export function useCreateFavoriteBook() {
                 },
             );
 
-            toast.success("Livro favorito adicionado.");
+            toast({
+                title: "Livro favorito adicionado ao perfil.",
+            });
         },
         onError: () => {
-            toast.error("Erro ao salvar livro favorito.");
+            toast({
+                title: "Erro ao adicionar livro favorito ao perfil.",
+                description: "Tente novamente mais tarde.",
+                variant: "destructive",
+            });
+
             throw new Error("Failed on create favorite book.");
         },
     });
@@ -54,6 +64,8 @@ interface UseUpdateFavoriteBookProps {
 
 export function useUpdateFavoriteBook() {
     const queryClient = useQueryClient();
+
+    const { toast } = useToast();
 
     return useMutation({
         mutationFn: async ({ order, bookId, favoriteBookId }: UseUpdateFavoriteBookProps) => {
@@ -78,10 +90,17 @@ export function useUpdateFavoriteBook() {
                 },
             );
 
-            toast.success("Livro favorito atualizado.");
+            toast({
+                title: "O livro favorito foi atualizado.",
+            });
         },
         onError: () => {
-            toast.error("Erro ao salvar livro favorito.");
+            toast({
+                title: "Erro ao salvar o livro favorito no perfil.",
+                description: "Tente novamente mais tarde.",
+                variant: "destructive",
+            });
+
             throw new Error("Failed on update favorite book");
         },
     });
@@ -95,6 +114,8 @@ interface UseRemoveFavoriteBookProps {
 
 export function useRemoveFavoriteBook() {
     const queryClient = useQueryClient();
+
+    const { toast } = useToast();
 
     return useMutation({
         mutationFn: async ({ bookIdToRemove }: UseRemoveFavoriteBookProps) => {
@@ -112,10 +133,16 @@ export function useRemoveFavoriteBook() {
                 },
             );
 
-            toast.success("Livro favorito removido.");
+            toast({
+                title: "O livro favorito foi removido do perfil.",
+            });
         },
         onError: () => {
-            toast.error("Erro ao remover livro favorito.");
+            toast({
+                title: "Erro ao remover livro favorito do perfil.",
+                description: "Tente novamente mais tarde.",
+                variant: "destructive",
+            });
             throw new Error("Failed on remove favorite book.");
         },
     });

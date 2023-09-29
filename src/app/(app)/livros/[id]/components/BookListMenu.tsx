@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { ChevronDown, Check, List } from "lucide-react";
-import { toast } from "react-toastify";
 
 import { BookData } from "@/endpoints/queries/booksQueries";
 import { useAuthContext } from "@/contexts/AuthContext";
@@ -13,6 +12,7 @@ import {
     useAddBookToABookList,
     useRemoveBookFromBookList,
 } from "@/endpoints/mutations/booksOnBookListMutations";
+import { useToast } from "@/components/ui/UseToast";
 
 import { Button } from "@/components/ui/Button";
 import {
@@ -30,6 +30,7 @@ interface BookListMenuProps {
 
 export function BookListMenu({ bookData }: BookListMenuProps) {
     const { user } = useAuthContext();
+    const { toast } = useToast();
 
     const [isOpen, setIsOpen] = useState(false);
 
@@ -42,7 +43,10 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
     const createBookList = useCreateBookList();
     function handleCreateBookList() {
         if (!user) {
-            toast.error("Usuário não encontrado.");
+            toast({
+                title: "Usuário não encontrado.",
+                variant: "destructive",
+            });
             return;
         }
 
@@ -55,7 +59,10 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
     const addBookToABookList = useAddBookToABookList();
     function handleAddBookToABookList(bookListId: string) {
         if (!user) {
-            toast.error("Usuário não encontrado.");
+            toast({
+                title: "Usuário não encontrado.",
+                variant: "destructive",
+            });
             return;
         }
 
@@ -69,7 +76,10 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
     const removeBookFromBookList = useRemoveBookFromBookList();
     function handleRemoveBookFromBookList(bookListId: string, bookOnBookListId: string) {
         if (!user) {
-            toast.error("Usuário não encontrado.");
+            toast({
+                title: "Usuário não encontrado.",
+                variant: "destructive",
+            });
             return;
         }
 

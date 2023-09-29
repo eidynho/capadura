@@ -1,11 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";
 
 import { BookListData } from "../queries/bookListsQueries";
 import { BookOnBookList, BookOnBookListWithBook } from "@/app/(app)/usuario/[username]/listas/page";
 import { GetMetadataCount } from "@/app/(app)/livros/[id]/components/BookMetaData";
+
+import { useToast } from "@/components/ui/UseToast";
 
 export interface UseAddBookToABookListProps {
     userId: string;
@@ -15,6 +16,8 @@ export interface UseAddBookToABookListProps {
 
 export function useAddBookToABookList() {
     const queryClient = useQueryClient();
+
+    const { toast } = useToast();
 
     return useMutation({
         mutationFn: async ({ bookId, bookListId }: UseAddBookToABookListProps) => {
@@ -69,7 +72,12 @@ export function useAddBookToABookList() {
             );
         },
         onError: () => {
-            toast.error("Erro ao adicionar livro na lista.");
+            toast({
+                title: "Erro ao adicionar o livro na lista.",
+                description: "Tente novamente mais tarde.",
+                variant: "destructive",
+            });
+
             throw new Error("Failed on add book in booklist.");
         },
     });
@@ -84,6 +92,8 @@ export interface UseRemoveBookFromBookListProps {
 
 export function useRemoveBookFromBookList() {
     const queryClient = useQueryClient();
+
+    const { toast } = useToast();
 
     return useMutation({
         mutationFn: async ({ bookOnBookListId }: UseRemoveBookFromBookListProps) => {
@@ -147,7 +157,12 @@ export function useRemoveBookFromBookList() {
             );
         },
         onError: () => {
-            toast.error("Erro ao remover livro da lista.");
+            toast({
+                title: "Erro ao remover livro da lista.",
+                description: "Tente novamente mais tarde.",
+                variant: "destructive",
+            });
+
             throw new Error("Failed on remove book from booklist.");
         },
     });

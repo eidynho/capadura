@@ -139,11 +139,8 @@ export function BookMetaData({ bookData }: BookMetaDataProps) {
             <div className="rounded-md border bg-white pb-4 text-black dark:bg-dark dark:text-white">
                 <div className="mx-4 mt-4 flex justify-between text-sm">
                     <span className="font-semibold">Escrito por</span>
-
                     {!!bookData.authors?.[0] ? (
-                        <LinkUnderline href="" className="font-semibold">
-                            {bookData.authors[0]}
-                        </LinkUnderline>
+                        <span className="font-semibold">{bookData.authors[0]}</span>
                     ) : (
                         <span>-</span>
                     )}
@@ -160,7 +157,6 @@ export function BookMetaData({ bookData }: BookMetaDataProps) {
 
                 <div className="mx-4 flex justify-between text-sm">
                     <span className="font-semibold">Editora</span>
-
                     <span>{bookData.publisher ?? "Sem informação"}</span>
                 </div>
 
@@ -168,7 +164,6 @@ export function BookMetaData({ bookData }: BookMetaDataProps) {
 
                 <div className="mx-4 flex justify-between text-sm">
                     <span className="font-semibold">Idioma</span>
-
                     <span>{bookData.language ?? "Sem informação"}</span>
                 </div>
 
@@ -176,8 +171,19 @@ export function BookMetaData({ bookData }: BookMetaDataProps) {
 
                 <div className="mx-4 flex justify-between text-sm">
                     <span className="font-semibold">Páginas</span>
-
                     <span>{bookData.pageCount ?? "Sem informação"}</span>
+                </div>
+
+                <Separator className="my-4" />
+
+                <div className="mx-4 flex justify-between text-sm">
+                    <span className="font-semibold">ISBN10</span>
+                    <span>{bookData.isbn13 ? bookData.isbn13.slice(3) : "Sem informação"}</span>
+                </div>
+
+                <div className="mx-4 mt-4 flex justify-between text-sm">
+                    <span className="font-semibold">ISBN13</span>
+                    <span>{bookData.isbn13 ?? "Sem informação"}</span>
                 </div>
 
                 <Separator className="my-4" />

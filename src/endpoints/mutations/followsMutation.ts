@@ -1,8 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";
+
 import { GetUserFollowersResponse, GetUsersFollowsCountResponse } from "../queries/followsQueries";
+
+import { useToast } from "@/components/ui/UseToast";
 
 interface UseFollowUserProps {
     followerId: string;
@@ -11,6 +13,8 @@ interface UseFollowUserProps {
 
 export function useFollowUser() {
     const queryClient = useQueryClient();
+
+    const { toast } = useToast();
 
     return useMutation({
         mutationFn: async ({ followerId, followingId }: UseFollowUserProps) => {
@@ -59,7 +63,12 @@ export function useFollowUser() {
             );
         },
         onError: () => {
-            toast.error("Erro ao seguir usuário.");
+            toast({
+                title: "Erro ao seguir usuário.",
+                description: "Tente novamente mais tarde.",
+                variant: "destructive",
+            });
+
             throw new Error("Failed on follow user.");
         },
     });
@@ -72,6 +81,8 @@ interface UseUnfollowUserProps {
 
 export function useUnfollowUser() {
     const queryClient = useQueryClient();
+
+    const { toast } = useToast();
 
     return useMutation({
         mutationFn: async ({ followerId, followingId }: UseUnfollowUserProps) => {
@@ -161,7 +172,12 @@ export function useUnfollowUser() {
             );
         },
         onError: () => {
-            toast.error("Erro ao desseguir usuário.");
+            toast({
+                title: "Erro ao desseguir usuário.",
+                description: "Tente novamente mais tarde.",
+                variant: "destructive",
+            });
+
             throw new Error("Failed on unfollow user.");
         },
     });

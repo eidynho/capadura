@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";
 import { ProfileDataResponse } from "../queries/usersQueries";
+
+import { useToast } from "@/components/ui/UseToast";
 
 export interface UseRegisterUserProps {
     username: string;
@@ -11,6 +12,8 @@ export interface UseRegisterUserProps {
 }
 
 export function useRegisterUser() {
+    const { toast } = useToast();
+
     return useMutation({
         mutationFn: async ({ username, email, password }: UseRegisterUserProps) => {
             await api.post("/users", {
@@ -20,7 +23,12 @@ export function useRegisterUser() {
             });
         },
         onError: () => {
-            toast.error("Ocorreu um erro no cadastro.");
+            toast({
+                title: "Ocorreu um erro no cadastro.",
+                description: "Tente novamente mais tarde.",
+                variant: "destructive",
+            });
+
             throw new Error("Failed on register user.");
         },
     });
@@ -38,6 +46,8 @@ export interface UseSignInProps {
 }
 
 export function useSignIn() {
+    const { toast } = useToast();
+
     return useMutation({
         mutationFn: async ({ email, password }: UseSignInProps) => {
             const { data } = await api.post("/sessions", {
@@ -48,7 +58,12 @@ export function useSignIn() {
             return data as UseSignInResponse;
         },
         onError: () => {
-            toast.error("Ocorreu um erro ao entrar.");
+            toast({
+                title: "Ocorreu um erro ao entrar.",
+                description: "O e-mail ou a senha estão incorretos.",
+                variant: "destructive",
+            });
+
             throw new Error("Failed on sign in.");
         },
     });
@@ -68,6 +83,8 @@ export interface UseUpdateUserDataProps {
 
 export function useUpdateUserData() {
     const queryClient = useQueryClient();
+
+    const { toast } = useToast();
 
     return useMutation({
         mutationFn: async ({
@@ -102,7 +119,12 @@ export function useUpdateUserData() {
             );
         },
         onError: () => {
-            toast.error("Erro ao atualizar perfil.");
+            toast({
+                title: "Erro ao atualizar perfil.",
+                description: "Tente novamente mais tarde.",
+                variant: "destructive",
+            });
+
             throw new Error("Failed on update user data.");
         },
     });

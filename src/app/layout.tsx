@@ -1,14 +1,13 @@
 import "@/styles/global.css";
-import "react-toastify/dist/ReactToastify.css";
 
 import { ReactNode } from "react";
-import { ToastContainer } from "react-toastify";
 
 import { Providers } from "@/contexts/Providers";
 import { manrope } from "@/constants/fonts";
 
 import { AuthDialog } from "@/components/AuthDialog";
 import { MainContainer } from "@/components/layout/MainContainer";
+import { Toaster } from "@/components/ui/Toaster";
 
 interface RootLayoutProps {
     children: ReactNode;
@@ -30,19 +29,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                             <MainContainer>{children}</MainContainer>
                         </div>
 
-                        <ToastContainer
-                            position="bottom-right"
-                            autoClose={3000}
-                            hideProgressBar
-                            newestOnTop={false}
-                            closeOnClick
-                            rtl={false}
-                            pauseOnFocusLoss={false}
-                            draggable
-                            pauseOnHover
-                            closeButton={false}
-                            theme="light"
-                        />
+                        <Toaster />
                         <AuthDialog />
                     </Providers>
                 </div>

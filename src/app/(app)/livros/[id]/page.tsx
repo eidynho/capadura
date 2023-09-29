@@ -7,13 +7,13 @@ import { API_BASE_URL, BASE_URL } from "@/constants/api";
 
 import { BookData } from "@/endpoints/queries/booksQueries";
 
+import { BookDescription } from "./BookDescription";
 import { BookGradient } from "./components/BookGradient";
 import { BookHeader } from "./components/BookHeader";
 import { BookMetaData } from "./components/BookMetaData";
 import { Container } from "@/components/layout/Container";
 import { RatingChart } from "@/components/RatingChart";
-import { ReadsProgress } from "./components/Read";
-import { BookDescription } from "./BookDescription";
+import { UserReads } from "./components/Read";
 
 interface BookProps {
     params: {
@@ -63,6 +63,22 @@ export async function generateMetadata({ params }: BookProps): Promise<Metadata>
 const getBookData = async (bookId: string) => {
     const response = await fetch(`${API_BASE_URL}/book/${bookId}`);
     const data = await response.json();
+
+    if (!data) {
+        // revalidate data to verify if book exists now
+        const refetchResponse = await fetch(`${API_BASE_URL}/book/${bookId}`, {
+            next: {
+                revalidate: 0,
+            },
+        });
+        const refetchData = await refetchResponse.json();
+
+        if (!refetchData) {
+            return notFound();
+        }
+
+        return refetchData as BookData;
+    }
 
     return data as BookData;
 };
@@ -127,7 +143,7 @@ export default async function Book({ params }: BookProps) {
                         <div className="flex w-full flex-col gap-2">
                             <BookDescription description={bookData.description} />
 
-                            <ReadsProgress bookData={bookData} />
+                            <UserReads bookData={bookData} />
                         </div>
                     </div>
                 </div>

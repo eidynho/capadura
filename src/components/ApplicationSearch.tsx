@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Search } from "lucide-react";
-import { toast } from "react-toastify";
 
 import { useDebounce } from "@/hooks/useDebounce";
 import { useDidMountEffect } from "@/hooks/useDidMountEffect";
+import { useToast } from "@/components/ui/UseToast";
 
 import { BookSearchItem } from "./BookSearchItem";
 import { Button } from "./ui/Button";
@@ -61,6 +61,8 @@ export interface GoogleAPIData {
 }
 
 export function ApplicationSearch() {
+    const { toast } = useToast();
+
     const [books, setBooks] = useState<GoogleAPIData>({
         items: [],
         totalItems: 0,
@@ -111,7 +113,12 @@ export function ApplicationSearch() {
                     totalItems: data.totalItems,
                 });
             } catch (err) {
-                toast.error("Erro ao carregar livros.");
+                toast({
+                    title: "Erro ao carregar livros.",
+                    description: "Tente novamente mais tarde.",
+                    variant: "destructive",
+                });
+
                 throw err;
             } finally {
                 setIsFetchingBooks(false);

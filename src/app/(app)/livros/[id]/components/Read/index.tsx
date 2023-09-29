@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { format, parseISO } from "date-fns";
 import { BookMarked, Lock, MoreVertical, PlusCircle, Undo2, Unlock } from "lucide-react";
-import { toast } from "react-toastify";
 import { pt } from "date-fns/locale";
 
 import { useAuthContext } from "@/contexts/AuthContext";
@@ -24,6 +23,7 @@ import {
     useDeleteProgress,
     useUpdateProgress,
 } from "@/endpoints/mutations/progressMutations";
+import { useToast } from "@/components/ui/UseToast";
 
 import { CreateReadReviewDialog } from "./ReadReview/CreateReadReviewDialog";
 import { UpdateReadReviewDialog } from "./ReadReview/UpdateReadReviewDialog";
@@ -60,12 +60,13 @@ export interface DeleteProgressData {
     progressId: string;
 }
 
-interface ReadsProgressProps {
+interface UserReadsProps {
     bookData: BookData | null;
 }
 
-export function ReadsProgress({ bookData }: ReadsProgressProps) {
+export function UserReads({ bookData }: UserReadsProps) {
     const { user, isAuthenticated } = useAuthContext();
+    const { toast } = useToast();
 
     const [isOpenUpdateProgressDialog, setIsOpenUpdateProgressDialog] = useState(false);
     const [isOpenDeleteProgressDialog, setIsOpenDeleteProgressDialog] = useState(false);
@@ -97,8 +98,12 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
     async function handleStartNewRead() {
         if (!bookData?.id || startNewRead.isLoading) return;
 
-        if (userReads && userReads.items?.length > 50) {
-            toast.error("Limite de leitura atingido.");
+        if (userReads && userReads.items?.length >= 10) {
+            toast({
+                title: "Limite de leitura atingido.",
+                description: "Você pode registrar até 10 leituras por livro",
+                variant: "destructive",
+            });
             return;
         }
 
@@ -267,7 +272,11 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
         if (!bookData || deleteProgress.isLoading) return;
 
         if (!progressDeleteData?.readId || !progressDeleteData?.progressId) {
-            toast.error("Erro ao deletar progresso de leitura.");
+            toast({
+                title: "Erro ao deletar progresso de leitura.",
+                description: "Atualize a página e tente novamente.",
+                variant: "destructive",
+            });
             return;
         }
 
@@ -327,7 +336,7 @@ export function ReadsProgress({ bookData }: ReadsProgressProps) {
             ? " em andamento"
             : " finalizada";
 
-    if (!isAuthenticated) return;
+    if (!isAuthenticated || !filteredReads) return;
 
     return (
         <>

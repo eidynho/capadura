@@ -1,10 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";
 
 import { ReadData, ReadsDataResponse } from "../queries/readsQueries";
 import { GetMetadataCount } from "@/app/(app)/livros/[id]/components/BookMetaData";
+
+import { useToast } from "@/components/ui/UseToast";
 
 interface UseStartNewReadProps {
     bookId: string;
@@ -12,6 +13,8 @@ interface UseStartNewReadProps {
 
 export function useStartNewRead() {
     const queryClient = useQueryClient();
+
+    const { toast } = useToast();
 
     return useMutation({
         mutationFn: async ({ bookId }: UseStartNewReadProps) => {
@@ -39,9 +42,19 @@ export function useStartNewRead() {
                     };
                 },
             );
+
+            toast({
+                title: "Uma leitura foi iniciada.",
+                description: "Adicione progressos para completar a leitura.",
+            });
         },
         onError: () => {
-            toast.error("Erro ao iniciar a leitura.");
+            toast({
+                title: "Erro ao iniciar a leitura.",
+                description: "Tente novamente mais tarde.",
+                variant: "destructive",
+            });
+
             throw new Error("Failed on start new read.");
         },
     });
@@ -60,6 +73,8 @@ interface UseUpdateReadProps {
 
 export function useUpdateRead() {
     const queryClient = useQueryClient();
+
+    const { toast } = useToast();
 
     return useMutation({
         mutationFn: async ({
@@ -145,9 +160,18 @@ export function useUpdateRead() {
                     },
                 );
             }
+
+            toast({
+                title: "Os dados da leitura foram alterados.",
+            });
         },
         onError: () => {
-            toast.error("Erro ao alterar dados da leitura.");
+            toast({
+                title: "Erro ao editar os dados da leitura.",
+                description: "Tente novamente mais tarde.",
+                variant: "destructive",
+            });
+
             throw new Error("Failed on update read data.");
         },
     });
@@ -161,6 +185,8 @@ interface UseDeleteReadProps {
 
 export function useDeleteRead() {
     const queryClient = useQueryClient();
+
+    const { toast } = useToast();
 
     return useMutation({
         mutationFn: async ({ readId }: UseDeleteReadProps) => {
@@ -200,10 +226,17 @@ export function useDeleteRead() {
                 );
             }
 
-            toast.success("Sua leitura foi excluída.");
+            toast({
+                title: "A sua leitura foi excluída.",
+            });
         },
         onError: () => {
-            toast.error("Erro ao deletar leitura.");
+            toast({
+                title: "Erro ao deletar leitura.",
+                description: "Tente novamente mais tarde.",
+                variant: "destructive",
+            });
+
             throw new Error("Failed on delete read.");
         },
     });
@@ -217,6 +250,8 @@ interface UseToggleReadPrivacyProps {
 
 export function useToggleReadPrivacy() {
     const queryClient = useQueryClient();
+
+    const { toast } = useToast();
 
     return useMutation({
         mutationFn: async ({ readId, isPrivate }: UseToggleReadPrivacyProps) => {
@@ -243,10 +278,17 @@ export function useToggleReadPrivacy() {
                 },
             );
 
-            toast.success("A privacidade da leitura foi alterada.");
+            toast({
+                title: "A privacidade da leitura foi alterada.",
+            });
         },
         onError: () => {
-            toast.error("Erro ao alterar privacidade da leitura.");
+            toast({
+                title: "Erro ao alterar privacidade da leitura.",
+                description: "Tente novamente mais tarde.",
+                variant: "destructive",
+            });
+
             throw new Error("Failed on update read privacy.");
         },
     });
@@ -262,6 +304,8 @@ export type ReadStatus = "ACTIVE" | "FINISHED" | "CANCELLED" | "DELETED";
 
 export function useToggleReadStatus() {
     const queryClient = useQueryClient();
+
+    const { toast } = useToast();
 
     return useMutation({
         mutationFn: async ({ bookId, readId, status }: UseToggleReadStatusProps) => {
@@ -289,10 +333,17 @@ export function useToggleReadStatus() {
                 },
             );
 
-            toast.success("O status da leitura foi alterado.");
+            toast({
+                title: "O status da leitura foi alterado.",
+            });
         },
         onError: () => {
-            toast.error("Erro ao alterar o status da leitura.");
+            toast({
+                title: "Erro ao alterar o status da leitura.",
+                description: "Tente novamente mais tarde.",
+                variant: "destructive",
+            });
+
             throw new Error("Failed on update read status.");
         },
     });

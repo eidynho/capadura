@@ -14,6 +14,7 @@ import getGoogleOAuthURL from "@/utils/get-google-url";
 import { ProfileDataResponse } from "@/endpoints/queries/usersQueries";
 
 import { useRegisterUser } from "@/endpoints/mutations/usersMutations";
+import { useToast } from "@/components/ui/UseToast";
 
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -26,6 +27,7 @@ const signUpFormSchema = z.object({
         .max(50, { message: "Máximo 50 caracteres." }),
     email: z
         .string()
+        .min(1, { message: "Campo obrigatório" })
         .max(200, { message: "Máximo 200 caracteres." })
         .email({ message: "E-mail inválido." }),
     password: z.string().min(6, { message: "Mínimo 6 caracteres" }),
@@ -35,6 +37,7 @@ type SignUpFormSchema = z.infer<typeof signUpFormSchema>;
 
 export default function SignUp() {
     const { signIn } = useAuthContext();
+    const { toast } = useToast();
 
     const [showPassword, setShowPassword] = useState(false);
     const [isValidatingUsername, setIsValidatingUsername] = useState(false);
@@ -94,6 +97,12 @@ export default function SignUp() {
 
             setUsernameAlreadyExists(existsUsername);
         } catch {
+            toast({
+                title: "Falha ao verificar se o usuário já existe.",
+                description: "Tente novamente mais tarde.",
+                variant: "destructive",
+            });
+
             throw new Error("Failed on verify user username.");
         } finally {
             setIsValidatingUsername(false);

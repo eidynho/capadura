@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/Label";
 const loginFormSchema = z.object({
     email: z
         .string()
+        .min(1, { message: "Campo obrigatório" })
         .max(200, { message: "Máximo 200 caracteres." })
         .email({ message: "E-mail inválido." }),
     password: z.string().min(1, { message: "Campo obrigatório" }),

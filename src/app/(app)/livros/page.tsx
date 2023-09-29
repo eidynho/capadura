@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, ArrowRight, BookMarked, ImageOff, Search, User } from "lucide-react";
-import { toast } from "react-toastify";
 
 import { useDebounce } from "@/hooks/useDebounce";
 import { useDidMountEffect } from "@/hooks/useDidMountEffect";
+import { useToast } from "@/components/ui/UseToast";
+
 import { fetchGoogleBooks } from "@/utils/fetch-google-books";
 import { GoogleAPIData } from "@/components/ApplicationSearch";
 
@@ -27,6 +28,7 @@ export default function Books() {
     const [page, setPage] = useState(1);
     const [searchName, setSearchName] = useState("ponto de inflexão");
 
+    const { toast } = useToast();
     const debouncedSearchName = useDebounce<string>(searchName, 400);
 
     useEffect(() => {
@@ -43,7 +45,12 @@ export default function Books() {
                     totalItems: data.totalItems,
                 });
             } catch (err) {
-                toast.error("Erro ao carregar os livros.");
+                toast({
+                    title: "Erro ao carregar os livros.",
+                    description: "Tente novamente mais tarde.",
+                    variant: "destructive",
+                });
+
                 throw err;
             } finally {
                 setIsFetchingBooks(false);

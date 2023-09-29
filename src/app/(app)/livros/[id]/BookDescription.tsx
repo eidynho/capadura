@@ -42,7 +42,7 @@ export function BookDescription({ description, className }: BookDescriptionProps
                     }}
                 ></div>
                 {!showFullDescription && (
-                    <div className="absolute left-0 top-0 z-0 h-full w-full bg-gradient-to-t from-light via-transparent transition-all dark:from-dark"></div>
+                    <div className="absolute bottom-0 left-0 z-0 h-1/2 w-full bg-gradient-to-t from-light to-transparent transition-all dark:from-dark"></div>
                 )}
             </div>
             {maximumHeightExceeded && (

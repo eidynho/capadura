@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";
 import { BookListData } from "../queries/bookListsQueries";
+
+import { useToast } from "@/components/ui/UseToast";
 
 export interface UseCreateBookListProps {
     userId: string;
@@ -13,6 +14,8 @@ export interface UseCreateBookListProps {
 
 export function useCreateBookList() {
     const queryClient = useQueryClient();
+
+    const { toast } = useToast();
 
     return useMutation({
         mutationFn: async ({ name, description, image }: UseCreateBookListProps) => {
@@ -33,7 +36,12 @@ export function useCreateBookList() {
             );
         },
         onError: () => {
-            toast.error("Erro ao criar lista.");
+            toast({
+                title: "Erro ao criar lista.",
+                description: "Tente novamente mais tarde.",
+                variant: "destructive",
+            });
+
             throw new Error("Failed on create booklist.");
         },
     });
@@ -50,6 +58,8 @@ interface UseUpdateBookListProps {
 
 export function useUpdateBookList() {
     const queryClient = useQueryClient();
+
+    const { toast } = useToast();
 
     return useMutation({
         mutationFn: async ({ bookListId, name, description, image }: UseUpdateBookListProps) => {
@@ -89,10 +99,17 @@ export function useUpdateBookList() {
                 refetchType: "none",
             });
 
-            toast.success("Lista atualizada com sucesso.");
+            toast({
+                title: "Lista atualizada com sucesso.",
+            });
         },
         onError: () => {
-            toast.error("Erro ao atualizar a lista.");
+            toast({
+                title: "Erro ao atualizar a lista.",
+                description: "Tente novamente mais tarde.",
+                variant: "destructive",
+            });
+
             throw new Error("Failed on update booklist.");
         },
     });
@@ -105,6 +122,8 @@ interface UseDeleteBookListProps {
 
 export function useDeleteBookList() {
     const queryClient = useQueryClient();
+
+    const { toast } = useToast();
 
     return useMutation({
         mutationFn: async ({ bookListId }: UseDeleteBookListProps) => {
@@ -128,7 +147,12 @@ export function useDeleteBookList() {
             });
         },
         onError: () => {
-            toast.error("Erro ao deletar lista.");
+            toast({
+                title: "Erro ao deletar lista.",
+                description: "Tente novamente mais tarde.",
+                variant: "destructive",
+            });
+
             throw new Error("Failed on delete booklist.");
         },
     });

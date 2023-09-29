@@ -186,33 +186,3 @@ a {
 .dialog-overlay[data-state="closed"] {
     animation: fadeOut 150ms ease-in;
 }
-
-/* react-toastify styles */
-.Toastify__toast--info {
-    background-color:#FFF !important;
-    border: 2px solid #3b82f6;
-    border-radius: 0.5rem !important;
-    color: #000 !important;
-    box-shadow: 0.25rem 0.25rem #3b82f6 !important;
-}
-.Toastify__toast--success {
-    background-color:#FFF !important;
-    border: 2px solid #22C55E;
-    border-radius: 0.5rem !important;
-    color: #000 !important;
-    box-shadow: 0.25rem 0.25rem #22C55E !important;
-}
-.Toastify__toast--warning {
-    background-color:#FFF !important;
-    border: 2px solid #eab308;
-    border-radius: 0.5rem !important;
-    color: #000 !important;
-    box-shadow: 0.25rem 0.25rem #eab308 !important;
-}
-.Toastify__toast--error {
-    background-color:#FFF !important;
-    border: 2px solid #ef4444;
-    border-radius: 0.5rem !important;
-    color: #000 !important;
-    box-shadow: 0.25rem 0.25rem #ef4444 !important;
-}

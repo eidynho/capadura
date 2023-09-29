@@ -3,7 +3,6 @@
 import { Fragment, useEffect, useState } from "react";
 import { isValid, parse } from "date-fns";
 import { Loader2 } from "lucide-react";
-import { toast } from "react-toastify";
 
 import { BookDataFromGoogle, GoogleAPIData } from "@/components/ApplicationSearch";
 import { BookData } from "@/endpoints/queries/booksQueries";
@@ -18,6 +17,7 @@ import {
     useRemoveFavoriteBook,
     useUpdateFavoriteBook,
 } from "@/endpoints/mutations/favoriteBooksMutations";
+import { useToast } from "@/components/ui/UseToast";
 
 import { BookSearchItem } from "@/components/BookSearchItem";
 import { Button } from "@/components/ui/Button";
@@ -37,9 +37,10 @@ interface FavoriteBooksProps {
 }
 
 export function FavoriteBooks({ username }: FavoriteBooksProps) {
+    const { toast } = useToast();
+
     const [isOpen, setIsOpen] = useState(false);
 
-    // const [isLoading, setIsLoading] = useState(false);
     const [isFetchingBooks, setIsFetchingBooks] = useState(false);
 
     const [currentBook, setCurrentBook] = useState<BookData | null>(null);
@@ -90,7 +91,12 @@ export function FavoriteBooks({ username }: FavoriteBooksProps) {
                     totalItems: data.totalItems,
                 });
             } catch (err) {
-                toast.error("Erro ao carregar livros.");
+                toast({
+                    title: "Erro ao carregar livros.",
+                    description: "Tente novamente mais tarde.",
+                    variant: "destructive",
+                });
+
                 throw err;
             } finally {
                 setIsFetchingBooks(false);

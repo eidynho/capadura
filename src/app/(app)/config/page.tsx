@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { toast } from "react-toastify";
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
 
 import { useAuthContext } from "@/contexts/AuthContext";
@@ -12,6 +11,8 @@ import { signOut } from "@/utils/sign-out";
 
 import { ProfileDataResponse } from "@/endpoints/queries/usersQueries";
 import { useUpdateUserData } from "@/endpoints/mutations/usersMutations";
+
+import { useToast } from "@/components/ui/UseToast";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
@@ -82,6 +83,7 @@ type ProfileFormSchema = z.infer<typeof profileFormSchema>;
 
 export default function UserConfigs() {
     const { user } = useAuthContext();
+    const { toast } = useToast();
 
     const [isValidatingUsername, setIsValidatingUsername] = useState(false);
     const [containsInvalidChars, setContainsInvalidChars] = useState(false);
@@ -153,7 +155,9 @@ export default function UserConfigs() {
                         setValue("twitter", "");
                     }
 
-                    toast.success("Seu perfil foi atualizado.");
+                    toast({
+                        title: "Seu perfil foi atualizado.",
+                    });
                 },
             },
         );
@@ -185,6 +189,12 @@ export default function UserConfigs() {
 
             setUsernameAlreadyExists(existsUsername);
         } catch {
+            toast({
+                title: "Falha ao verificar se o usuário já existe.",
+                description: "Tente novamente mais tarde.",
+                variant: "destructive",
+            });
+
             throw new Error("Failed on verify user username.");
         } finally {
             setIsValidatingUsername(false);

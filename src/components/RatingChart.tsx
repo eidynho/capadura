@@ -3,10 +3,10 @@
 import { SVGProps, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BarChart, Bar, Cell, Tooltip as RechartsTooltip, ResponsiveContainer } from "recharts";
-import { toast } from "react-toastify";
 import { Star, StarHalf } from "phosphor-react";
 
 import { useFetchReadsRating } from "@/endpoints/queries/readsQueries";
+import { useToast } from "@/components/ui/UseToast";
 
 import { RatingStars } from "./RatingStars";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/Tooltip";
@@ -36,6 +36,7 @@ export function RatingChart({ bookId, userId, username }: RatingChartProps) {
     if (!bookId && !userId) return;
 
     const router = useRouter();
+    const { toast } = useToast();
 
     const [barGraphData, setBarGraphData] = useState({ x: 0, y: 0 });
 
@@ -45,7 +46,10 @@ export function RatingChart({ bookId, userId, username }: RatingChartProps) {
     });
 
     if (isErrorBookRatings) {
-        toast.error("Não foi possível exibir as avaliações.");
+        toast({
+            title: "Erro ao exibir as avaliações.",
+            variant: "destructive",
+        });
         return;
     }
     if (!bookRatings) return;

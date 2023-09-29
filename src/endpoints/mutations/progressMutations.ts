@@ -1,10 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-toastify";
 
 import { api } from "@/lib/api";
 
 import { ProgressData } from "../queries/progressQueries";
 import { ReadsDataResponse } from "../queries/readsQueries";
+
+import { useToast } from "@/components/ui/UseToast";
 
 interface UseAddNewProgressProps {
     bookId: string;
@@ -18,6 +19,8 @@ interface UseAddNewProgressProps {
 
 export function useAddNewProgress() {
     const queryClient = useQueryClient();
+
+    const { toast } = useToast();
 
     return useMutation({
         mutationFn: async ({
@@ -67,10 +70,17 @@ export function useAddNewProgress() {
                 },
             );
 
-            toast.success("Progresso adicionado.");
+            toast({
+                title: "Progresso adicionado.",
+            });
         },
         onError: () => {
-            toast.error("Erro ao adicionar o progresso de leitura.");
+            toast({
+                title: "Erro ao adicionar o progresso de leitura.",
+                description: "Tente novamente mais tarde.",
+                variant: "destructive",
+            });
+
             throw new Error("Failed on add new read progress.");
         },
     });
@@ -89,6 +99,8 @@ interface UseUpdateProgressProps {
 
 export function useUpdateProgress() {
     const queryClient = useQueryClient();
+
+    const { toast } = useToast();
 
     return useMutation({
         mutationFn: async ({
@@ -168,10 +180,17 @@ export function useUpdateProgress() {
                 },
             );
 
-            toast.success("Progresso alterado.");
+            toast({
+                title: "O progresso de leitura foi editado.",
+            });
         },
         onError: () => {
-            toast.error("Erro ao alterar o progresso de leitura.");
+            toast({
+                title: "Erro ao editar o progresso de leitura.",
+                description: "Tente novamente mais tarde.",
+                variant: "destructive",
+            });
+
             throw new Error("Failed on update read progress.");
         },
     });
@@ -185,6 +204,8 @@ interface UseDeleteProgressProps {
 
 export function useDeleteProgress() {
     const queryClient = useQueryClient();
+
+    const { toast } = useToast();
 
     return useMutation({
         mutationFn: async ({ progressId }: UseDeleteProgressProps) => {
@@ -211,10 +232,17 @@ export function useDeleteProgress() {
                 },
             );
 
-            toast.success("Progresso deletado.");
+            toast({
+                title: "O progresso de leitura foi deletado.",
+            });
         },
         onError: () => {
-            toast.error("Erro ao deletar o progresso de leitura.");
+            toast({
+                title: "Erro ao deletar o progresso de leitura.",
+                description: "Tente novamente mais tarde.",
+                variant: "destructive",
+            });
+
             throw new Error("Failed on delete read progress.");
         },
     });

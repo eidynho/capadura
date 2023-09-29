@@ -6,12 +6,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Star, StarHalf } from "phosphor-react";
 import { Loader2 } from "lucide-react";
-import { toast } from "react-toastify";
 
 import { BookData } from "@/endpoints/queries/booksQueries";
 import { ReadStatus } from "@/endpoints/mutations/readsMutations";
 
 import { ratingFormat } from "@/utils/rating-format";
+
+import { useToast } from "@/components/ui/UseToast";
 
 import { Button } from "@/components/ui/Button";
 import { Label } from "@/components/ui/Label";
@@ -73,6 +74,8 @@ export function FormReadReview({
     const [hoverPositionRating, setHoverPositionRating] = useState<number>(0);
     const [rating, setRating] = useState<number | null>(null);
 
+    const { toast } = useToast();
+
     const {
         register,
         handleSubmit,
@@ -109,7 +112,11 @@ export function FormReadReview({
     async function submitReview({ content, rating, isSpoiler }: ReviewReadFormSchema) {
         try {
             if (!bookData?.id) {
-                toast.error("Ocorreu um erro ao enviar avaliação.");
+                toast({
+                    title: "Erro ao enviar avaliação.",
+                    description: "O livro não foi encontrado.",
+                    variant: "destructive",
+                });
                 throw new Error("Failed on submit book review: book data not provided.");
             }
 
@@ -136,12 +143,21 @@ export function FormReadReview({
                 endRead: !editData,
             });
 
-            toast.success("Avalição adicionada.");
+            toast({
+                title: editData
+                    ? "A avalição foi editada com sucesso."
+                    : "Uma avalição foi adicionada.",
+            });
             executeOnSubmit();
 
             reset();
         } catch (err) {
-            toast.error("Erro ao avaliar o livro.");
+            toast({
+                title: "Erro ao avaliar o livro.",
+                description: "Atualize a página e tente novamente.",
+                variant: "destructive",
+            });
+
             throw err;
         }
     }

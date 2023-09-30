@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { format, parseISO } from "date-fns";
-import { BookMarked, Lock, MoreVertical, PlusCircle, Undo2, Unlock } from "lucide-react";
+import { BookMarked, Lock, MoreVertical, Undo2, Unlock } from "lucide-react";
 import { pt } from "date-fns/locale";
 
 import { useAuthContext } from "@/contexts/AuthContext";
@@ -25,6 +25,7 @@ import {
 } from "@/endpoints/mutations/progressMutations";
 import { useToast } from "@/components/ui/UseToast";
 
+import { CardUserHover } from "@/components/CardUserHover";
 import { CreateReadReviewDialog } from "./ReadReview/CreateReadReviewDialog";
 import { UpdateReadReviewDialog } from "./ReadReview/UpdateReadReviewDialog";
 import { DeleteReadDialog } from "./DeleteReadDialog";
@@ -33,10 +34,15 @@ import { DeleteProgressDialog } from "./Progress/DeleteProgressDialog";
 import { HandleUpdateProgressProps, UpdateProgressDialog } from "./Progress/UpdateProgressDialog";
 import { Progress } from "./Progress";
 import { RatingStars } from "@/components/RatingStars";
-import { UserHoverCard } from "@/components/UserHoverCard";
 
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import {
+    CardReadAction,
+    CardReadActionDescription,
+    CardReadActionPicture,
+    CardReadActionTitle,
+} from "./CardReadAction";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -45,6 +51,7 @@ import {
 } from "@/components/ui/DropdownMenu";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import { Separator } from "@/components/ui/Separator";
+import { SpiralWavy } from "@/components/svg/SpiralWavy";
 
 export interface EditReadData {
     readId: string;
@@ -329,54 +336,53 @@ export function UserReads({ bookData }: UserReadsProps) {
         return <Badge variant={variant}>{message}</Badge>;
     }
 
-    const tabNoReadsFoundType =
-        currentTab === "all"
-            ? " encontrada"
-            : currentTab === "active"
-            ? " em andamento"
-            : " finalizada";
-
     if (!isAuthenticated || !filteredReads) return;
+
+    const hasPreviousReads = userReads?.items?.length;
+    const lastReadIsFinished = userReads?.items[0]?.status === "FINISHED";
 
     return (
         <>
-            <div className="-mb-px mt-2 flex flex-wrap items-center justify-between text-center text-sm font-medium">
-                <div className="flex flex-wrap items-center gap-y-2 py-1">
-                    <div className="flex items-center gap-2 pl-2 pr-4 text-black dark:text-white">
-                        <BookMarked size={16} />
-                        <h2 className="font-semibold">Minhas leituras</h2>
-                    </div>
-
-                    <Tabs value={currentTab} onValueChange={setCurrentTab} defaultValue="account">
-                        <TabsList>
-                            <TabsTrigger value="all">Todas</TabsTrigger>
-                            <TabsTrigger value="active">Em andamento</TabsTrigger>
-                            <TabsTrigger value="finished">Finalizadas</TabsTrigger>
-                        </TabsList>
-                    </Tabs>
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-y-2">
+                <div className="flex items-center gap-2 pl-2 pr-4 text-black dark:text-white">
+                    <BookMarked size={16} />
+                    <h2 className="font-semibold">Minhas leituras</h2>
                 </div>
 
-                {(!userReads?.items?.length || userReads.items[0].status === "FINISHED") && (
-                    <div className="flex flex-col items-center gap-2">
-                        <div className="flex flex-col items-center justify-center gap-2 lg:flex-row">
-                            <Button size="sm" variant="outline" onClick={handleStartNewRead}>
-                                <PlusCircle size={16} />
-                                Nova leitura
-                            </Button>
-
-                            {(!userReads || !userReads.items.length) && (
-                                <CreateReadReviewDialog
-                                    bookData={bookData}
-                                    handleStartNewRead={handleStartNewRead}
-                                    handleUpdateRead={handleUpdateRead}
-                                    handleAddNewProgress={handleAddNewProgress}
-                                    isReviewWithoutProgress
-                                />
-                            )}
-                        </div>
-                    </div>
-                )}
+                <Tabs value={currentTab} onValueChange={setCurrentTab} defaultValue="account">
+                    <TabsList>
+                        <TabsTrigger value="all">Todas</TabsTrigger>
+                        <TabsTrigger value="active">Em andamento</TabsTrigger>
+                        <TabsTrigger value="finished">Finalizadas</TabsTrigger>
+                    </TabsList>
+                </Tabs>
             </div>
+
+            {(!hasPreviousReads || lastReadIsFinished) && (
+                <>
+                    <CardReadAction onClick={handleStartNewRead}>
+                        <CardReadActionTitle>Iniciar nova leitura</CardReadActionTitle>
+                        <CardReadActionDescription>
+                            {lastReadIsFinished
+                                ? "Já li esse livro e quero ler novamente."
+                                : "Quero começar a registrar minha leitura."}
+                        </CardReadActionDescription>
+                        <CardReadActionPicture className="group-hover:rotate-45 -right-20 rotate-90">
+                            <SpiralWavy />
+                        </CardReadActionPicture>
+                    </CardReadAction>
+
+                    {!userReads?.items.length && (
+                        <CreateReadReviewDialog
+                            bookData={bookData}
+                            handleStartNewRead={handleStartNewRead}
+                            handleUpdateRead={handleUpdateRead}
+                            handleAddNewProgress={handleAddNewProgress}
+                            isReviewWithoutProgress
+                        />
+                    )}
+                </>
+            )}
 
             {!!filteredReads?.length ? (
                 filteredReads.map((read) => (
@@ -404,7 +410,7 @@ export function UserReads({ bookData }: UserReadsProps) {
                             {/* read active */}
                             <div className="flex flex-wrap items-center justify-between gap-3">
                                 <div className="flex items-center gap-2">
-                                    {user && <UserHoverCard user={user} />}
+                                    {user && <CardUserHover user={user} />}
 
                                     {!!read.reviewRating && (
                                         <Separator
@@ -550,14 +556,22 @@ export function UserReads({ bookData }: UserReadsProps) {
                     </div>
                 ))
             ) : (
-                <div className="mt-2 flex h-36 w-full flex-col items-center justify-center rounded-md border bg-white text-center dark:bg-dark">
-                    <span className="text-base font-semibold text-black dark:text-white">
-                        Nenhuma leitura {tabNoReadsFoundType}.
-                    </span>
-                    <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
-                        Que tal iniciar a leitura desse livro?
-                    </p>
-                </div>
+                <>
+                    {(currentTab === "active" || currentTab === "finished") && (
+                        <div className="mt-2 flex h-36 w-full flex-col items-center justify-center rounded-md border bg-white text-center dark:bg-dark">
+                            <span className="text-base font-semibold text-black dark:text-white">
+                                {currentTab === "active"
+                                    ? "Você não tem uma leitura em andamento."
+                                    : "Você não tem uma leitura finalizada."}
+                            </span>
+                            <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
+                                {currentTab === "active"
+                                    ? "Inicie sua leitura e comece a marcar seus progressos."
+                                    : "Finalize a leitura do livro para ver seu histórico."}
+                            </p>
+                        </div>
+                    )}
+                </>
             )}
 
             <UpdateProgressDialog

@@ -204,7 +204,9 @@ export function AppNavBar() {
                                             </AvatarFallback>
                                         </Avatar>
 
-                                        {user.username}
+                                        <span className="truncate max-w-[80px]">
+                                            {user.username}
+                                        </span>
 
                                         <ChevronDown size={14} className="text-muted-foreground" />
                                     </Button>

@@ -7,11 +7,11 @@ import { Button } from "./ui/Button";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/HoverCard";
 import { LinkUnderline } from "./LinkUnderline";
 
-interface UserHoverCardProps {
+interface CardUserHoverProps {
     user: ProfileDataResponse;
 }
 
-export function UserHoverCard({ user }: UserHoverCardProps) {
+export function CardUserHover({ user }: CardUserHoverProps) {
     return (
         <HoverCard openDelay={300}>
             <HoverCardTrigger asChild>

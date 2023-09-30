@@ -23,6 +23,7 @@ import { DeleteBookListDialog } from "./components/DeleteBookListDialog";
 import Loading from "./loading";
 
 import { Button } from "@/components/ui/Button";
+import { CardUserHover } from "@/components/CardUserHover";
 import { Container } from "@/components/layout/Container";
 import {
     DropdownMenu,
@@ -41,7 +42,6 @@ import {
     TableRow,
 } from "@/components/ui/Table";
 import { Title } from "@/components/Title";
-import { UserHoverCard } from "@/components/UserHoverCard";
 
 export interface BookOnBookList {
     id: string;
@@ -232,7 +232,7 @@ export default function UserLists({ params }: UserListsProps) {
                                     </p>
                                 </div>
                                 <div className="flex items-center text-black dark:text-white">
-                                    {targetUser && <UserHoverCard user={targetUser} />}
+                                    {targetUser && <CardUserHover user={targetUser} />}
                                     <span className="mr-2">•</span>
                                     <span className="text-sm font-medium">
                                         {!booksOnBookList?.length

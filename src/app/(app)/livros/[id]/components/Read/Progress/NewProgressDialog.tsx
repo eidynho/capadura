@@ -1,12 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { BadgePlus } from "lucide-react";
 
 import { HandleAddNewProgressProps } from "../ReadReview/FormReadReview";
 
 import { FormProgress, ProgressFormSchema } from "./FormProgress";
-import { Button } from "@/components/ui/Button";
+
+import {
+    CardReadAction,
+    CardReadActionDescription,
+    CardReadActionPicture,
+    CardReadActionTitle,
+} from "../CardReadAction";
 import {
     Dialog,
     DialogClose,
@@ -15,6 +20,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/Dialog";
+import { Leaves } from "@/components/svg/Leaves";
 
 interface NewProgressDialogProps {
     readId: string;
@@ -57,10 +63,15 @@ export function NewProgressDialog({
         <>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
-                    <Button size="sm" variant="primary">
-                        <BadgePlus size={16} />
-                        Novo progresso
-                    </Button>
+                    <CardReadAction>
+                        <CardReadActionTitle>Adicionar progresso</CardReadActionTitle>
+                        <CardReadActionDescription>
+                            Compartilhe seu progresso com a comunidade.
+                        </CardReadActionDescription>
+                        <CardReadActionPicture className="-right-72 rotate-45">
+                            <Leaves />
+                        </CardReadActionPicture>
+                    </CardReadAction>
                 </DialogTrigger>
                 <DialogContent>
                     <DialogHeader>

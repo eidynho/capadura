@@ -1,7 +1,7 @@
 import { Separator } from "@/components/ui/Separator";
 
-import { Instagram } from "@/components/icons/Instagram";
-import { X } from "@/components/icons/X";
+import { Instagram } from "@/components/svg/Instagram";
+import { X } from "@/components/svg/X";
 
 export function Footer() {
     return (

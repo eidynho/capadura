@@ -1,12 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Star } from "lucide-react";
 
 import { BookData } from "@/endpoints/queries/booksQueries";
 
 import { FormReadReview, HandleAddNewProgressProps, HandleUpdateReadProps } from "./FormReadReview";
-import { Button } from "@/components/ui/Button";
+
+import {
+    CardReadAction,
+    CardReadActionDescription,
+    CardReadActionPicture,
+    CardReadActionTitle,
+} from "../CardReadAction";
+import { ChaosWavy } from "@/components/svg/ChaosWavy";
 import {
     Dialog,
     DialogClose,
@@ -40,10 +46,17 @@ export function CreateReadReviewDialog({
         <>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
-                    <Button size="sm" variant="outline">
-                        <Star size={16} className="text-yellow-500" />
-                        Avaliar
-                    </Button>
+                    <CardReadAction>
+                        <CardReadActionTitle>Avaliar livro</CardReadActionTitle>
+                        <CardReadActionDescription>
+                            {readId
+                                ? "Compartilhe o que achou do livro."
+                                : "Li esse livro anteriormente e quero avaliar."}
+                        </CardReadActionDescription>
+                        <CardReadActionPicture className="-right-16 rotate-45">
+                            <ChaosWavy />
+                        </CardReadActionPicture>
+                    </CardReadAction>
                 </DialogTrigger>
                 <DialogContent>
                     <DialogHeader>

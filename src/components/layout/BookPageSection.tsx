@@ -8,8 +8,8 @@ import { BookHeader } from "@/app/(app)/livros/[id]/components/BookHeader";
 
 import { BookDescription } from "@/app/(app)/livros/[id]/BookDescription";
 import { BookGradient } from "@/app/(app)/livros/[id]/components/BookGradient";
+import { CardUserHover } from "@/components/CardUserHover";
 import { RatingStars } from "../RatingStars";
-import { UserHoverCard } from "../UserHoverCard";
 
 import { Badge } from "@/components/ui/Badge";
 import { Separator } from "@/components/ui/Separator";
@@ -245,7 +245,7 @@ export function BookPageSection() {
                                             {/* read active */}
                                             <div className="flex flex-wrap items-center justify-between gap-3">
                                                 <div className="flex items-center gap-2">
-                                                    <UserHoverCard user={user} />
+                                                    <CardUserHover user={user} />
 
                                                     <Separator
                                                         orientation="vertical"
@@ -298,7 +298,7 @@ export function BookPageSection() {
                                                 <div key={progress.id} className="border-t p-4">
                                                     <div className="flex items-start justify-between gap-2">
                                                         <div className="flex items-center gap-2">
-                                                            <UserHoverCard user={user} />
+                                                            <CardUserHover user={user} />
 
                                                             <span className="mt-[2px] text-xs text-muted-foreground">
                                                                 {progress.createdAt}

@@ -1,4 +1,5 @@
 import { format, parseISO } from "date-fns";
+import { pt } from "date-fns/locale";
 import { MoreVertical } from "lucide-react";
 
 import { useAuthContext } from "@/contexts/AuthContext";
@@ -6,14 +7,13 @@ import { DeleteProgressData, EditReadData } from "..";
 import { ProgressData } from "@/endpoints/queries/progressQueries";
 
 import { Button } from "@/components/ui/Button";
+import { CardUserHover } from "@/components/CardUserHover";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/DropdownMenu";
-import { UserHoverCard } from "@/components/UserHoverCard";
-import { pt } from "date-fns/locale";
 
 interface ProgressProps {
     progressList?: ProgressData[];
@@ -50,7 +50,7 @@ export function Progress({
                     <div key={progress.id} className="border-t p-4">
                         <div className="flex items-start justify-between gap-2">
                             <div className="flex items-center gap-2">
-                                {user && <UserHoverCard user={user} />}
+                                {user && <CardUserHover user={user} />}
 
                                 <span className="mt-[2px] text-xs text-muted-foreground">
                                     {format(

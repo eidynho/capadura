@@ -204,7 +204,7 @@ export function AppNavBar() {
                                             </AvatarFallback>
                                         </Avatar>
 
-                                        <span className="truncate max-w-[80px]">
+                                        <span className="max-w-[80px] truncate">
                                             {user.username}
                                         </span>
 

@@ -38,11 +38,11 @@ import { RatingStars } from "@/components/RatingStars";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import {
-    CardReadAction,
-    CardReadActionDescription,
-    CardReadActionPicture,
-    CardReadActionTitle,
-} from "./CardReadAction";
+    CardAction,
+    CardActionDescription,
+    CardActionPicture,
+    CardActionTitle,
+} from "@/components/ui/CardAction";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -360,17 +360,17 @@ export function UserReads({ bookData }: UserReadsProps) {
 
             {(!hasPreviousReads || lastReadIsFinished) && (
                 <>
-                    <CardReadAction onClick={handleStartNewRead}>
-                        <CardReadActionTitle>Iniciar nova leitura</CardReadActionTitle>
-                        <CardReadActionDescription>
+                    <CardAction onClick={handleStartNewRead}>
+                        <CardActionTitle>Iniciar nova leitura</CardActionTitle>
+                        <CardActionDescription>
                             {lastReadIsFinished
                                 ? "Já li esse livro e quero ler novamente."
                                 : "Quero começar a registrar minha leitura."}
-                        </CardReadActionDescription>
-                        <CardReadActionPicture className="group-hover:rotate-45 -right-20 rotate-90">
+                        </CardActionDescription>
+                        <CardActionPicture className="-right-20 rotate-90 group-hover:rotate-45">
                             <SpiralWavy />
-                        </CardReadActionPicture>
-                    </CardReadAction>
+                        </CardActionPicture>
+                    </CardAction>
 
                     {!userReads?.items.length && (
                         <CreateReadReviewDialog

@@ -106,7 +106,7 @@ export default function UserConfigs() {
     const {
         register,
         handleSubmit,
-        formState: { isSubmitting, errors },
+        formState: { errors },
         setValue,
         control,
         watch,
@@ -473,9 +473,9 @@ export default function UserConfigs() {
                                 size="md"
                                 variant="primary"
                                 type="submit"
-                                disabled={isSubmitting || isInvalidUsername}
+                                disabled={updateUserData.isLoading || isInvalidUsername}
                             >
-                                {isSubmitting ? (
+                                {updateUserData.isLoading ? (
                                     <>
                                         <Loader2 size={22} className="animate-spin" />
                                         <span>Atualizando...</span>

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Library, MoreHorizontal } from "lucide-react";
+import { Library, MoreHorizontal, MoveLeft } from "lucide-react";
 
 import { BookData } from "@/endpoints/queries/booksQueries";
 import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";
@@ -61,6 +61,7 @@ interface UserListsProps {
 
 export default function UserLists({ params }: UserListsProps) {
     const [activeBookList, setActiveBookList] = useState(0);
+    const [showDetailedBookList, setShowDetailedBookList] = useState(true);
 
     const isCurrentUser = isPageUserSameCurrentUser(params.username);
 
@@ -119,6 +120,7 @@ export default function UserLists({ params }: UserListsProps) {
 
     async function handleUpdateActiveBookList(index: number) {
         setActiveBookList(index);
+        setShowDetailedBookList(true);
     }
 
     if (!targetUser && isFetched) {
@@ -166,8 +168,18 @@ export default function UserLists({ params }: UserListsProps) {
 
             <Separator className="my-6" />
 
+            <Button
+                size="sm"
+                variant="link"
+                onClick={() => setShowDetailedBookList(false)}
+                className={`${showDetailedBookList ? "" : "hidden"} md:hidden`}
+            >
+                <MoveLeft size={16} />
+                Voltar
+            </Button>
+
             <div className="mt-4 flex flex-col gap-8 md:flex-row lg:gap-6 xl:gap-8">
-                <div className="w-full md:w-1/4">
+                <div className={`${showDetailedBookList ? "hidden md:block" : ""} w-full md:w-1/3`}>
                     {isCurrentUser && (
                         <>
                             <CreateBookListDialog />
@@ -177,8 +189,12 @@ export default function UserLists({ params }: UserListsProps) {
                     {renderBookLists()}
                 </div>
 
-                {bookLists?.[activeBookList] ? (
-                    <div className="flex w-full flex-col gap-8 md:w-3/4">
+                {!!bookLists?.[activeBookList] && (
+                    <div
+                        className={`${
+                            showDetailedBookList ? "" : "hidden md:flex"
+                        } flex w-full flex-col gap-8 md:w-2/3`}
+                    >
                         <div className="flex gap-4">
                             <div className="flex h-56 w-56 rounded-md bg-neutral-800 transition-all">
                                 {bookLists[activeBookList].imageUrl ? (
@@ -320,7 +336,9 @@ export default function UserLists({ params }: UserListsProps) {
                             </div>
                         )}
                     </div>
-                ) : (
+                )}
+
+                {!bookLists?.[activeBookList] && (
                     <div className="mt-2 flex h-52 w-full flex-col items-center justify-center rounded-md border bg-white text-center transition-colors dark:bg-dark">
                         <span className="text-base font-semibold text-black dark:text-white">
                             {isCurrentUser

@@ -11,7 +11,6 @@ import { useQueries } from "@tanstack/react-query";
 import { BookListMenu } from "./BookListMenu";
 import { Like } from "./Like";
 
-import { LinkUnderline } from "@/components/LinkUnderline";
 import { Separator } from "@/components/ui/Separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/Tooltip";
 
@@ -136,7 +135,7 @@ export function BookMetaData({ bookData }: BookMetaDataProps) {
                 </TooltipProvider>
             </div>
 
-            <div className="rounded-md border bg-white pb-4 text-black dark:bg-dark dark:text-white">
+            <div className="rounded-md border bg-white pb-4 text-black transition-colors dark:bg-dark dark:text-white">
                 <div className="mx-4 mt-4 flex justify-between text-sm">
                     <span className="font-semibold">Escrito por</span>
                     {!!bookData.authors?.[0] ? (

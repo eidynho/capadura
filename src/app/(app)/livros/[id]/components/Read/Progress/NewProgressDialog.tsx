@@ -7,11 +7,11 @@ import { HandleAddNewProgressProps } from "../ReadReview/FormReadReview";
 import { FormProgress, ProgressFormSchema } from "./FormProgress";
 
 import {
-    CardReadAction,
-    CardReadActionDescription,
-    CardReadActionPicture,
-    CardReadActionTitle,
-} from "../CardReadAction";
+    CardAction,
+    CardActionDescription,
+    CardActionPicture,
+    CardActionTitle,
+} from "@/components/ui/CardAction";
 import {
     Dialog,
     DialogClose,
@@ -20,7 +20,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/Dialog";
-import { Leaves } from "@/components/svg/Leaves";
+import { Wavy } from "@/components/svg/Wavy";
 
 interface NewProgressDialogProps {
     readId: string;
@@ -63,15 +63,15 @@ export function NewProgressDialog({
         <>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
-                    <CardReadAction>
-                        <CardReadActionTitle>Adicionar progresso</CardReadActionTitle>
-                        <CardReadActionDescription>
+                    <CardAction>
+                        <CardActionTitle>Adicionar progresso</CardActionTitle>
+                        <CardActionDescription>
                             Compartilhe seu progresso com a comunidade.
-                        </CardReadActionDescription>
-                        <CardReadActionPicture className="-right-72 rotate-45">
-                            <Leaves />
-                        </CardReadActionPicture>
-                    </CardReadAction>
+                        </CardActionDescription>
+                        <CardActionPicture className="-right-20 -top-20 -rotate-[36deg]">
+                            <Wavy />
+                        </CardActionPicture>
+                    </CardAction>
                 </DialogTrigger>
                 <DialogContent>
                     <DialogHeader>

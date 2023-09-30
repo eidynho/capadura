@@ -3,13 +3,19 @@ import Image from "next/image";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Library, Loader2, PencilLine, PlusCircle } from "lucide-react";
+import { Library, Loader2, PencilLine } from "lucide-react";
 
 import { useAuthContext } from "@/contexts/AuthContext";
 
 import { useCreateBookList } from "@/endpoints/mutations/bookListsMutations";
 
 import { Button } from "@/components/ui/Button";
+import {
+    CardAction,
+    CardActionDescription,
+    CardActionPicture,
+    CardActionTitle,
+} from "@/components/ui/CardAction";
 import {
     Dialog,
     DialogClose,
@@ -21,6 +27,7 @@ import {
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Textarea } from "@/components/ui/Textarea";
+import { Wavy } from "@/components/svg/Wavy";
 
 const MAX_FILE_SIZE = 1024 * 1024 * 2; // 2 MB;
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -106,10 +113,15 @@ export function CreateBookListDialog() {
         <>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
-                    <Button size="sm" variant="primary">
-                        <PlusCircle size={16} />
-                        Nova lista
-                    </Button>
+                    <CardAction className="h-28">
+                        <CardActionTitle>Criar nova lista</CardActionTitle>
+                        <CardActionDescription>
+                            Crie, personalize e compartilhe :)
+                        </CardActionDescription>
+                        <CardActionPicture className="-right-40 top-32 rotate-90 opacity-100">
+                            <Wavy firstColor="#8b5cf6" secondaryColor="#581c87" />
+                        </CardActionPicture>
+                    </CardAction>
                 </DialogTrigger>
 
                 <DialogContent>

@@ -7,11 +7,11 @@ import { BookData } from "@/endpoints/queries/booksQueries";
 import { FormReadReview, HandleAddNewProgressProps, HandleUpdateReadProps } from "./FormReadReview";
 
 import {
-    CardReadAction,
-    CardReadActionDescription,
-    CardReadActionPicture,
-    CardReadActionTitle,
-} from "../CardReadAction";
+    CardAction,
+    CardActionDescription,
+    CardActionPicture,
+    CardActionTitle,
+} from "@/components/ui/CardAction";
 import { ChaosWavy } from "@/components/svg/ChaosWavy";
 import {
     Dialog,
@@ -46,21 +46,21 @@ export function CreateReadReviewDialog({
         <>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
-                    <CardReadAction>
-                        <CardReadActionTitle>Avaliar livro</CardReadActionTitle>
-                        <CardReadActionDescription>
+                    <CardAction>
+                        <CardActionTitle>Avaliar livro</CardActionTitle>
+                        <CardActionDescription>
                             {readId
                                 ? "Compartilhe o que achou do livro."
                                 : "Li esse livro anteriormente e quero avaliar."}
-                        </CardReadActionDescription>
-                        <CardReadActionPicture className="-right-16 rotate-45">
+                        </CardActionDescription>
+                        <CardActionPicture className="-right-16 rotate-45">
                             <ChaosWavy />
-                        </CardReadActionPicture>
-                    </CardReadAction>
+                        </CardActionPicture>
+                    </CardAction>
                 </DialogTrigger>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Avaliar livro - {bookData?.title}</DialogTitle>
+                        <DialogTitle>Avaliar livro</DialogTitle>
                     </DialogHeader>
 
                     <div className="px-3 py-2">

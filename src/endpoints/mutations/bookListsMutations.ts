@@ -10,6 +10,7 @@ export interface UseCreateBookListProps {
     name: string;
     description?: string;
     image?: any;
+    bookId?: string;
 }
 
 export function useCreateBookList() {
@@ -27,9 +28,16 @@ export function useCreateBookList() {
 
             return data;
         },
-        onSuccess: (newBookList, { userId }) => {
+        onSuccess: (newBookList, { userId, bookId }) => {
             queryClient.setQueryData<BookListData[]>(
                 ["fetchUserBookLists", { userId }],
+                (prevData) => {
+                    return [newBookList, ...(prevData || [])];
+                },
+            );
+
+            queryClient.setQueryData<BookListData[]>(
+                ["fetchUserBookListsIncludeBook", { userId, bookId }],
                 (prevData) => {
                     return [newBookList, ...(prevData || [])];
                 },

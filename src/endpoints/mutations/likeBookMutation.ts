@@ -2,13 +2,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
 
-import { LikeBook } from "../queries/likeBookQueries";
+import { LikeBook, LikeBookWithBook } from "../queries/likeBookQueries";
 import { GetMetadataCount } from "@/app/(app)/livros/[id]/components/BookMetaData";
 
 import { useToast } from "@/components/ui/UseToast";
 
 export interface UseAddLikeBookProps {
     bookId: string;
+    userId: string;
 }
 
 export function useAddLikeBook() {
@@ -24,7 +25,7 @@ export function useAddLikeBook() {
 
             return data.like as LikeBook;
         },
-        onSuccess: (newData, { bookId }) => {
+        onSuccess: (newData, { bookId, userId }) => {
             queryClient.setQueryData(["getUserLikedBook", { bookId }], () => {
                 return newData;
             });
@@ -46,6 +47,12 @@ export function useAddLikeBook() {
                     };
                 },
             );
+
+            // invalidate user likes page
+            queryClient.invalidateQueries({
+                queryKey: ["getBookLikesByUser", { userId }],
+                refetchType: "none",
+            });
         },
         onError: () => {
             toast({
@@ -60,6 +67,7 @@ export function useAddLikeBook() {
 }
 
 export interface UseDislikeBookProps {
+    userId: string;
     bookId: string;
     likeId: string;
 }
@@ -73,10 +81,8 @@ export function useDislikeBook() {
         mutationFn: async ({ likeId }: UseDislikeBookProps) => {
             await api.delete(`/likes/${likeId}`);
         },
-        onSuccess: (_, { bookId }) => {
-            queryClient.setQueryData(["getUserLikedBook", { bookId }], () => {
-                return null;
-            });
+        onSuccess: (_, { bookId, userId }) => {
+            queryClient.setQueryData(["getUserLikedBook", { bookId }], () => null);
 
             // update book likes total count
             queryClient.setQueriesData<GetMetadataCount>(
@@ -92,6 +98,19 @@ export function useDislikeBook() {
                     return {
                         total: updatedCount,
                     };
+                },
+            );
+
+            // update user likes page
+            queryClient.setQueriesData<LikeBookWithBook[]>(
+                ["getBookLikesByUser", { userId }],
+                (prevData) => {
+                    if (!prevData) {
+                        return [];
+                    }
+
+                    const updatedData = prevData.filter((data) => data.bookId !== bookId);
+                    return updatedData;
                 },
             );
         },

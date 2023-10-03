@@ -53,6 +53,7 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
         createBookList.mutate({
             userId: user.id,
             name: `Lista - ${(bookLists?.length || 0) + 1}`,
+            bookId: bookData.id,
         });
     }
 

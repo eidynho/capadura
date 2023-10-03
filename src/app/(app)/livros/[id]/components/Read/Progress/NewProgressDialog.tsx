@@ -26,6 +26,7 @@ interface NewProgressDialogProps {
     readId: string;
     bookTitle?: string;
     bookPageCount: number;
+    palette: string[];
     handleAddNewProgress: (data: HandleAddNewProgressProps) => Promise<void>;
 }
 
@@ -33,6 +34,7 @@ export function NewProgressDialog({
     readId,
     bookTitle,
     bookPageCount,
+    palette,
     handleAddNewProgress,
 }: NewProgressDialogProps) {
     const [isOpen, setIsOpen] = useState(false);
@@ -69,7 +71,7 @@ export function NewProgressDialog({
                             Compartilhe seu progresso com a comunidade.
                         </CardActionDescription>
                         <CardActionPicture className="-right-20 -top-20 -rotate-[36deg]">
-                            <Wavy />
+                            <Wavy palette={palette} />
                         </CardActionPicture>
                     </CardAction>
                 </DialogTrigger>

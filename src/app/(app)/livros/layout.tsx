@@ -5,5 +5,5 @@ interface BooksLayoutProps {
 }
 
 export default async function BooksLayout({ children }: BooksLayoutProps) {
-    return <div>{children}</div>;
+    return <>{children}</>;
 }

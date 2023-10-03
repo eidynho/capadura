@@ -65,7 +65,7 @@ export default function UserLists({ params }: UserListsProps) {
 
     const isCurrentUser = isPageUserSameCurrentUser(params.username);
 
-    const { data: targetUser, isFetched } = useFetchUserByUsername({
+    const { data: targetUser, isFetched: isFetchedTargetUser } = useFetchUserByUsername({
         username: params.username,
     });
 
@@ -123,7 +123,7 @@ export default function UserLists({ params }: UserListsProps) {
         setShowDetailedBookList(true);
     }
 
-    if (!targetUser && isFetched) {
+    if (!targetUser && isFetchedTargetUser) {
         notFound();
     }
 
@@ -131,39 +131,39 @@ export default function UserLists({ params }: UserListsProps) {
         return <Loading />;
     }
 
-    function renderBookLists() {
+    function BookListsSidebar() {
+        if (!bookLists?.length) {
+            return (
+                <div className="mx-5 text-center text-black dark:text-white">
+                    <span>Nenhuma lista encontrada.</span>
+                </div>
+            );
+        }
+
         return (
-            <>
-                {bookLists?.length ? (
-                    <nav className="flex flex-col gap-1 text-black dark:text-white">
-                        {bookLists.map((bookList, index) => {
-                            return (
-                                <div
-                                    key={bookList.id}
-                                    onClick={() => handleUpdateActiveBookList(index)}
-                                    className={`${
-                                        activeBookList === index
-                                            ? "bg-muted-foreground text-white dark:bg-accent"
-                                            : "hover:bg-muted-foreground/25 dark:hover:bg-accent/50"
-                                    } cursor-pointer rounded-md px-4 py-2 text-sm`}
-                                >
-                                    <span className="block w-full truncate">{bookList.name}</span>
-                                </div>
-                            );
-                        })}
-                    </nav>
-                ) : (
-                    <div className="mx-5 text-center text-black dark:text-white">
-                        <span>Nenhuma lista encontrada.</span>
-                    </div>
-                )}
-            </>
+            <nav className="flex flex-col gap-1 text-black dark:text-white">
+                {bookLists.map((bookList, index) => {
+                    return (
+                        <div
+                            key={bookList.id}
+                            onClick={() => handleUpdateActiveBookList(index)}
+                            className={`${
+                                activeBookList === index
+                                    ? "bg-muted-foreground text-white dark:bg-accent"
+                                    : "hover:bg-muted-foreground/25 dark:hover:bg-accent/50"
+                            } cursor-pointer rounded-md px-4 py-2 text-sm`}
+                        >
+                            <span className="block w-full truncate">{bookList.name}</span>
+                        </div>
+                    );
+                })}
+            </nav>
         );
     }
 
     return (
         <Container>
-            <Title>{isCurrentUser ? "Minhas listas" : `Listas do ${params.username}`}</Title>
+            <Title>{isCurrentUser ? "Minhas listas" : `Listas de ${params.username}`}</Title>
             {isCurrentUser && <Subtitle>Organize sua leitura do jeito que você quiser.</Subtitle>}
 
             <Separator className="my-6" />
@@ -179,6 +179,7 @@ export default function UserLists({ params }: UserListsProps) {
             </Button>
 
             <div className="mt-4 flex flex-col gap-8 md:flex-row lg:gap-6 xl:gap-8">
+                {/* sidebar */}
                 <div className={`${showDetailedBookList ? "hidden md:block" : ""} w-full md:w-1/3`}>
                     {isCurrentUser && (
                         <>
@@ -186,9 +187,11 @@ export default function UserLists({ params }: UserListsProps) {
                             <Separator className="my-6" />
                         </>
                     )}
-                    {renderBookLists()}
+
+                    <BookListsSidebar />
                 </div>
 
+                {/* detailed book list */}
                 {!!bookLists?.[activeBookList] && (
                     <div
                         className={`${
@@ -270,7 +273,9 @@ export default function UserLists({ params }: UserListsProps) {
                                         <TableHead>Autor(a)</TableHead>
                                         <TableHead>Ano de publicação</TableHead>
                                         <TableHead>Páginas</TableHead>
-                                        <TableHead className="text-right"></TableHead>
+                                        {isCurrentUser && (
+                                            <TableHead className="text-right"></TableHead>
+                                        )}
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -292,35 +297,37 @@ export default function UserLists({ params }: UserListsProps) {
                                                 {publishDateFormat(bookOnBookList.book.publishDate)}
                                             </TableCell>
                                             <TableCell>{bookOnBookList.book.pageCount}</TableCell>
-                                            <TableCell className="text-right">
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button
-                                                            variant="default"
-                                                            className="flex h-8 w-8 p-0 data-[state=open]:bg-zinc-300 dark:data-[state=open]:bg-accent"
+                                            {isCurrentUser && (
+                                                <TableCell className="text-right">
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button
+                                                                variant="default"
+                                                                className="flex h-8 w-8 p-0 data-[state=open]:bg-zinc-300 dark:data-[state=open]:bg-accent"
+                                                            >
+                                                                <MoreHorizontal className="h-4 w-4" />
+                                                                <span className="sr-only">
+                                                                    Abrir menu
+                                                                </span>
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent
+                                                            align="end"
+                                                            className="w-[160px]"
                                                         >
-                                                            <MoreHorizontal className="h-4 w-4" />
-                                                            <span className="sr-only">
-                                                                Abrir menu
-                                                            </span>
-                                                        </Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent
-                                                        align="end"
-                                                        className="w-[160px]"
-                                                    >
-                                                        <DropdownMenuItem
-                                                            onClick={() =>
-                                                                handleRemoveBookFromBookList(
-                                                                    bookOnBookList,
-                                                                )
-                                                            }
-                                                        >
-                                                            Remover da lista
-                                                        </DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
-                                            </TableCell>
+                                                            <DropdownMenuItem
+                                                                onClick={() =>
+                                                                    handleRemoveBookFromBookList(
+                                                                        bookOnBookList,
+                                                                    )
+                                                                }
+                                                            >
+                                                                Remover da lista
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
+                                                </TableCell>
+                                            )}
                                         </TableRow>
                                     ))}
                                 </TableBody>

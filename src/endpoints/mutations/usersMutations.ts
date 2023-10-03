@@ -117,6 +117,8 @@ export function useUpdateUserData() {
                 ["fetchUserByUsername", { username }],
                 () => newData,
             );
+
+            queryClient.setQueryData<ProfileDataResponse>(["fetchCurrentUser"], () => newData);
         },
         onError: () => {
             toast({

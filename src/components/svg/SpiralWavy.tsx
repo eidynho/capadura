@@ -1,32 +1,53 @@
 interface SpiralWavyProps {
     firstColor?: string;
     secondColor?: string;
+    palette?: string[];
 }
 
-export function SpiralWavy({ firstColor = "#3b82f6", secondColor = "#1e40af" }: SpiralWavyProps) {
+export function SpiralWavy({
+    firstColor = "#eab308",
+    secondColor = "#854d0e",
+    palette,
+}: SpiralWavyProps) {
     return (
         <svg version="1.1" viewBox="0 0 800 800">
             <defs>
                 <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="cccoil-grad">
-                    <stop stop-color={firstColor} stop-opacity="1" offset="0%"></stop>
-                    <stop stop-color={secondColor} stop-opacity="1" offset="100%"></stop>
+                    {!!palette ? (
+                        palette.map((color, index) => {
+                            const offset = `${index * 6.66}%`;
+                            return (
+                                <stop
+                                    key={`${color}-${index}`}
+                                    stopColor={color}
+                                    stopOpacity="1"
+                                    offset={offset}
+                                ></stop>
+                            );
+                        })
+                    ) : (
+                        <>
+                            <stop stopColor={firstColor} stopOpacity="1" offset="0%"></stop>
+                            <stop stopColor={secondColor} stopOpacity="1" offset="100%"></stop>
+                        </>
+                    )}
                 </linearGradient>
             </defs>
-            <g stroke="url(#cccoil-grad)" fill="none" stroke-linecap="round">
+            <g stroke="url(#cccoil-grad)" fill="none" strokeLinecap="round">
                 <circle
                     r="403"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="0 2532"
+                    strokeWidth="2.5"
+                    strokeDasharray="0 2532"
                     opacity="0.05"
                 ></circle>
                 <circle
                     r="387.5"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="97 2435"
+                    strokeWidth="2.5"
+                    strokeDasharray="97 2435"
                     transform="rotate(14, 400, 400)"
                     opacity="0.09"
                 ></circle>
@@ -34,8 +55,8 @@ export function SpiralWavy({ firstColor = "#3b82f6", secondColor = "#1e40af" }: 
                     r="372"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="187 2337"
+                    strokeWidth="2.5"
+                    strokeDasharray="187 2337"
                     transform="rotate(29, 400, 400)"
                     opacity="0.13"
                 ></circle>
@@ -43,8 +64,8 @@ export function SpiralWavy({ firstColor = "#3b82f6", secondColor = "#1e40af" }: 
                     r="356.5"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="269 2240"
+                    strokeWidth="2.5"
+                    strokeDasharray="269 2240"
                     transform="rotate(43, 400, 400)"
                     opacity="0.16"
                 ></circle>
@@ -52,8 +73,8 @@ export function SpiralWavy({ firstColor = "#3b82f6", secondColor = "#1e40af" }: 
                     r="341"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="343 2143"
+                    strokeWidth="2.5"
+                    strokeDasharray="343 2143"
                     transform="rotate(58, 400, 400)"
                     opacity="0.20"
                 ></circle>
@@ -61,8 +82,8 @@ export function SpiralWavy({ firstColor = "#3b82f6", secondColor = "#1e40af" }: 
                     r="325.5"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="409 2045"
+                    strokeWidth="2.5"
+                    strokeDasharray="409 2045"
                     transform="rotate(72, 400, 400)"
                     opacity="0.24"
                 ></circle>
@@ -70,8 +91,8 @@ export function SpiralWavy({ firstColor = "#3b82f6", secondColor = "#1e40af" }: 
                     r="310"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="467 1948"
+                    strokeWidth="2.5"
+                    strokeDasharray="467 1948"
                     transform="rotate(86, 400, 400)"
                     opacity="0.28"
                 ></circle>
@@ -79,8 +100,8 @@ export function SpiralWavy({ firstColor = "#3b82f6", secondColor = "#1e40af" }: 
                     r="294.5"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="518 1850"
+                    strokeWidth="2.5"
+                    strokeDasharray="518 1850"
                     transform="rotate(101, 400, 400)"
                     opacity="0.32"
                 ></circle>
@@ -88,8 +109,8 @@ export function SpiralWavy({ firstColor = "#3b82f6", secondColor = "#1e40af" }: 
                     r="279"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="561 1753"
+                    strokeWidth="2.5"
+                    strokeDasharray="561 1753"
                     transform="rotate(115, 400, 400)"
                     opacity="0.35"
                 ></circle>
@@ -97,8 +118,8 @@ export function SpiralWavy({ firstColor = "#3b82f6", secondColor = "#1e40af" }: 
                     r="263.5"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="596 1656"
+                    strokeWidth="2.5"
+                    strokeDasharray="596 1656"
                     transform="rotate(130, 400, 400)"
                     opacity="0.39"
                 ></circle>
@@ -106,8 +127,8 @@ export function SpiralWavy({ firstColor = "#3b82f6", secondColor = "#1e40af" }: 
                     r="248"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="623 1558"
+                    strokeWidth="2.5"
+                    strokeDasharray="623 1558"
                     transform="rotate(144, 400, 400)"
                     opacity="0.43"
                 ></circle>
@@ -115,8 +136,8 @@ export function SpiralWavy({ firstColor = "#3b82f6", secondColor = "#1e40af" }: 
                     r="232.5"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="643 1461"
+                    strokeWidth="2.5"
+                    strokeDasharray="643 1461"
                     transform="rotate(158, 400, 400)"
                     opacity="0.47"
                 ></circle>
@@ -124,8 +145,8 @@ export function SpiralWavy({ firstColor = "#3b82f6", secondColor = "#1e40af" }: 
                     r="217"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="654 1363"
+                    strokeWidth="2.5"
+                    strokeDasharray="654 1363"
                     transform="rotate(173, 400, 400)"
                     opacity="0.51"
                 ></circle>
@@ -133,8 +154,8 @@ export function SpiralWavy({ firstColor = "#3b82f6", secondColor = "#1e40af" }: 
                     r="201.5"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="658 1266"
+                    strokeWidth="2.5"
+                    strokeDasharray="658 1266"
                     transform="rotate(187, 400, 400)"
                     opacity="0.54"
                 ></circle>
@@ -142,8 +163,8 @@ export function SpiralWavy({ firstColor = "#3b82f6", secondColor = "#1e40af" }: 
                     r="186"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="654 1169"
+                    strokeWidth="2.5"
+                    strokeDasharray="654 1169"
                     transform="rotate(202, 400, 400)"
                     opacity="0.58"
                 ></circle>
@@ -151,8 +172,8 @@ export function SpiralWavy({ firstColor = "#3b82f6", secondColor = "#1e40af" }: 
                     r="170.5"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="643 1071"
+                    strokeWidth="2.5"
+                    strokeDasharray="643 1071"
                     transform="rotate(216, 400, 400)"
                     opacity="0.62"
                 ></circle>
@@ -160,8 +181,8 @@ export function SpiralWavy({ firstColor = "#3b82f6", secondColor = "#1e40af" }: 
                     r="155"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="623 974"
+                    strokeWidth="2.5"
+                    strokeDasharray="623 974"
                     transform="rotate(230, 400, 400)"
                     opacity="0.66"
                 ></circle>
@@ -169,8 +190,8 @@ export function SpiralWavy({ firstColor = "#3b82f6", secondColor = "#1e40af" }: 
                     r="139.5"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="596 877"
+                    strokeWidth="2.5"
+                    strokeDasharray="596 877"
                     transform="rotate(245, 400, 400)"
                     opacity="0.70"
                 ></circle>
@@ -178,8 +199,8 @@ export function SpiralWavy({ firstColor = "#3b82f6", secondColor = "#1e40af" }: 
                     r="124"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="561 779"
+                    strokeWidth="2.5"
+                    strokeDasharray="561 779"
                     transform="rotate(259, 400, 400)"
                     opacity="0.73"
                 ></circle>
@@ -187,8 +208,8 @@ export function SpiralWavy({ firstColor = "#3b82f6", secondColor = "#1e40af" }: 
                     r="108.5"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="518 682"
+                    strokeWidth="2.5"
+                    strokeDasharray="518 682"
                     transform="rotate(274, 400, 400)"
                     opacity="0.77"
                 ></circle>
@@ -196,8 +217,8 @@ export function SpiralWavy({ firstColor = "#3b82f6", secondColor = "#1e40af" }: 
                     r="93"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="467 584"
+                    strokeWidth="2.5"
+                    strokeDasharray="467 584"
                     transform="rotate(288, 400, 400)"
                     opacity="0.81"
                 ></circle>
@@ -205,8 +226,8 @@ export function SpiralWavy({ firstColor = "#3b82f6", secondColor = "#1e40af" }: 
                     r="77.5"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="409 487"
+                    strokeWidth="2.5"
+                    strokeDasharray="409 487"
                     transform="rotate(302, 400, 400)"
                     opacity="0.85"
                 ></circle>
@@ -214,8 +235,8 @@ export function SpiralWavy({ firstColor = "#3b82f6", secondColor = "#1e40af" }: 
                     r="62"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="343 390"
+                    strokeWidth="2.5"
+                    strokeDasharray="343 390"
                     transform="rotate(317, 400, 400)"
                     opacity="0.89"
                 ></circle>
@@ -223,8 +244,8 @@ export function SpiralWavy({ firstColor = "#3b82f6", secondColor = "#1e40af" }: 
                     r="46.5"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="269 292"
+                    strokeWidth="2.5"
+                    strokeDasharray="269 292"
                     transform="rotate(331, 400, 400)"
                     opacity="0.92"
                 ></circle>
@@ -232,8 +253,8 @@ export function SpiralWavy({ firstColor = "#3b82f6", secondColor = "#1e40af" }: 
                     r="31"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="187 195"
+                    strokeWidth="2.5"
+                    strokeDasharray="187 195"
                     transform="rotate(346, 400, 400)"
                     opacity="0.96"
                 ></circle>
@@ -241,8 +262,8 @@ export function SpiralWavy({ firstColor = "#3b82f6", secondColor = "#1e40af" }: 
                     r="15.5"
                     cx="400"
                     cy="400"
-                    stroke-width="2.5"
-                    stroke-dasharray="97 97"
+                    strokeWidth="2.5"
+                    strokeDasharray="97 97"
                     transform="rotate(360, 400, 400)"
                     opacity="1.00"
                 ></circle>

@@ -25,16 +25,17 @@ import {
 interface ReadReviewDialogProps {
     readId?: string;
     bookData: BookData | null;
+    palette: string[];
     handleStartNewRead: () => Promise<string | undefined>;
     handleUpdateRead: (data: HandleUpdateReadProps) => Promise<void>;
     handleAddNewProgress: (data: HandleAddNewProgressProps) => Promise<void>;
-
     isReviewWithoutProgress?: boolean;
 }
 
 export function CreateReadReviewDialog({
     readId,
     bookData,
+    palette,
     handleStartNewRead,
     handleUpdateRead,
     handleAddNewProgress,
@@ -54,7 +55,7 @@ export function CreateReadReviewDialog({
                                 : "Li esse livro anteriormente e quero avaliar."}
                         </CardActionDescription>
                         <CardActionPicture className="-right-16 rotate-45">
-                            <ChaosWavy />
+                            <ChaosWavy palette={palette} />
                         </CardActionPicture>
                     </CardAction>
                 </DialogTrigger>

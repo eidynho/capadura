@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { setCookie, parseCookies } from "nookies";
 
 import { api } from "@/lib/api";
+import { signOut } from "@/utils/sign-out";
 
 import { ProfileDataResponse, useFetchCurrentUser } from "@/endpoints/queries/usersQueries";
 import { useSignIn } from "@/endpoints/mutations/usersMutations";
-import { signOut } from "@/utils/sign-out";
 
 interface AuthContextType {
     user?: ProfileDataResponse;

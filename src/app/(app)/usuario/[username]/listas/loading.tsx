@@ -4,8 +4,8 @@ import { Container } from "@/components/layout/Container";
 
 export default function Loading() {
     return (
-        <Container>
-            <div className="flex animate-pulse flex-col items-start justify-center md:flex-row">
+        <Container className="animate-pulse">
+            <div className="flex flex-col items-start justify-center md:flex-row">
                 <div className="flex items-start gap-8">
                     <div className="flex h-28 w-28 items-center gap-4 rounded-full bg-zinc-300 dark:bg-accent"></div>
 

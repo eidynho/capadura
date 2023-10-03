@@ -119,7 +119,7 @@ export function CreateBookListDialog() {
                             Crie, personalize e compartilhe :)
                         </CardActionDescription>
                         <CardActionPicture className="-right-40 top-32 rotate-90 opacity-100">
-                            <Wavy firstColor="#8b5cf6" secondaryColor="#581c87" />
+                            <Wavy />
                         </CardActionPicture>
                     </CardAction>
                 </DialogTrigger>

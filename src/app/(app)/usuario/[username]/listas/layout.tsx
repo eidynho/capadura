@@ -5,5 +5,5 @@ interface UserListsLayoutProps {
 }
 
 export default async function UserListsLayout({ children }: UserListsLayoutProps) {
-    return <div>{children}</div>;
+    return <>{children}</>;
 }

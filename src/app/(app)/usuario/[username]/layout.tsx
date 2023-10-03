@@ -38,5 +38,5 @@ export default async function MeLayout({ children, params }: MeLayoutProps) {
         notFound();
     }
 
-    return <div>{children}</div>;
+    return <>{children}</>;
 }

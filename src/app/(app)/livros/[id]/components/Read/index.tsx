@@ -24,6 +24,7 @@ import {
     useUpdateProgress,
 } from "@/endpoints/mutations/progressMutations";
 import { useToast } from "@/components/ui/UseToast";
+import { useColorPalette } from "@/hooks/useColorPalette";
 
 import { CardUserHover } from "@/components/CardUserHover";
 import { CreateReadReviewDialog } from "./ReadReview/CreateReadReviewDialog";
@@ -84,6 +85,8 @@ export function UserReads({ bookData }: UserReadsProps) {
     const [readToDelete, setReadToDelete] = useState<ReadData | null>(null);
 
     const [currentTab, setCurrentTab] = useState("all");
+
+    const palette = useColorPalette(bookData?.imageUrl);
 
     const { data: userReads } = useFetchUserReadsByBook({
         bookId: bookData?.id || "",
@@ -368,13 +371,14 @@ export function UserReads({ bookData }: UserReadsProps) {
                                 : "Quero começar a registrar minha leitura."}
                         </CardActionDescription>
                         <CardActionPicture className="-right-20 rotate-90 group-hover:rotate-45">
-                            <SpiralWavy />
+                            <SpiralWavy palette={palette} />
                         </CardActionPicture>
                     </CardAction>
 
                     {!userReads?.items.length && (
                         <CreateReadReviewDialog
                             bookData={bookData}
+                            palette={palette}
                             handleStartNewRead={handleStartNewRead}
                             handleUpdateRead={handleUpdateRead}
                             handleAddNewProgress={handleAddNewProgress}
@@ -529,6 +533,7 @@ export function UserReads({ bookData }: UserReadsProps) {
                                             readId={read.id}
                                             bookTitle={bookData?.title}
                                             bookPageCount={bookData?.pageCount ?? 0}
+                                            palette={palette}
                                             handleAddNewProgress={handleAddNewProgress}
                                         />
                                     )}
@@ -538,6 +543,7 @@ export function UserReads({ bookData }: UserReadsProps) {
                                             <CreateReadReviewDialog
                                                 readId={read.id}
                                                 bookData={bookData}
+                                                palette={palette}
                                                 handleStartNewRead={handleStartNewRead}
                                                 handleUpdateRead={handleUpdateRead}
                                                 handleAddNewProgress={handleAddNewProgress}

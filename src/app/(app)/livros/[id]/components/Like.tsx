@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart, Loader2 } from "lucide-react";
+import { Loader2, ThumbsUp } from "lucide-react";
 
 import { useAuthContext } from "@/contexts/AuthContext";
 
@@ -14,7 +14,7 @@ interface LikeProps {
 }
 
 export function Like({ bookId }: LikeProps) {
-    const { isAuthenticated, toggleAuthDialog } = useAuthContext();
+    const { user, isAuthenticated, toggleAuthDialog } = useAuthContext();
 
     const { data: like } = useGetUserLikedBook({
         bookId,
@@ -25,6 +25,8 @@ export function Like({ bookId }: LikeProps) {
     const dislikeBook = useDislikeBook();
 
     async function handleToggleLikeBook() {
+        if (!user?.id) return;
+
         if (!isAuthenticated) {
             toggleAuthDialog(true);
             return;
@@ -34,11 +36,13 @@ export function Like({ bookId }: LikeProps) {
 
         if (isLiked) {
             dislikeBook.mutate({
+                userId: user.id,
                 bookId,
                 likeId: like.id,
             });
         } else {
             addLikeBook.mutate({
+                userId: user.id,
                 bookId,
             });
         }
@@ -50,12 +54,15 @@ export function Like({ bookId }: LikeProps) {
         <>
             <Button
                 size="sm"
-                variant="neobrutalism"
+                variant={like ? "primary" : "outline"}
                 onClick={handleToggleLikeBook}
-                className={`${like ? "bg-pink-500 text-black" : ""} hover:bg-pink-500`}
                 disabled={isLoading}
             >
-                {isLoading ? <Loader2 size={22} className="animate-spin" /> : <Heart size={16} />}
+                {isLoading ? (
+                    <Loader2 size={22} className="animate-spin" />
+                ) : (
+                    <ThumbsUp size={16} />
+                )}
                 <span className="font-medium">{like ? "Curtido" : "Curtir"}</span>
             </Button>
         </>

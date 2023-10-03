@@ -17,6 +17,7 @@ import {
     Newspaper,
     Settings,
     Sun,
+    ThumbsUp,
     User,
     UserPlus,
 } from "lucide-react";
@@ -26,6 +27,7 @@ import { useThemeContext } from "@/contexts/ThemeContext";
 
 import { ApplicationSearch } from "./ApplicationSearch";
 import { LinkUnderline } from "./LinkUnderline";
+import { SignOutDialog } from "./SignOutDialog";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
@@ -64,6 +66,7 @@ const mobileDropdownRoutes: routeProps[] = [
 
 export function AppNavBar() {
     const [mounted, setMounted] = useState(false);
+    const [openSignOutDialog, setOpenSignOutDialog] = useState(false);
 
     const { user, isFetchingCurrentUser } = useAuthContext();
     const { theme, toggleTheme } = useThemeContext();
@@ -90,6 +93,11 @@ export function AppNavBar() {
                   path: `/@${user.username}/linha-do-tempo`,
                   disabled: true,
                   icon: CalendarClock,
+              },
+              {
+                  name: "Curtidas",
+                  path: `/@${user.username}/curtidas`,
+                  icon: ThumbsUp,
               },
               {
                   name: "Minhas listas",
@@ -121,7 +129,11 @@ export function AppNavBar() {
 
     if (!mounted) return;
 
-    function routesTree(routes: routeProps[]) {
+    function toggleSignOutDialog(value: boolean) {
+        setOpenSignOutDialog(value);
+    }
+
+    function RoutesTree({ routes }: { routes: routeProps[] }) {
         return (
             <>
                 {routes.map(({ name, path, disabled, icon: Icon }) => (
@@ -148,7 +160,7 @@ export function AppNavBar() {
                 <div className="h-6 w-24 rounded-md bg-zinc-300"></div>
 
                 <div className="flex items-center gap-2">
-                    <div className="h-10 w-11 rounded-md bg-zinc-300 md:w-40 md:w-56"></div>
+                    <div className="h-10 w-11 rounded-md bg-zinc-300 md:w-40"></div>
                     <div className="h-10 w-28 rounded-md bg-zinc-300"></div>
                     <div className="block h-10 w-11 rounded-md bg-zinc-300 md:hidden"></div>
                 </div>
@@ -212,13 +224,14 @@ export function AppNavBar() {
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" className="w-48">
-                                    {routesTree(profileRoutes)}
+                                    <RoutesTree routes={profileRoutes} />
 
-                                    <DropdownMenuItem>
-                                        <Link href="/sair" className="flex items-center gap-2">
-                                            <LogOut size={16} />
-                                            Sair
-                                        </Link>
+                                    <DropdownMenuItem
+                                        onClick={() => setOpenSignOutDialog(true)}
+                                        className="flex items-center gap-2"
+                                    >
+                                        <LogOut size={16} />
+                                        Sair
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
@@ -251,7 +264,7 @@ export function AppNavBar() {
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" className="w-36">
-                                    {routesTree(mobileDropdownRoutes)}
+                                    <RoutesTree routes={mobileDropdownRoutes} />
 
                                     <DropdownMenuSub>
                                         <DropdownMenuSubTrigger className="flex items-center gap-2">
@@ -290,6 +303,8 @@ export function AppNavBar() {
                     </div>
                 </div>
             </div>
+
+            <SignOutDialog open={openSignOutDialog} onOpenChange={toggleSignOutDialog} />
         </div>
     );
 }

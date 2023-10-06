@@ -16,7 +16,6 @@ import { useToast } from "@/components/ui/UseToast";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
-import { Container } from "@/components/layout/Container";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Separator } from "@/components/ui/Separator";
@@ -207,7 +206,7 @@ export default function UserConfigs() {
         !typedUsername || containsInvalidChars || usernameAlreadyExists || !!errors.username;
 
     return (
-        <Container>
+        <>
             <Title>Configurações</Title>
             <Subtitle>Gerencie as configurações da sua conta.</Subtitle>
 
@@ -488,6 +487,6 @@ export default function UserConfigs() {
                     </>
                 )}
             </section>
-        </Container>
+        </>
     );
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import { BookMarked, Heart, List, Lock } from "lucide-react";
 
@@ -13,7 +12,6 @@ import { RatingStars } from "../RatingStars";
 
 import { Badge } from "@/components/ui/Badge";
 import { Separator } from "@/components/ui/Separator";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/Tooltip";
 
 const bookData = {
@@ -68,26 +66,13 @@ const user = {
 };
 
 export function BookPageSection() {
-    const [currentTab, setCurrentTab] = useState("all");
-
-    const filteredReads = readsList.filter((item) => {
-        switch (currentTab) {
-            case "all":
-                return true;
-            case "active":
-                return item.status === "ACTIVE";
-            case "finished":
-                return item.status === "FINISHED";
-        }
-    });
-
     return (
-        <div className="relative my-12 max-h-[49rem]  rounded-lg border border-zinc-300 bg-black/5 p-4 after:absolute after:-left-px after:top-1/2 after:h-40 after:w-px after:bg-gradient-to-t after:from-transparent after:via-yellow-700 after:to-transparent after:opacity-0 after:transition-all after:duration-500 after:content-[''] hover:after:top-1/4 hover:after:opacity-100 dark:border-border dark:bg-light/5 dark:after:via-primary lg:my-16">
+        <div className="relative my-12 max-h-[46rem] rounded-lg border border-zinc-300 bg-black/5 p-4 after:absolute after:-left-px after:top-1/2 after:h-40 after:w-px after:bg-gradient-to-t after:from-transparent after:via-yellow-700 after:to-transparent after:opacity-0 after:transition-all after:duration-500 after:content-[''] hover:after:top-1/4 hover:after:opacity-100 dark:border-border dark:bg-light/5 dark:after:via-primary lg:my-16">
             <div className="relative block md:hidden">
                 <BookGradient bookImageUrl={bookData.imageUrl} className="rounded-lg" />
             </div>
 
-            <div className="flex max-h-[46.75rem] flex-col items-start gap-8 overflow-hidden rounded-lg bg-light p-4 shadow-lg transition-colors dark:bg-dark dark:shadow-2xl md:flex-row">
+            <div className="flex max-h-[43.75rem] flex-col items-start gap-8 overflow-hidden rounded-lg bg-light p-4 shadow-lg transition-colors dark:bg-dark dark:shadow-2xl md:flex-row">
                 <div className="z-10 w-full md:w-[19.5rem]">
                     <BookHeader
                         title={bookData.title}
@@ -220,135 +205,108 @@ export function BookPageSection() {
                                         <BookMarked size={16} />
                                         <h2 className="font-semibold">Minhas leituras</h2>
                                     </div>
-
-                                    <Tabs
-                                        value={currentTab}
-                                        onValueChange={setCurrentTab}
-                                        defaultValue="account"
-                                    >
-                                        <TabsList>
-                                            <TabsTrigger value="all">Todas</TabsTrigger>
-                                            <TabsTrigger value="active">Em andamento</TabsTrigger>
-                                            <TabsTrigger value="finished">Finalizadas</TabsTrigger>
-                                        </TabsList>
-                                    </Tabs>
                                 </div>
                             </div>
 
-                            {!!filteredReads.length ? (
-                                filteredReads.map((read) => (
-                                    <div
-                                        key={read.id}
-                                        className="relative rounded-md border bg-white text-sm transition-colors dark:bg-dark"
-                                    >
-                                        <div className="m-6 flex flex-col gap-2 rounded-md">
-                                            {/* read active */}
-                                            <div className="flex flex-wrap items-center justify-between gap-3">
-                                                <div className="flex items-center gap-2">
-                                                    <CardUserHover user={user} />
+                            {readsList.map((read) => (
+                                <div
+                                    key={read.id}
+                                    className="relative rounded-md border bg-white text-sm transition-colors dark:bg-dark"
+                                >
+                                    <div className="m-6 flex flex-col gap-2 rounded-md">
+                                        {/* read active */}
+                                        <div className="flex flex-wrap items-center justify-between gap-3">
+                                            <div className="flex items-center gap-2">
+                                                <CardUserHover user={user} />
 
-                                                    <Separator
-                                                        orientation="vertical"
-                                                        className="h-6"
-                                                    ></Separator>
+                                                <Separator
+                                                    orientation="vertical"
+                                                    className="h-6"
+                                                ></Separator>
 
-                                                    {/* Rating stars */}
-                                                    <div className="ml-1 inline-flex items-center gap-2">
-                                                        <div className="inline-flex items-center">
-                                                            <RatingStars
-                                                                rating={read.reviewRating}
-                                                            />
-                                                        </div>
+                                                {/* Rating stars */}
+                                                <div className="ml-1 inline-flex items-center gap-2">
+                                                    <div className="inline-flex items-center">
+                                                        <RatingStars rating={read.reviewRating} />
                                                     </div>
-                                                </div>
-
-                                                <div className="flex items-center gap-2">
-                                                    <Badge variant="green">
-                                                        Leitura finalizada
-                                                    </Badge>
-
-                                                    {/* Privacy badge */}
-                                                    <Badge variant="default">
-                                                        <Lock size={12} />
-                                                        Privado
-                                                    </Badge>
                                                 </div>
                                             </div>
 
-                                            <div className="my-1 flex flex-wrap items-center justify-between gap-2">
+                                            <div className="flex items-center gap-2">
+                                                <Badge variant="green">Leitura finalizada</Badge>
+
+                                                {/* Privacy badge */}
+                                                <Badge variant="default">
+                                                    <Lock size={12} />
+                                                    Privado
+                                                </Badge>
+                                            </div>
+                                        </div>
+
+                                        <div className="my-1 flex flex-wrap items-center justify-between gap-2">
+                                            <div className="text-sm font-medium text-muted-foreground">
+                                                Início da leitura: {read.startDate}
+                                            </div>
+                                            {read.endDate && (
                                                 <div className="text-sm font-medium text-muted-foreground">
-                                                    Início da leitura: {read.startDate}
+                                                    Fim da leitura: {read.endDate}
                                                 </div>
-                                                {read.endDate && (
-                                                    <div className="text-sm font-medium text-muted-foreground">
-                                                        Fim da leitura: {read.endDate}
-                                                    </div>
-                                                )}
-                                            </div>
+                                            )}
+                                        </div>
 
-                                            <p className="text-justify text-black dark:text-white">
-                                                {read.reviewContent}
-                                            </p>
+                                        <p className="text-justify text-black dark:text-white">
+                                            {read.reviewContent}
+                                        </p>
 
-                                            <h4 className="my-2 font-bold text-black dark:text-white">
-                                                Progressos recentes
-                                            </h4>
+                                        <h4 className="my-2 font-bold text-black dark:text-white">
+                                            Progressos recentes
+                                        </h4>
 
-                                            {read.progress.map((progress) => (
-                                                <div key={progress.id} className="border-t p-4">
-                                                    <div className="flex items-start justify-between gap-2">
-                                                        <div className="flex items-center gap-2">
-                                                            <CardUserHover user={user} />
+                                        {read.progress.map((progress) => (
+                                            <div key={progress.id} className="border-t p-4">
+                                                <div className="flex items-start justify-between gap-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <CardUserHover user={user} />
 
-                                                            <span className="mt-[2px] text-xs text-muted-foreground">
-                                                                {progress.createdAt}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-
-                                                    <p className="mt-2 text-justify text-black dark:text-white">
-                                                        {progress.description}
-                                                    </p>
-
-                                                    <div className="mt-4 flex items-center">
-                                                        <div className="flex items-center gap-1 text-sm font-medium">
-                                                            <span className="text-black dark:text-white">
-                                                                {progress.page}
-                                                            </span>
-                                                        </div>
-                                                        <div className="relative mx-2 h-5 flex-1 overflow-hidden rounded border bg-muted dark:bg-muted-foreground/25">
-                                                            <div
-                                                                className="h-5 bg-primary/50"
-                                                                style={{
-                                                                    width:
-                                                                        `${progress.percentage}%` ??
-                                                                        0,
-                                                                }}
-                                                            ></div>
-                                                            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-semibold text-black">
-                                                                {`${progress.percentage}%`}
-                                                            </span>
-                                                        </div>
-                                                        <span className="w-8 text-sm font-medium text-black dark:text-white">
-                                                            {bookData.pageCount}
+                                                        <span className="mt-[2px] text-xs text-muted-foreground">
+                                                            {progress.createdAt}
                                                         </span>
                                                     </div>
                                                 </div>
-                                            ))}
-                                            {/* end of progress */}
-                                        </div>
+
+                                                <p className="mt-2 text-justify text-black dark:text-white">
+                                                    {progress.description}
+                                                </p>
+
+                                                <div className="mt-4 flex items-center">
+                                                    <div className="flex items-center gap-1 text-sm font-medium">
+                                                        <span className="text-black dark:text-white">
+                                                            {progress.page}
+                                                        </span>
+                                                    </div>
+                                                    <div className="relative mx-2 h-5 flex-1 overflow-hidden rounded border bg-muted dark:bg-muted-foreground/25">
+                                                        <div
+                                                            className="h-5 bg-primary/50"
+                                                            style={{
+                                                                width:
+                                                                    `${progress.percentage}%` ?? 0,
+                                                            }}
+                                                        ></div>
+                                                        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-semibold text-black">
+                                                            {`${progress.percentage}%`}
+                                                        </span>
+                                                    </div>
+                                                    <span className="w-8 text-sm font-medium text-black dark:text-white">
+                                                        {bookData.pageCount}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {/* end of progress */}
                                     </div>
-                                ))
-                            ) : (
-                                <div className="mt-2 flex h-36 w-full flex-col items-center justify-center rounded-md border bg-white text-center dark:bg-dark">
-                                    <span className="text-base font-semibold text-black dark:text-white">
-                                        Nenhuma leitura em andamento.
-                                    </span>
-                                    <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
-                                        Que tal iniciar a leitura desse livro?
-                                    </p>
                                 </div>
-                            )}
+                            ))}
+                            {/* end of read */}
                         </div>
                     </div>
                 </div>

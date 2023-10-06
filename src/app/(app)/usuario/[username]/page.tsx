@@ -19,7 +19,6 @@ import { FavoriteBooks } from "./components/favoriteBooks";
 import { Calendar } from "@/components/ui/Calendar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
 import { LinkUnderline } from "@/components/LinkUnderline";
-import { Container } from "@/components/layout/Container";
 import { RatingChart } from "@/components/RatingChart";
 import { UserActivities } from "./components/userActivities";
 import { EditProfileButton } from "./components/editProfileButton";
@@ -84,7 +83,6 @@ export default function Profile({ params }: ProfileProps) {
         enabled: !!targetUser?.id,
     });
 
-    // render loading
     const isMounting =
         !isFetchedUser || !isFetchedFollowsCount || !isFetchedUserReads || !isFetchedUserProgress;
 
@@ -161,7 +159,7 @@ export default function Profile({ params }: ProfileProps) {
     );
 
     return (
-        <Container>
+        <>
             <div className="flex flex-col items-start justify-center md:flex-row">
                 <div className="flex items-start gap-8">
                     <Avatar className="h-28 w-28 md:h-40 md:w-40">
@@ -243,6 +241,6 @@ export default function Profile({ params }: ProfileProps) {
                     </div>
                 </div>
             </div>
-        </Container>
+        </>
     );
 }

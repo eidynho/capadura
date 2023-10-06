@@ -22,7 +22,7 @@ export function UserActivities({ userId }: UserActivitiesProps) {
         enabled: !!userId,
     });
 
-    function renderBookActivity({
+    function BookActivity({
         activity,
         activityType,
         createdAt,
@@ -138,7 +138,7 @@ export function UserActivities({ userId }: UserActivitiesProps) {
             {!!userActivities?.length ? (
                 userActivities.map((item) => (
                     <div key={item.id} className="flex items-center gap-2">
-                        {renderBookActivity(item)}
+                        {BookActivity(item)}
                     </div>
                 ))
             ) : (

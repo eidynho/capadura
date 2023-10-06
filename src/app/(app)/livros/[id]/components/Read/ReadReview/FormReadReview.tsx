@@ -46,7 +46,7 @@ type ReviewReadFormSchema = z.infer<typeof readReviewFormSchema>;
 
 interface FormReadReviewProps {
     readId?: string;
-    handleStartNewRead: () => Promise<string | undefined>;
+    handleStartNewRead?: () => Promise<string | undefined>;
     handleUpdateRead: (data: HandleUpdateReadProps) => Promise<void>;
     handleAddNewProgress: (data: HandleAddNewProgressProps) => Promise<void>;
     isReviewWithoutProgress?: boolean;
@@ -121,7 +121,7 @@ export function FormReadReview({
             }
 
             let newlyCreatedRead: string | undefined = "";
-            if (isReviewWithoutProgress) {
+            if (isReviewWithoutProgress && handleStartNewRead) {
                 const createdReadId = await handleStartNewRead();
                 newlyCreatedRead = createdReadId;
 

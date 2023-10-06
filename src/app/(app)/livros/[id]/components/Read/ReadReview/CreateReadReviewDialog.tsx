@@ -26,7 +26,7 @@ interface ReadReviewDialogProps {
     readId?: string;
     bookData: BookData | null;
     palette: string[];
-    handleStartNewRead: () => Promise<string | undefined>;
+    handleStartNewRead?: () => Promise<string | undefined>;
     handleUpdateRead: (data: HandleUpdateReadProps) => Promise<void>;
     handleAddNewProgress: (data: HandleAddNewProgressProps) => Promise<void>;
     isReviewWithoutProgress?: boolean;

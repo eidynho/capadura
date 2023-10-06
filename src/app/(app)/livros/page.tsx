@@ -12,7 +12,6 @@ import { useToast } from "@/components/ui/UseToast";
 import { fetchGoogleBooks } from "@/utils/fetch-google-books";
 import { GoogleAPIData } from "@/components/ApplicationSearch";
 
-import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Separator } from "@/components/ui/Separator";
@@ -68,7 +67,7 @@ export default function Books() {
     if (isFetchingBooks) return;
 
     return (
-        <Container>
+        <>
             <Title>Livros</Title>
             <Subtitle>Encontre os livros mais procurados da comunidade.</Subtitle>
 
@@ -196,6 +195,6 @@ export default function Books() {
                     </div>
                 </div>
             </div>
-        </Container>
+        </>
     );
 }

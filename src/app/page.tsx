@@ -1,6 +1,5 @@
 import { Metadata } from "next";
 
-import { Container } from "@/components/layout/Container";
 import { Header } from "@/components/layout/Header";
 import { FeatureSection } from "@/components/layout/FeatureSection";
 import { FAQSection } from "@/components/layout/FAQSection";
@@ -14,13 +13,13 @@ export const metadata: Metadata = {
 
 export default async function Home() {
     return (
-        <Container>
+        <>
             <Header />
             <BookPageSection />
             <FeatureSection />
             <FAQSection />
             <CTASection />
             <Footer />
-        </Container>
+        </>
     );
 }

@@ -13,13 +13,12 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/Dialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/Tooltip";
 
 interface ReadReviewDialogProps {
     readId?: string;
     bookData: BookData | null;
-    handleStartNewRead: () => Promise<string | undefined>;
     handleUpdateRead: (data: HandleUpdateReadProps) => Promise<void>;
     handleAddNewProgress: (data: HandleAddNewProgressProps) => Promise<void>;
 
@@ -33,7 +32,6 @@ interface ReadReviewDialogProps {
 export function UpdateReadReviewDialog({
     readId,
     bookData,
-    handleStartNewRead,
     handleUpdateRead,
     handleAddNewProgress,
     editData,
@@ -46,16 +44,24 @@ export function UpdateReadReviewDialog({
 
     return (
         <>
+            <TooltipProvider delayDuration={400} skipDelayDuration={0}>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button
+                            size="icon-sm"
+                            variant="default"
+                            onClick={() => handleToggleDialog(true)}
+                        >
+                            <PencilLine size={16} />
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent sideOffset={8}>
+                        <span>Editar avaliação</span>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                <DialogTrigger asChild>
-                    <Button
-                        size="icon-sm"
-                        variant="default"
-                        onClick={() => handleToggleDialog(true)}
-                    >
-                        <PencilLine size={16} />
-                    </Button>
-                </DialogTrigger>
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Avaliar livro - {bookData?.title}</DialogTitle>
@@ -64,7 +70,6 @@ export function UpdateReadReviewDialog({
                     <div className="px-3 py-2">
                         <FormReadReview
                             readId={readId}
-                            handleStartNewRead={handleStartNewRead}
                             handleUpdateRead={handleUpdateRead}
                             handleAddNewProgress={handleAddNewProgress}
                             editData={editData}

@@ -6,6 +6,7 @@ import { Providers } from "@/contexts/Providers";
 import { manrope } from "@/constants/fonts";
 
 import { AuthDialog } from "@/components/AuthDialog";
+import { Container } from "@/components/layout/Container";
 import { MainContainer } from "@/components/layout/MainContainer";
 import { Toaster } from "@/components/ui/Toaster";
 
@@ -26,7 +27,9 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                 <div className={`${manrope.variable} mx-auto max-w-[120rem] font-manrope`}>
                     <Providers>
                         <div className="flex flex-col">
-                            <MainContainer>{children}</MainContainer>
+                            <MainContainer>
+                                <Container>{children}</Container>
+                            </MainContainer>
                         </div>
 
                         <Toaster />

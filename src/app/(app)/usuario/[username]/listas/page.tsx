@@ -24,7 +24,6 @@ import Loading from "./loading";
 
 import { Button } from "@/components/ui/Button";
 import { CardUserHover } from "@/components/CardUserHover";
-import { Container } from "@/components/layout/Container";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -162,7 +161,7 @@ export default function UserLists({ params }: UserListsProps) {
     }
 
     return (
-        <Container>
+        <>
             <Title>{isCurrentUser ? "Minhas listas" : `Listas de ${params.username}`}</Title>
             {isCurrentUser && <Subtitle>Organize sua leitura do jeito que você quiser.</Subtitle>}
 
@@ -363,6 +362,6 @@ export default function UserLists({ params }: UserListsProps) {
                     </div>
                 )}
             </div>
-        </Container>
+        </>
     );
 }

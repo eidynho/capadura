@@ -14,6 +14,7 @@ export interface ReadData {
     reviewContent: string | null;
     reviewRating: number | null;
     reviewIsSpoiler: boolean | null;
+    userId: string;
     status: ReadStatus;
     progress: ProgressData[];
     book?: BookData;
@@ -62,6 +63,23 @@ export function useFetchUserReadsByBook({ bookId, enabled = true }: UseFetchUser
             const { data } = await api.get(`/user-reads/book/${bookId}`);
 
             return data as ReadsDataResponse;
+        },
+        enabled,
+    });
+}
+
+interface UseFetchReadProps {
+    readId: string;
+    enabled?: boolean;
+}
+
+export function useFetchRead({ readId, enabled = true }: UseFetchReadProps) {
+    return useQuery({
+        queryKey: ["fetchRead", { readId }],
+        queryFn: async () => {
+            const { data } = await api.get(`/read/${readId}`);
+
+            return data as ReadData;
         },
         enabled,
     });

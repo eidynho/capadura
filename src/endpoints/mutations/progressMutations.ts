@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 
 import { ProgressData } from "../queries/progressQueries";
-import { ReadsDataResponse } from "../queries/readsQueries";
+import { ReadData, ReadsDataResponse } from "../queries/readsQueries";
 
 import { useToast } from "@/components/ui/UseToast";
 
@@ -69,6 +69,21 @@ export function useAddNewProgress() {
                     };
                 },
             );
+
+            // read id page
+            queryClient.setQueryData<ReadData>(["fetchRead", { readId }], (prevData) => {
+                if (!prevData) return;
+
+                const updatedRead = { ...(prevData || {}) };
+
+                if (!updatedRead.progress) {
+                    updatedRead.progress = [];
+                }
+
+                updatedRead.progress.unshift(newData);
+
+                return updatedRead;
+            });
 
             toast({
                 title: "Progresso adicionado.",
@@ -180,6 +195,44 @@ export function useUpdateProgress() {
                 },
             );
 
+            // read id page
+            queryClient.setQueryData<ReadData>(["fetchRead", { readId }], (prevData) => {
+                if (!prevData) return;
+
+                const updatedRead = { ...(prevData || {}) };
+
+                const progress = updatedRead.progress.find(
+                    (progress) => progress.id === progressId,
+                );
+                if (!progress) {
+                    return updatedRead;
+                }
+
+                let page = 0;
+                let percentage = 0;
+                if (countType === "page") {
+                    page = Math.round(pagesCount);
+                    percentage = Math.round((pagesCount / bookPageCount) * 100);
+                }
+
+                if (countType === "percentage") {
+                    page = Math.round((bookPageCount / 100) * pagesCount);
+                    percentage = Math.round(pagesCount);
+                }
+
+                if (percentage >= 100) {
+                    page = bookPageCount;
+                    percentage = 100;
+                }
+
+                progress.description = description ?? "";
+                progress.isSpoiler = isSpoiler;
+                progress.page = page;
+                progress.percentage = percentage;
+
+                return updatedRead;
+            });
+
             toast({
                 title: "O progresso de leitura foi editado.",
             });
@@ -231,6 +284,19 @@ export function useDeleteProgress() {
                     };
                 },
             );
+
+            // read id page
+            queryClient.setQueryData<ReadData>(["fetchRead", { readId }], (prevData) => {
+                if (!prevData) return;
+
+                const updatedRead = { ...(prevData || {}) };
+
+                updatedRead.progress = updatedRead.progress.filter(
+                    (progress) => progress.id !== progressId,
+                );
+
+                return updatedRead;
+            });
 
             toast({
                 title: "O progresso de leitura foi deletado.",

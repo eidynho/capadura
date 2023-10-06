@@ -142,6 +142,24 @@ export function useUpdateRead() {
                 (prevData) => updateReadsQueryData(prevData),
             );
 
+            // read id page
+            queryClient.setQueryData<ReadData>(["fetchRead", { readId }], (prevData) => {
+                if (!prevData) return;
+
+                const updatedRead = { ...(prevData || {}) };
+
+                updatedRead.status = status;
+                updatedRead.reviewContent = reviewContent || null;
+                updatedRead.reviewRating = reviewRating;
+                updatedRead.reviewIsSpoiler = reviewIsSpoiler;
+
+                if (endRead) {
+                    updatedRead.endDate = new Date().toISOString();
+                }
+
+                return updatedRead;
+            });
+
             // is status is abount to change for "FINISHED", add total finished read count metadata count by one
             if (status === "FINISHED") {
                 queryClient.setQueriesData<GetMetadataCount>(
@@ -278,6 +296,17 @@ export function useToggleReadPrivacy() {
                 },
             );
 
+            // read id page
+            queryClient.setQueryData<ReadData>(["fetchRead", { readId }], (prevData) => {
+                if (!prevData) return;
+
+                const updatedRead = { ...(prevData || {}) };
+
+                updatedRead.isPrivate = !updatedRead.isPrivate;
+
+                return updatedRead;
+            });
+
             toast({
                 title: "A privacidade da leitura foi alterada.",
             });
@@ -332,6 +361,17 @@ export function useToggleReadStatus() {
                     };
                 },
             );
+
+            // read id page
+            queryClient.setQueryData<ReadData>(["fetchRead", { readId }], (prevData) => {
+                if (!prevData) return;
+
+                const updatedRead = { ...(prevData || {}) };
+
+                updatedRead.status = status;
+
+                return updatedRead;
+            });
 
             toast({
                 title: "O status da leitura foi alterado.",

@@ -94,7 +94,7 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
 
     if (!user) return null;
 
-    function renderBookLists() {
+    function BookLists() {
         return (
             <>
                 {isFetching ? (
@@ -174,7 +174,7 @@ export function BookListMenu({ bookData }: BookListMenuProps) {
 
                 <DropdownMenuSeparator />
 
-                {renderBookLists()}
+                <BookLists />
             </DropdownMenuContent>
         </DropdownMenu>
     );

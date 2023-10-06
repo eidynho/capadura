@@ -1,11 +1,7 @@
-"use client";
-
-import { Container } from "@/components/layout/Container";
-
-export default function Loading() {
+export default async function Loading() {
     return (
-        <Container className="animate-pulse">
-            <div className="flex flex-col items-start justify-center md:flex-row">
+        <>
+            <div className="flex animate-pulse flex-col items-start justify-center md:flex-row">
                 <div className="flex items-start gap-8">
                     <div className="flex h-28 w-28 items-center gap-4 rounded-full bg-zinc-300 dark:bg-accent"></div>
 
@@ -21,7 +17,7 @@ export default function Loading() {
                 </div>
             </div>
 
-            <div className="mt-8 flex flex-col justify-center gap-12 lg:flex-row">
+            <div className="mt-8 flex animate-pulse flex-col justify-center gap-12 lg:flex-row">
                 <div className="flex w-full flex-col gap-12 lg:w-3/5">
                     <div className="flex flex-col">
                         <div className="mb-1 h-6 w-32 items-center rounded-md bg-zinc-300 dark:bg-accent"></div>
@@ -104,6 +100,6 @@ export default function Loading() {
                     </div>
                 </div>
             </div>
-        </Container>
+        </>
     );
 }

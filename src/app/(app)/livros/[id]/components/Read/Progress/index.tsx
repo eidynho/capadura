@@ -1,9 +1,12 @@
+"use client";
+
+import Link from "next/link";
 import { format, parseISO } from "date-fns";
 import { pt } from "date-fns/locale";
 import { MoreVertical } from "lucide-react";
 
-import { useAuthContext } from "@/contexts/AuthContext";
 import { DeleteProgressData, EditReadData } from "..";
+import { ProfileDataResponse } from "@/endpoints/queries/usersQueries";
 import { ProgressData } from "@/endpoints/queries/progressQueries";
 
 import { Button } from "@/components/ui/Button";
@@ -16,6 +19,11 @@ import {
 } from "@/components/ui/DropdownMenu";
 
 interface ProgressProps {
+    canEdit: boolean;
+    user: ProfileDataResponse;
+    readId: string;
+    bookId: string;
+    showMoreProgressBtn: boolean;
     progressList?: ProgressData[];
     bookPageCount: number;
     setProgressEditData: ({
@@ -30,20 +38,27 @@ interface ProgressProps {
 }
 
 export function Progress({
+    user,
+    canEdit,
+    readId,
+    bookId,
+    showMoreProgressBtn,
     progressList,
     bookPageCount,
     setProgressEditData,
     setProgressDeleteData,
 }: ProgressProps) {
-    const { user } = useAuthContext();
-
     return (
         <div className="mt-2 flex flex-col gap-3 text-black dark:text-white">
             <div className="flex items-center justify-between gap-2">
                 <h4 className="font-bold">Progressos recentes</h4>
-                <Button size="sm" variant="outline">
-                    Ver todos
-                </Button>
+                {showMoreProgressBtn && (
+                    <Link href={`/livros/${bookId}/leituras/${readId}`}>
+                        <Button size="sm" variant="outline">
+                            Ver mais
+                        </Button>
+                    </Link>
+                )}
             </div>
             {!!progressList?.length ? (
                 progressList.map((progress) => (
@@ -61,37 +76,42 @@ export function Progress({
                                 </span>
                             </div>
 
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button size="icon-sm" variant="default">
-                                        <MoreVertical
-                                            size={16}
-                                            className="text-black dark:text-white"
-                                        />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                    <DropdownMenuItem
-                                        onClick={() =>
-                                            setProgressEditData({ ...progress, countType: "page" })
-                                        }
-                                    >
-                                        <span>Editar</span>
-                                    </DropdownMenuItem>
+                            {canEdit && (
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button size="icon-sm" variant="default">
+                                            <MoreVertical
+                                                size={16}
+                                                className="text-black dark:text-white"
+                                            />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DropdownMenuItem
+                                            onClick={() =>
+                                                setProgressEditData({
+                                                    ...progress,
+                                                    countType: "page",
+                                                })
+                                            }
+                                        >
+                                            <span>Editar</span>
+                                        </DropdownMenuItem>
 
-                                    <DropdownMenuItem
-                                        onClick={() =>
-                                            setProgressDeleteData({
-                                                progressId: progress.id,
-                                                readId: progress.readId,
-                                            })
-                                        }
-                                        className="text-destructive focus:bg-destructive/10 focus:text-destructive"
-                                    >
-                                        <span>Excluir</span>
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                                        <DropdownMenuItem
+                                            onClick={() =>
+                                                setProgressDeleteData({
+                                                    progressId: progress.id,
+                                                    readId: progress.readId,
+                                                })
+                                            }
+                                            className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+                                        >
+                                            <span>Excluir</span>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            )}
                         </div>
 
                         {progress.description && (

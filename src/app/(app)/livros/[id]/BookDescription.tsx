@@ -10,7 +10,7 @@ interface BookDescriptionProps {
     className?: string;
 }
 
-const MAX_DESCRIPTION_HEIGHT_IN_PX = 320;
+const MAX_DESCRIPTION_HEIGHT_IN_PX = 120;
 
 export function BookDescription({ description, className }: BookDescriptionProps) {
     const [showFullDescription, setShowFullDescription] = useState(true);
@@ -29,22 +29,19 @@ export function BookDescription({ description, className }: BookDescriptionProps
 
     return (
         <>
-            <div className="relative">
-                <div
-                    ref={descriptionRef}
-                    className={cn(
-                        "text-sm leading-7 text-black dark:text-muted-foreground",
-                        showFullDescription ? "" : "max-h-72 overflow-hidden",
-                        className,
-                    )}
-                    dangerouslySetInnerHTML={{
-                        __html: description || "",
-                    }}
-                ></div>
-                {!showFullDescription && (
-                    <div className="absolute bottom-0 left-0 z-0 h-1/2 w-full bg-gradient-to-t from-light to-transparent transition-all dark:from-dark"></div>
+            <div
+                ref={descriptionRef}
+                className={cn(
+                    "bg-gradient-to-b from-black bg-clip-text text-sm leading-7 text-transparent transition-all dark:from-muted-foreground",
+                    showFullDescription
+                        ? "to-black dark:to-light"
+                        : "max-h-40 overflow-hidden to-light dark:to-dark",
+                    className,
                 )}
-            </div>
+                dangerouslySetInnerHTML={{
+                    __html: description || "",
+                }}
+            ></div>
             {maximumHeightExceeded && (
                 <Button
                     size="sm"

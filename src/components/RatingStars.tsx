@@ -13,7 +13,7 @@ export function RatingStars({ rating, size = 16, className }: RatingStarsProps) 
     const isInteger = Number.isInteger(rating);
     const ratingFloor = Math.floor(rating);
 
-    const renderIntegerStars = () => {
+    const IntegerStars = () => {
         return [...Array(ratingFloor)].map((_, index) => (
             <Star key={index} size={size} weight="fill" />
         ));
@@ -21,7 +21,7 @@ export function RatingStars({ rating, size = 16, className }: RatingStarsProps) 
 
     return (
         <div className={cn("inline-flex items-center text-black dark:text-white", className)}>
-            {renderIntegerStars()}
+            <IntegerStars />
             {!isInteger && <StarHalf size={size} weight="fill" />}
         </div>
     );

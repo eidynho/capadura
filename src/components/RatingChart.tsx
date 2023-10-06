@@ -58,7 +58,7 @@ export function RatingChart({ bookId, userId, username }: RatingChartProps) {
         router.push(`/${username ? `@${username}` : bookId}/ratings/${rating}`);
     }
 
-    function RenderTooltipContent({ payload }: any) {
+    function ChartTooltipContent({ payload }: any) {
         const data = payload?.[0]?.payload;
         if (!data) return <></>;
 
@@ -118,7 +118,7 @@ export function RatingChart({ bookId, userId, username }: RatingChartProps) {
                     <ResponsiveContainer width="100%" height={96}>
                         <BarChart data={bookRatings.data}>
                             <RechartsTooltip
-                                content={<RenderTooltipContent />}
+                                content={<ChartTooltipContent />}
                                 cursor={<CustomTooltipCursor />}
                                 position={{ x: barGraphData.x, y: barGraphData.y - 30 }}
                                 animationDuration={300}

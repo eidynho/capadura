@@ -19,7 +19,6 @@ import { useToast } from "@/components/ui/UseToast";
 import Loading from "./loading";
 
 import { Button } from "@/components/ui/Button";
-import { Container } from "@/components/layout/Container";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -93,7 +92,7 @@ export default function UserLikes({ params }: UserLikesProps) {
     }
 
     return (
-        <Container>
+        <>
             <Title>{isCurrentUser ? "Minhas curtidas" : `Curtidas de ${params.username}`}</Title>
             {isCurrentUser && (
                 <Subtitle>O cantinho pra você guardar todas as coisas que curtiu.</Subtitle>
@@ -193,6 +192,6 @@ export default function UserLikes({ params }: UserLikesProps) {
                     </TableBody>
                 </Table>
             </div>
-        </Container>
+        </>
     );
 }

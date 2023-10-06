@@ -33,6 +33,23 @@ export function useFetchCurrentUser({ enabled = true }: UseFetchCurrentUserProps
     });
 }
 
+interface UseFetchUserByIdProps {
+    userId: string;
+    enabled?: boolean;
+}
+
+export function useFetchUserById({ userId, enabled = true }: UseFetchUserByIdProps) {
+    return useQuery({
+        queryKey: ["fetchUserById", { userId }],
+        queryFn: async () => {
+            const { data } = await api.get(`/users/id/${userId}`);
+
+            return data as ProfileDataResponse;
+        },
+        enabled,
+    });
+}
+
 interface UseFetchUserByUsernameProps {
     username: string;
     enabled?: boolean;
@@ -42,7 +59,7 @@ export function useFetchUserByUsername({ username, enabled = true }: UseFetchUse
     return useQuery({
         queryKey: ["fetchUserByUsername", { username }],
         queryFn: async () => {
-            const { data } = await api.get(`/users/${username}`);
+            const { data } = await api.get(`/users/username/${username}`);
 
             return data as ProfileDataResponse;
         },

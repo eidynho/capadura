@@ -10,7 +10,7 @@ import { useWindowSize } from "@/hooks/useWindowSize";
 
 import { useFetchUserByUsername } from "@/endpoints/queries/usersQueries";
 import { useGetUsersFollowsCount } from "@/endpoints/queries/followsQueries";
-import { ReadData, useFetchUserReadsByUser } from "@/endpoints/queries/readsQueries";
+import { ReadData, useFetchUserReadsByStatus } from "@/endpoints/queries/readsQueries";
 import { ProgressData, useFetchUserProgress } from "@/endpoints/queries/progressQueries";
 
 import Loading from "./loading";
@@ -73,8 +73,9 @@ export default function Profile({ params }: ProfileProps) {
         enabled: !!targetUser?.id,
     });
 
-    const { data: userReads, isFetched: isFetchedUserReads } = useFetchUserReadsByUser({
+    const { data: userReads, isFetched: isFetchedUserReads } = useFetchUserReadsByStatus({
         userId: targetUser?.id || "",
+        status: "FINISHED",
         enabled: !!targetUser?.id,
     });
 

@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
 
-import { ReadData, ReadsDataResponse } from "../queries/readsQueries";
+import { ReadData, ReadStatus, ReadsDataResponse } from "../queries/readsQueries";
 import { GetMetadataCount } from "@/app/(app)/livros/[id]/components/BookMetaData";
 
 import { useToast } from "@/components/ui/UseToast";
@@ -329,8 +329,6 @@ interface UseToggleReadStatusProps {
     status: ReadStatus;
 }
 
-export type ReadStatus = "ACTIVE" | "FINISHED" | "CANCELLED" | "DELETED";
-
 export function useToggleReadStatus() {
     const queryClient = useQueryClient();
 
@@ -371,6 +369,11 @@ export function useToggleReadStatus() {
                 updatedRead.status = status;
 
                 return updatedRead;
+            });
+
+            queryClient.invalidateQueries({
+                queryKey: ["fetchUserReadsByUser"],
+                refetchType: "none",
             });
 
             toast({

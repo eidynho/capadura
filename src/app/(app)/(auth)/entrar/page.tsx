@@ -47,7 +47,7 @@ export default function Login() {
     }
 
     return (
-        <div className="mt-20 flex min-h-[80dvh] w-full items-center justify-center text-black dark:text-white">
+        <div className="flex min-h-[80dvh] w-full items-center justify-center text-black dark:text-white">
             <div className="mx-4 w-full sm:mx-0 sm:max-w-sm">
                 <div className="text-center">
                     <span className="font-medium">Capadura</span>

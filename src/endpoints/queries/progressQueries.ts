@@ -44,3 +44,29 @@ export function useFetchUserProgress({
         enabled,
     });
 }
+
+interface UseFetchReadProgressProps {
+    readId: string;
+    page?: number;
+    perPage?: number;
+    enabled?: boolean;
+}
+
+export function useFetchReadProgress({
+    readId,
+    page = 1,
+    perPage = 10,
+    enabled = true,
+}: UseFetchReadProgressProps) {
+    return useQuery({
+        queryKey: ["fetchReadProgress", { readId, page, perPage }],
+        queryFn: async () => {
+            const { data } = await api.get(
+                `/progress/read/${readId}?page=${page}&perPage=${perPage}`,
+            );
+
+            return data as ProgressDataResponse;
+        },
+        enabled,
+    });
+}

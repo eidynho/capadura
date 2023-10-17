@@ -25,29 +25,32 @@ export interface ReadsDataResponse {
     total: number;
 }
 
-interface UseFetchUserReadsByUserProps {
+interface useFetchUserReadsByStatusProps {
     userId: string;
+    status: ReadStatus;
     page?: number;
     perPage?: number;
     enabled?: boolean;
 }
 
-export function useFetchUserReadsByUser({
+export function useFetchUserReadsByStatus({
     userId,
+    status,
     page = 1,
     perPage = 3,
     enabled = true,
-}: UseFetchUserReadsByUserProps) {
+}: useFetchUserReadsByStatusProps) {
     return useQuery({
-        queryKey: ["fetchUserReadsByUser", { userId }],
+        queryKey: ["fetchUserReadsByUser", { userId, status, page, perPage }],
         queryFn: async () => {
             const { data } = await api.get(
-                `/user-reads?userId=${userId}&status=FINISHED&page=${page}&perPage=${perPage}`,
+                `/user-reads?userId=${userId}&status=${status}&page=${page}&perPage=${perPage}`,
             );
 
             return data as ReadsDataResponse;
         },
         enabled,
+        staleTime: Infinity,
     });
 }
 

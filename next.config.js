@@ -25,6 +25,10 @@ const nextConfig = {
                 destination: "/usuario/:username",
             },
             {
+                source: "/@:username/leituras",
+                destination: "/usuario/:username/leituras",
+            },
+            {
                 source: "/@:username/curtidas",
                 destination: "/usuario/:username/curtidas",
             },

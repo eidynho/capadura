@@ -128,7 +128,7 @@ export function Progress({
                                 <div
                                     className="h-5 bg-primary/50"
                                     style={{
-                                        width: `${progress.percentage}%` ?? 0,
+                                        width: `${progress.percentage ?? 0}%`,
                                     }}
                                 ></div>
                                 <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-semibold text-black">

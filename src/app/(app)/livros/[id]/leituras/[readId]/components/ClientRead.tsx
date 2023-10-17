@@ -1,11 +1,13 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { notFound } from "next/navigation";
 
 import { BookData } from "@/endpoints/queries/booksQueries";
 
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useFetchRead } from "@/endpoints/queries/readsQueries";
+import { ProgressData, useFetchReadProgress } from "@/endpoints/queries/progressQueries";
 import { useFetchUserById } from "@/endpoints/queries/usersQueries";
 
 import { Button } from "@/components/ui/Button";
@@ -19,6 +21,9 @@ interface ClientReadProps {
 export function ClientRead({ readId, bookData }: ClientReadProps) {
     const { user } = useAuthContext();
 
+    const [fullProgressList, setFullProgressList] = useState<ProgressData[]>([]);
+    const [page, setPage] = useState(1);
+
     const { data: readData, isFetched: isReadFetched } = useFetchRead({
         readId,
         enabled: true,
@@ -29,13 +34,31 @@ export function ClientRead({ readId, bookData }: ClientReadProps) {
         enabled: !!readData?.userId,
     });
 
-    if (!readData || !readCreator) return;
+    const { data: progressList, isFetched } = useFetchReadProgress({
+        readId,
+        page,
+    });
+
+    useEffect(() => {
+        if (isFetched && progressList) {
+            setFullProgressList((prev) => [...prev, progressList.items].flat());
+        }
+    }, [isFetched]);
+
+    if (!readData || !readCreator || !progressList) return;
 
     if ((!readData && isReadFetched) || (!readCreator && isReadCreatorFetched)) {
         notFound();
     }
 
     const isReaderCreator = user?.id === readCreator.id;
+    const hasMoreProgress = progressList.total > fullProgressList.length;
+
+    function fetchMoreProgress() {
+        if (hasMoreProgress) {
+            setPage((prev) => prev + 1);
+        }
+    }
 
     return (
         <>
@@ -43,13 +66,22 @@ export function ClientRead({ readId, bookData }: ClientReadProps) {
                 user={readCreator}
                 read={readData}
                 bookData={bookData}
+                progressList={fullProgressList}
                 canEdit={isReaderCreator}
                 showExternalLink={false}
             />
 
-            <Button size="sm" variant="primary" className="mt-2">
-                Carregar mais progressos
-            </Button>
+            {hasMoreProgress && (
+                <Button
+                    size="sm"
+                    variant="primary"
+                    onClick={fetchMoreProgress}
+                    disabled={!hasMoreProgress}
+                    className="mt-2"
+                >
+                    Carregar mais progressos
+                </Button>
+            )}
         </>
     );
 }

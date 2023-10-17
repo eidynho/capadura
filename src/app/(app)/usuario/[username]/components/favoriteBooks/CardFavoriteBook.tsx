@@ -13,7 +13,6 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/DropdownMenu";
-import { LinkUnderline } from "@/components/LinkUnderline";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/Tooltip";
 
 interface CardFavoriteBookProps {
@@ -58,15 +57,13 @@ export function CardFavoriteBook({
 
             <div className="flex h-full w-full flex-1 flex-col justify-between gap-2">
                 <div className="flex w-full items-start justify-between gap-2">
-                    <div>
-                        <LinkUnderline href={`/livros/${currentBook.id}`} className="table">
-                            <h3
-                                className="font-semibold leading-none tracking-tight text-black dark:text-white"
-                                title={currentBook.title}
-                            >
-                                {currentBook.title}
-                            </h3>
-                        </LinkUnderline>
+                    <div className="flex flex-col gap-1">
+                        <Link
+                            href={`/livros/${currentBook.id}`}
+                            className="font-semibold leading-none tracking-tight text-black hover:underline dark:text-white"
+                        >
+                            {currentBook.title}
+                        </Link>
                         <span className="text-sm text-muted-foreground">
                             {currentBook.authors?.[0]}
                         </span>

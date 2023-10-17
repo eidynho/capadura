@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { format, parseISO } from "date-fns";
 import { ExternalLink, Lock, MoreVertical, Undo2, Unlock } from "lucide-react";
 import { pt } from "date-fns/locale";
@@ -9,9 +10,10 @@ import { pt } from "date-fns/locale";
 import { HandleAddNewProgressProps, HandleUpdateReadProps } from "./ReadReview/FormReadReview";
 
 import { BookData } from "@/endpoints/queries/booksQueries";
-import { ReadData } from "@/endpoints/queries/readsQueries";
+import { ReadData, ReadStatus } from "@/endpoints/queries/readsQueries";
+import { ProfileDataResponse } from "@/endpoints/queries/usersQueries";
+import { ProgressData } from "@/endpoints/queries/progressQueries";
 import {
-    ReadStatus,
     useDeleteRead,
     useToggleReadPrivacy,
     useToggleReadStatus,
@@ -44,8 +46,6 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/DropdownMenu";
 import { Separator } from "@/components/ui/Separator";
-import Link from "next/link";
-import { ProfileDataResponse } from "@/endpoints/queries/usersQueries";
 
 export interface EditReadData {
     readId: string;
@@ -64,12 +64,13 @@ export interface DeleteProgressData {
 interface ReadProps {
     user: ProfileDataResponse;
     read: ReadData;
+    progressList?: ProgressData[];
     bookData: BookData;
     canEdit: boolean;
     showExternalLink: boolean;
 }
 
-export function Read({ user, read, bookData, canEdit, showExternalLink }: ReadProps) {
+export function Read({ user, read, progressList, bookData, canEdit, showExternalLink }: ReadProps) {
     const [isOpenUpdateProgressDialog, setIsOpenUpdateProgressDialog] = useState(false);
     const [isOpenDeleteProgressDialog, setIsOpenDeleteProgressDialog] = useState(false);
     const [isOpenDeleteReadDialog, setIsOpenDeleteReadDialog] = useState(false);
@@ -304,6 +305,10 @@ export function Read({ user, read, bookData, canEdit, showExternalLink }: ReadPr
         return <Badge variant={variant}>{message}</Badge>;
     }
 
+    const lastProgressPercentage = progressList?.[0]
+        ? progressList[0].percentage
+        : read.progress?.[0]?.percentage;
+
     return (
         <>
             <div
@@ -452,7 +457,7 @@ export function Read({ user, read, bookData, canEdit, showExternalLink }: ReadPr
 
                     {canEdit && (
                         <div className="mt-2 flex items-center gap-2">
-                            {read.progress?.[0]?.percentage !== 100 && (
+                            {lastProgressPercentage !== 100 && (
                                 <NewProgressDialog
                                     readId={read.id}
                                     bookTitle={bookData.title}
@@ -462,16 +467,15 @@ export function Read({ user, read, bookData, canEdit, showExternalLink }: ReadPr
                                 />
                             )}
 
-                            {read.reviewRating === null &&
-                                read.progress?.[0]?.percentage === 100 && (
-                                    <CreateReadReviewDialog
-                                        readId={read.id}
-                                        bookData={bookData}
-                                        palette={palette}
-                                        handleUpdateRead={handleUpdateRead}
-                                        handleAddNewProgress={handleAddNewProgress}
-                                    />
-                                )}
+                            {read.reviewRating === null && lastProgressPercentage === 100 && (
+                                <CreateReadReviewDialog
+                                    readId={read.id}
+                                    bookData={bookData}
+                                    palette={palette}
+                                    handleUpdateRead={handleUpdateRead}
+                                    handleAddNewProgress={handleAddNewProgress}
+                                />
+                            )}
                         </div>
                     )}
 
@@ -481,7 +485,7 @@ export function Read({ user, read, bookData, canEdit, showExternalLink }: ReadPr
                         bookId={bookData.id}
                         readId={read.id}
                         showMoreProgressBtn={showExternalLink}
-                        progressList={read.progress}
+                        progressList={progressList || read.progress}
                         bookPageCount={bookData.pageCount ?? 0}
                         setProgressEditData={handleSetProgressEditData}
                         setProgressDeleteData={handleSetProgressDeleteData}

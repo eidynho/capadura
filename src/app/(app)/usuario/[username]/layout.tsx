@@ -3,14 +3,14 @@ import { notFound } from "next/navigation";
 
 import { API_BASE_URL } from "@/constants/api";
 
-interface MeLayoutProps {
+interface ProfileLayoutProps {
     children: ReactNode;
     params: {
         username: string;
     };
 }
 
-export function generateMetadata({ params }: MeLayoutProps) {
+export function generateMetadata({ params }: ProfileLayoutProps) {
     return {
         title: `${params.username}`,
     };
@@ -18,7 +18,7 @@ export function generateMetadata({ params }: MeLayoutProps) {
 
 const fetchUserByUsername = async (username: string) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/users/${username}`);
+        const response = await fetch(`${API_BASE_URL}/users/username/${username}`);
         const data = await response.json();
 
         if (!data.id) {
@@ -31,7 +31,7 @@ const fetchUserByUsername = async (username: string) => {
     }
 };
 
-export default async function MeLayout({ children, params }: MeLayoutProps) {
+export default async function ProfileLayout({ children, params }: ProfileLayoutProps) {
     try {
         await fetchUserByUsername(params.username);
     } catch (err) {

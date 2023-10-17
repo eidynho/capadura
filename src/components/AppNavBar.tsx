@@ -7,14 +7,12 @@ import {
     BookOpen,
     CalendarClock,
     ChevronDown,
-    ExternalLink,
     Hexagon,
     Home,
     List,
     LogOut,
     Menu,
     Moon,
-    Newspaper,
     Settings,
     Sun,
     ThumbsUp,
@@ -37,7 +35,6 @@ import {
     DropdownMenuItem,
     DropdownMenuPortal,
     DropdownMenuSeparator,
-    DropdownMenuShortcut,
     DropdownMenuSub,
     DropdownMenuSubContent,
     DropdownMenuSubTrigger,
@@ -85,14 +82,7 @@ export function AppNavBar() {
               {
                   name: "Minhas leituras",
                   path: `/@${user.username}/leituras`,
-                  disabled: true,
                   icon: BookMarked,
-              },
-              {
-                  name: "Linha do tempo",
-                  path: `/@${user.username}/linha-do-tempo`,
-                  disabled: true,
-                  icon: CalendarClock,
               },
               {
                   name: "Curtidas",
@@ -184,13 +174,6 @@ export function AppNavBar() {
 
                             <LinkUnderline href="/livros" className="font-medium">
                                 Livros
-                            </LinkUnderline>
-
-                            <LinkUnderline href="/blog" className="font-medium">
-                                <div className="flex items-center gap-2">
-                                    Blog
-                                    <ExternalLink size={14} className="text-muted-foreground" />
-                                </div>
                             </LinkUnderline>
                         </div>
                     </div>
@@ -287,16 +270,6 @@ export function AppNavBar() {
                                             </DropdownMenuSubContent>
                                         </DropdownMenuPortal>
                                     </DropdownMenuSub>
-
-                                    <DropdownMenuItem>
-                                        <Link href="#" className="flex items-center gap-2">
-                                            <Newspaper size={16} />
-                                            Blog
-                                        </Link>
-                                        <DropdownMenuShortcut>
-                                            <ExternalLink size={14} />
-                                        </DropdownMenuShortcut>
-                                    </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </div>

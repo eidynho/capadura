@@ -2,7 +2,7 @@ import { API_BASE_URL } from "@/constants/api";
 
 import { fetchBookData } from "@/utils/fetch-book-data";
 
-import { BookDescription } from "./BookDescription";
+import { BookDescription } from "./components/BookDescription";
 import { UserReads } from "./components/Read/UserReads";
 
 interface BookProps {

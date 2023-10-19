@@ -5,7 +5,8 @@ export function publishDateFormat(date?: Date | null | string) {
         return "Sem informação";
     }
 
-    if (date.toString().indexOf("-") !== -1) {
+    const dateHasHyphen = date.toString().indexOf("-") !== -1;
+    if (dateHasHyphen) {
         return `${getYear(new Date(date))}`;
     }
 

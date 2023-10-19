@@ -179,6 +179,18 @@ export function useUpdateRead() {
                 );
             }
 
+            // rating charts component
+            queryClient.invalidateQueries({
+                queryKey: ["fetchReadsRating"],
+                refetchType: "none",
+            });
+
+            // user ratings page
+            queryClient.invalidateQueries({
+                queryKey: ["fetchReadsByReviewRatingsAndUser"],
+                refetchType: "none",
+            });
+
             toast({
                 title: "Os dados da leitura foram alterados.",
             });
@@ -244,6 +256,12 @@ export function useDeleteRead() {
                 );
             }
 
+            // book ratings page
+            queryClient.invalidateQueries({
+                queryKey: ["fetchReadsByReviewRatingsAndBook"],
+                refetchType: "none",
+            });
+
             toast({
                 title: "A sua leitura foi excluída.",
             });
@@ -305,6 +323,12 @@ export function useToggleReadPrivacy() {
                 updatedRead.isPrivate = !updatedRead.isPrivate;
 
                 return updatedRead;
+            });
+
+            // book ratings page
+            queryClient.invalidateQueries({
+                queryKey: ["fetchReadsByReviewRatingsAndBook"],
+                refetchType: "none",
             });
 
             toast({

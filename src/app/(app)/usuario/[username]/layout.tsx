@@ -1,7 +1,8 @@
 import { ReactNode } from "react";
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { API_BASE_URL } from "@/constants/api";
+import { API_BASE_URL, BASE_URL } from "@/constants/api";
 
 interface ProfileLayoutProps {
     children: ReactNode;
@@ -10,9 +11,15 @@ interface ProfileLayoutProps {
     };
 }
 
-export function generateMetadata({ params }: ProfileLayoutProps) {
+export function generateMetadata({ params }: ProfileLayoutProps): Metadata {
     return {
-        title: `${params.username}`,
+        title: {
+            template: `${params.username}: %s | Capadura`,
+            default: `${params.username}`,
+        },
+        alternates: {
+            canonical: `${BASE_URL}/@${params.username}`,
+        },
     };
 }
 

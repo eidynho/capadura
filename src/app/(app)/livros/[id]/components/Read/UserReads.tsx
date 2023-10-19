@@ -134,7 +134,7 @@ export function UserReads({ bookData }: UserReadsProps) {
                     <h2 className="font-semibold">Minhas leituras</h2>
                 </div>
 
-                <Tabs value={currentTab} onValueChange={setCurrentTab} defaultValue="account">
+                <Tabs value={currentTab} onValueChange={setCurrentTab} defaultValue="all">
                     <TabsList>
                         <TabsTrigger value="all">Todas</TabsTrigger>
                         <TabsTrigger value="active">Em andamento</TabsTrigger>

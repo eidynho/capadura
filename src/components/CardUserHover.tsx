@@ -5,7 +5,6 @@ import { ProfileDataResponse } from "@/endpoints/queries/usersQueries";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/Avatar";
 import { Button } from "./ui/Button";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/HoverCard";
-import { LinkUnderline } from "./LinkUnderline";
 
 interface CardUserHoverProps {
     user: ProfileDataResponse;
@@ -27,9 +26,12 @@ export function CardUserHover({ user }: CardUserHoverProps) {
                         />
                         <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
                     </Avatar>
-                    <Button variant="link" size="sm" className="px-2">
+                    <Link
+                        href={`/@${user.username}`}
+                        className="px-2 text-black hover:underline dark:text-white"
+                    >
                         {user.username}
-                    </Button>
+                    </Link>
                 </div>
             </HoverCardTrigger>
             <HoverCardContent align="start" className="flex w-80 space-x-4">
@@ -43,18 +45,12 @@ export function CardUserHover({ user }: CardUserHoverProps) {
                 </Avatar>
                 <div className="space-y-1">
                     <Link
-                        href={`@${user.username}`}
+                        href={`/@${user.username}`}
                         className="text-sm font-semibold hover:underline"
                     >
                         @{user.username}
                     </Link>
                     <p className="text-sm">{user.description}</p>
-                    <div className="flex items-center gap-2 pt-2">
-                        <LinkUnderline href="" className="text-sm">
-                            <span className="mr-1 font-semibold">234</span>
-                            <span className="text-muted-foreground">livros</span>
-                        </LinkUnderline>
-                    </div>
                 </div>
             </HoverCardContent>
         </HoverCard>

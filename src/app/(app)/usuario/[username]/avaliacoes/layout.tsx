@@ -5,23 +5,23 @@ import { redirect } from "next/navigation";
 
 import { BASE_URL } from "@/constants/api";
 
-interface UserReadsLayoutProps {
+interface UserReviewsLayoutProps {
     children: ReactNode;
     params: {
         username: string;
     };
 }
 
-export function generateMetadata({ params }: UserReadsLayoutProps): Metadata {
+export function generateMetadata({ params }: UserReviewsLayoutProps): Metadata {
     return {
-        title: "leituras",
+        title: "avaliações",
         alternates: {
-            canonical: `${BASE_URL}/@${params.username}/leituras`,
+            canonical: `${BASE_URL}/@${params.username}/avaliacoes`,
         },
     };
 }
 
-export default async function UserReadsLayout({ children }: UserReadsLayoutProps) {
+export default async function UserReviewsLayout({ children }: UserReviewsLayoutProps) {
     const cookies = NextCookies();
     const token = cookies.get("token");
 

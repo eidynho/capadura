@@ -1,9 +1,11 @@
 import "@/styles/global.css";
 
 import { ReactNode } from "react";
+import { Metadata } from "next";
 
-import { Providers } from "@/contexts/Providers";
+import { BASE_URL } from "@/constants/api";
 import { manrope } from "@/constants/fonts";
+import { Providers } from "@/contexts/Providers";
 
 import { AuthDialog } from "@/components/AuthDialog";
 import { Container } from "@/components/layout/Container";
@@ -13,6 +15,16 @@ import { Toaster } from "@/components/ui/Toaster";
 interface RootLayoutProps {
     children: ReactNode;
 }
+
+export const metadata: Metadata = {
+    title: {
+        template: "%s | Capadura",
+        default: "A sua rede social de livros | Capadura",
+    },
+    alternates: {
+        canonical: `${BASE_URL}`,
+    },
+};
 
 export default async function RootLayout({ children }: RootLayoutProps) {
     return (

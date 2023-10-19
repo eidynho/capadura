@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
     BookMarked,
     BookOpen,
-    CalendarClock,
     ChevronDown,
     Hexagon,
     Home,
@@ -14,6 +13,7 @@ import {
     Menu,
     Moon,
     Settings,
+    Star,
     Sun,
     ThumbsUp,
     User,
@@ -80,9 +80,14 @@ export function AppNavBar() {
                   icon: User,
               },
               {
-                  name: "Minhas leituras",
+                  name: "Leituras",
                   path: `/@${user.username}/leituras`,
                   icon: BookMarked,
+              },
+              {
+                  name: "Avaliações",
+                  path: `/@${user.username}/avaliacoes`,
+                  icon: Star,
               },
               {
                   name: "Curtidas",

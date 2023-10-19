@@ -26,7 +26,12 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
         const { data: bookData }: { data: BookData } = await response.json();
 
         return {
-            title: `${bookData.title} ${bookData.authors[0] ? ` - ${bookData.authors[0]}` : ""}`,
+            title: {
+                template: `${bookData.title}: %s | Capadura`,
+                default: `${bookData.title} ${
+                    bookData.authors[0] ? ` - ${bookData.authors[0]}` : ""
+                }`,
+            },
             alternates: {
                 canonical: `${BASE_URL}/livros/${params.id}`,
             },

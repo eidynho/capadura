@@ -25,6 +25,7 @@ interface RatingChartProps {
     bookId?: string;
     userId?: string;
     username?: string;
+    readOnly?: boolean;
 }
 
 const CustomTooltipCursor = (props: SVGProps<SVGElement>) => {
@@ -32,7 +33,7 @@ const CustomTooltipCursor = (props: SVGProps<SVGElement>) => {
     return <rect fill="#e4e4e780" x={x} y={y} rx="4" width={width} height={height} />;
 };
 
-export function RatingChart({ bookId, userId, username }: RatingChartProps) {
+export function RatingChart({ bookId, userId, username, readOnly }: RatingChartProps) {
     if (!bookId && !userId) return;
 
     const router = useRouter();
@@ -52,10 +53,18 @@ export function RatingChart({ bookId, userId, username }: RatingChartProps) {
         });
         return;
     }
+
     if (!bookRatings) return;
 
     function handleClickBar({ rating }: { rating: number }) {
-        router.push(`/${username ? `@${username}` : bookId}/ratings/${rating}`);
+        if (readOnly) return;
+
+        if (username) {
+            router.push(`/@${username}/avaliacoes?rating=${rating}`);
+            return;
+        }
+
+        router.push(`/livros/${bookId}/avaliacoes/${rating}`);
     }
 
     function ChartTooltipContent({ payload }: any) {
@@ -132,7 +141,7 @@ export function RatingChart({ bookId, userId, username }: RatingChartProps) {
                             >
                                 {bookRatings.data.map((entry) => (
                                     <Cell
-                                        cursor="pointer"
+                                        cursor={readOnly ? "" : "pointer"}
                                         key={entry.rating}
                                         className="fill-primary"
                                     />

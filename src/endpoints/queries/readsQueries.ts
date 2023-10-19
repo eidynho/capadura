@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { BookData } from "./booksQueries";
 import { ProgressData } from "./progressQueries";
+import { ProfileDataResponse } from "./usersQueries";
 
 export type ReadStatus = "ACTIVE" | "FINISHED" | "CANCELLED" | "DELETED";
 export interface ReadData {
@@ -18,6 +19,7 @@ export interface ReadData {
     status: ReadStatus;
     progress: ProgressData[];
     book?: BookData;
+    user?: ProfileDataResponse;
 }
 
 export interface ReadsDataResponse {
@@ -88,6 +90,64 @@ export function useFetchRead({ readId, enabled = true }: UseFetchReadProps) {
     });
 }
 
+export type RatingsOptions = "0.5" | "1" | "1.5" | "2" | "2.5" | "3" | "3.5" | "4" | "4.5" | "5";
+
+interface UseFetchReadsByReviewRatingsAndUserProps {
+    rating: RatingsOptions;
+    userId: string;
+    page: number;
+    perPage: number;
+    enabled?: boolean;
+}
+
+export function useFetchReadsByReviewRatingsAndUser({
+    rating,
+    userId,
+    page,
+    perPage,
+    enabled = true,
+}: UseFetchReadsByReviewRatingsAndUserProps) {
+    return useQuery({
+        queryKey: ["fetchReadsByReviewRatingsAndUser", { rating, userId, page, perPage }],
+        queryFn: async () => {
+            const { data } = await api.get(
+                `/user/${userId}/read-ratings/${rating}?page=${page}&perPage=${perPage}`,
+            );
+
+            return data as ReadsDataResponse;
+        },
+        enabled,
+    });
+}
+
+interface UseFetchReadsByReviewRatingsAndBookProps {
+    rating: RatingsOptions;
+    bookId: string;
+    page: number;
+    perPage: number;
+    enabled?: boolean;
+}
+
+export function useFetchReadsByReviewRatingsAndBook({
+    rating,
+    bookId,
+    page,
+    perPage,
+    enabled = true,
+}: UseFetchReadsByReviewRatingsAndBookProps) {
+    return useQuery({
+        queryKey: ["fetchReadsByReviewRatingsAndBook", { rating, bookId, page, perPage }],
+        queryFn: async () => {
+            const { data } = await api.get(
+                `/book/${bookId}/read-ratings/${rating}?page=${page}&perPage=${perPage}`,
+            );
+
+            return data as ReadsDataResponse;
+        },
+        enabled,
+    });
+}
+
 interface FetchReadsRatingData {
     data: {
         rating: number;
@@ -106,7 +166,7 @@ interface UseFetchReadsRatingProps {
 
 export function useFetchReadsRating({ bookId, userId, enabled = true }: UseFetchReadsRatingProps) {
     return useQuery({
-        queryKey: ["fetchReadsRating", { bookId }],
+        queryKey: ["fetchReadsRating", { bookId, userId }],
         queryFn: async () => {
             let query = "";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { format, parseISO } from "date-fns";
@@ -310,11 +310,8 @@ export function Read({ user, read, progressList, bookData, canEdit, showExternal
         : read.progress?.[0]?.percentage;
 
     return (
-        <>
-            <div
-                key={read.id}
-                className="relative rounded-md border bg-white text-sm transition-colors dark:bg-dark"
-            >
+        <Fragment key={read.id}>
+            <div className="relative rounded-md border bg-white text-sm transition-colors dark:bg-dark">
                 {/* read cancelled */}
                 {read.status === "CANCELLED" && (
                     <div className="absolute z-20 flex h-full w-full flex-col items-center justify-center gap-2 rounded-md bg-muted-foreground/10 backdrop-blur-sm">
@@ -513,6 +510,6 @@ export function Read({ user, read, progressList, bookData, canEdit, showExternal
                 deleteRead={handleDeleteRead}
                 isDeleteReadLoading={deleteRead.isLoading}
             />
-        </>
+        </Fragment>
     );
 }

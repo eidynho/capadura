@@ -1,0 +1,190 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { parseISO } from "date-fns";
+import format from "date-fns/format";
+import { ExternalLink, Loader2 } from "lucide-react";
+
+import {
+    RatingsOptions,
+    ReadsDataResponse,
+    useFetchReadsByReviewRatingsAndBook,
+} from "@/endpoints/queries/readsQueries";
+
+import { Button } from "@/components/ui/Button";
+import { CardUserHover } from "@/components/CardUserHover";
+import { RatingStars } from "@/components/RatingStars";
+import { Separator } from "@/components/ui/Separator";
+
+interface ClientBookReviewsProps {
+    bookId: string;
+    rating: RatingsOptions;
+}
+
+export function ClientBookReviews({ bookId, rating }: ClientBookReviewsProps) {
+    const [page, setPage] = useState(1);
+    const [fullReviewsList, setFullReviewsList] = useState<ReadsDataResponse>({
+        items: [],
+        total: 0,
+    });
+
+    const {
+        data: reviewsList,
+        isFetching,
+        isFetched,
+    } = useFetchReadsByReviewRatingsAndBook({
+        rating,
+        bookId,
+        page,
+        perPage: 20,
+        enabled: !!bookId && !!rating,
+    });
+
+    useEffect(() => {
+        if (isFetched && reviewsList) {
+            setFullReviewsList((prev) => {
+                const allReviews = [...prev.items, reviewsList.items].flat();
+                const uniqueReviewsSet = new Set(allReviews);
+
+                return {
+                    items: [...uniqueReviewsSet],
+                    total: reviewsList.total,
+                };
+            });
+        }
+    }, [isFetched]);
+
+    if (!reviewsList) return;
+
+    const hasMoreReviews = reviewsList.total > fullReviewsList.items.length;
+
+    function fetchMoreReviews() {
+        if (hasMoreReviews) {
+            setPage((prev) => prev + 1);
+        }
+    }
+
+    function LoadingCards() {
+        return (
+            <div className="mt-2 flex animate-pulse flex-col gap-2">
+                {Array.from({ length: 2 }, (_, index) => (
+                    <div
+                        key={index}
+                        className="w-full items-center rounded-md border border-zinc-300 p-6 dark:border-accent"
+                    >
+                        <div className="flex items-center justify-between pr-2">
+                            <div className="flex items-center gap-2">
+                                <div className="h-8 w-8 items-center rounded-full bg-zinc-300 dark:bg-accent"></div>
+                                <div className="h-6 w-40 items-center rounded bg-zinc-300 dark:bg-accent"></div>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <div className="h-6 w-20 items-center rounded bg-zinc-300 dark:bg-accent"></div>
+                                <div className="h-6 w-6 items-center rounded bg-zinc-300 dark:bg-accent"></div>
+                            </div>
+                        </div>
+
+                        <div className="mt-6 h-4 w-1/2 items-center rounded bg-zinc-300 dark:bg-accent"></div>
+                    </div>
+                ))}
+            </div>
+        );
+    }
+
+    return (
+        <div className="flex flex-col justify-center">
+            <h2 className="mb-3 text-lg font-medium text-black dark:text-white">
+                Avaliações - Nota {rating}
+            </h2>
+
+            {fullReviewsList.items.length ? (
+                <div className="flex flex-col gap-2">
+                    {fullReviewsList.items.map((read) => (
+                        <div className="w-full rounded-md border bg-white text-sm transition-colors dark:bg-dark">
+                            <div className="m-6 flex flex-col gap-2 rounded-md">
+                                {/* read active */}
+                                <div className="flex flex-wrap items-center justify-between gap-3">
+                                    <div className="flex items-center gap-2">
+                                        {read.user && <CardUserHover user={read.user} />}
+
+                                        {!!read.reviewRating && (
+                                            <Separator
+                                                orientation="vertical"
+                                                className="h-6"
+                                            ></Separator>
+                                        )}
+
+                                        {/* Rating stars */}
+                                        <div className="ml-1 inline-flex items-center gap-2">
+                                            {!!read.reviewRating && (
+                                                <div className="inline-flex items-center">
+                                                    <RatingStars rating={read.reviewRating} />
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-2">
+                                        {read.endDate && (
+                                            <div className="text-xs font-medium text-muted-foreground">
+                                                {format(
+                                                    parseISO(read.endDate.toString()),
+                                                    "dd/MM/yyyy",
+                                                )}
+                                            </div>
+                                        )}
+
+                                        <Link href={`/livros/${read.bookId}/leituras/${read.id}`}>
+                                            <Button size="icon-sm" variant="default">
+                                                <ExternalLink size={16} />
+                                            </Button>
+                                        </Link>
+                                    </div>
+                                </div>
+
+                                {read.reviewContent && (
+                                    <p className="mt-2 text-justify text-black dark:text-white">
+                                        {read.reviewContent}
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                !isFetching && (
+                    <div className="mt-2 flex h-36 w-full flex-col items-center justify-center rounded-md border bg-white text-center transition-colors dark:bg-dark">
+                        <span className="text-base font-semibold text-black dark:text-white">
+                            Nenhuma avaliação com nota {rating} para esse livro.
+                        </span>
+                        <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
+                            As avaliações dos membros aparecerão aqui.
+                        </p>
+                    </div>
+                )
+            )}
+
+            {isFetching && <LoadingCards />}
+
+            {hasMoreReviews && isFetched && (
+                <Button
+                    size="sm"
+                    variant="primary"
+                    onClick={fetchMoreReviews}
+                    disabled={!hasMoreReviews}
+                    className="mt-2"
+                >
+                    {isFetching ? (
+                        <>
+                            <Loader2 size={22} className="animate-spin" />
+                            <span>Carregando...</span>
+                        </>
+                    ) : (
+                        <span>Carregar mais avaliações</span>
+                    )}
+                </Button>
+            )}
+        </div>
+    );
+}

@@ -5,7 +5,7 @@ import { BookMarked, Heart, List, Lock } from "lucide-react";
 
 import { BookHeader } from "@/app/(app)/livros/[id]/components/BookHeader";
 
-import { BookDescription } from "@/app/(app)/livros/[id]/BookDescription";
+import { BookDescription } from "@/app/(app)/livros/[id]/components/BookDescription";
 import { BookGradient } from "@/app/(app)/livros/[id]/components/BookGradient";
 import { CardUserHover } from "@/components/CardUserHover";
 import { RatingStars } from "../RatingStars";

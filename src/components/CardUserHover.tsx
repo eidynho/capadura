@@ -3,7 +3,6 @@ import Link from "next/link";
 import { ProfileDataResponse } from "@/endpoints/queries/usersQueries";
 
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/Avatar";
-import { Button } from "./ui/Button";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/HoverCard";
 
 interface CardUserHoverProps {

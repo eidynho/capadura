@@ -19,6 +19,7 @@ import { useToast } from "@/components/ui/UseToast";
 import Loading from "../loading";
 
 import { Button } from "@/components/ui/Button";
+import { CardUserHover } from "@/components/CardUserHover";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -91,10 +92,16 @@ export function ClientUserLikes({ username }: UserLikesProps) {
 
     return (
         <>
-            <Title>{isCurrentUser ? "Minhas curtidas" : `Curtidas de ${username}`}</Title>
-            {isCurrentUser && (
-                <Subtitle>O cantinho pra você guardar todas as coisas que curtiu.</Subtitle>
-            )}
+            <div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
+                <div>
+                    <Title>{isCurrentUser ? "Minhas curtidas" : `Curtidas de ${username}`}</Title>
+                    {isCurrentUser && (
+                        <Subtitle>O cantinho pra você guardar todas as coisas que curtiu.</Subtitle>
+                    )}
+                </div>
+
+                {targetUser && <CardUserHover user={targetUser} />}
+            </div>
 
             <Separator className="my-6" />
 

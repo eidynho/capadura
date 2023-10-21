@@ -13,8 +13,8 @@ import {
 import { useFetchUserByUsername } from "@/endpoints/queries/usersQueries";
 
 import { Button } from "@/components/ui/Button";
+import { CardUserHover } from "@/components/CardUserHover";
 import { CardUserRead } from "../../_components/CardUserRead";
-import { RatingChart } from "@/components/RatingChart";
 import { Separator } from "@/components/ui/Separator";
 import { Subtitle } from "@/components/Subtitle";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs";
@@ -105,7 +105,7 @@ export function ClientUserReviews({ username }: ClientUserReviewsProps) {
             items: [],
             total: 0,
             page: 1,
-            firstFetch: false,
+            firstFetch: true,
         },
     });
 
@@ -168,7 +168,7 @@ export function ClientUserReviews({ username }: ClientUserReviewsProps) {
                 };
             });
         }
-    }, [isFetched]);
+    }, [isFetched, reads[currentTab].firstFetch]);
 
     useEffect(() => {
         if (!reads[currentTab].firstFetch) {
@@ -236,7 +236,7 @@ export function ClientUserReviews({ username }: ClientUserReviewsProps) {
 
     return (
         <>
-            <div className="flex flex-col justify-between md:flex-row">
+            <div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
                 <div>
                     <Title>
                         {isCurrentUser ? "Minhas avaliações" : `Avaliações de ${username}`}
@@ -246,16 +246,9 @@ export function ClientUserReviews({ username }: ClientUserReviewsProps) {
                     )}
                 </div>
 
-                {targetUser?.id && (
-                    <div className="w-full md:w-96">
-                        <RatingChart
-                            userId={targetUser.id}
-                            username={targetUser.username}
-                            readOnly
-                        />
-                    </div>
-                )}
+                {targetUser && <CardUserHover user={targetUser} />}
             </div>
+
             <Separator className="my-6" />
 
             <div className="flex flex-col justify-center">

@@ -67,10 +67,19 @@ interface ReadProps {
     progressList?: ProgressData[];
     bookData: BookData;
     canEdit: boolean;
-    showExternalLink: boolean;
+    showExternalLink?: boolean;
+    showProgress?: boolean;
 }
 
-export function Read({ user, read, progressList, bookData, canEdit, showExternalLink }: ReadProps) {
+export function Read({
+    user,
+    read,
+    progressList,
+    bookData,
+    canEdit,
+    showExternalLink,
+    showProgress,
+}: ReadProps) {
     const [isOpenUpdateProgressDialog, setIsOpenUpdateProgressDialog] = useState(false);
     const [isOpenDeleteProgressDialog, setIsOpenDeleteProgressDialog] = useState(false);
     const [isOpenDeleteReadDialog, setIsOpenDeleteReadDialog] = useState(false);
@@ -476,17 +485,19 @@ export function Read({ user, read, progressList, bookData, canEdit, showExternal
                         </div>
                     )}
 
-                    <Progress
-                        canEdit={canEdit}
-                        user={user}
-                        bookId={bookData.id}
-                        readId={read.id}
-                        showMoreProgressBtn={showExternalLink}
-                        progressList={progressList || read.progress}
-                        bookPageCount={bookData.pageCount ?? 0}
-                        setProgressEditData={handleSetProgressEditData}
-                        setProgressDeleteData={handleSetProgressDeleteData}
-                    />
+                    {showProgress && (
+                        <Progress
+                            canEdit={canEdit}
+                            user={user}
+                            bookId={bookData.id}
+                            readId={read.id}
+                            showMoreProgressBtn={showExternalLink ?? false}
+                            progressList={progressList || read.progress}
+                            bookPageCount={bookData.pageCount ?? 0}
+                            setProgressEditData={handleSetProgressEditData}
+                            setProgressDeleteData={handleSetProgressDeleteData}
+                        />
+                    )}
                 </div>
             </div>
 

@@ -4,7 +4,7 @@ import { cn } from "@/utils/cn";
 
 interface TitleProps extends HTMLAttributes<HTMLHeadingElement> {
     className?: string;
-    children: string;
+    children: string | string[];
 }
 
 export function Title({ className, children }: TitleProps) {

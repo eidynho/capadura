@@ -160,8 +160,16 @@ export function ClientUserLists({ username }: ClientUserListsProps) {
 
     return (
         <>
-            <Title>{isCurrentUser ? "Minhas listas" : `Listas de ${username}`}</Title>
-            {isCurrentUser && <Subtitle>Organize sua leitura do jeito que você quiser.</Subtitle>}
+            <div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
+                <div>
+                    <Title>{isCurrentUser ? "Minhas listas" : `Listas de ${username}`}</Title>
+                    {isCurrentUser && (
+                        <Subtitle>Organize sua leitura do jeito que você quiser.</Subtitle>
+                    )}
+                </div>
+
+                {targetUser && <CardUserHover user={targetUser} />}
+            </div>
 
             <Separator className="my-6" />
 

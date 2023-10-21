@@ -69,6 +69,7 @@ export function ClientRead({ readId, bookData }: ClientReadProps) {
                 progressList={fullProgressList}
                 canEdit={isReaderCreator}
                 showExternalLink={false}
+                showProgress
             />
 
             {hasMoreProgress && (

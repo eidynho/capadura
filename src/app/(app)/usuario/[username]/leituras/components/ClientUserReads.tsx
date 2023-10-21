@@ -8,6 +8,7 @@ import { ReadData, useFetchUserReadsByStatus } from "@/endpoints/queries/readsQu
 import { useFetchUserByUsername } from "@/endpoints/queries/usersQueries";
 
 import { Button } from "@/components/ui/Button";
+import { CardUserHover } from "@/components/CardUserHover";
 import { CardUserRead } from "../../_components/CardUserRead";
 import { Separator } from "@/components/ui/Separator";
 import { Subtitle } from "@/components/Subtitle";
@@ -60,7 +61,7 @@ export function ClientUserReads({ username }: ClientUserReadsProps) {
 
     const isCurrentUser = isPageUserSameCurrentUser(username);
 
-    const { data: activeUser } = useFetchUserByUsername({
+    const { data: targetUser } = useFetchUserByUsername({
         username: username,
         enabled: !!username,
     });
@@ -71,11 +72,11 @@ export function ClientUserReads({ username }: ClientUserReadsProps) {
         isFetched,
         refetch,
     } = useFetchUserReadsByStatus({
-        userId: activeUser?.id || "",
+        userId: targetUser?.id || "",
         status: currentTab,
         page: reads[currentTab].page,
         perPage: 20,
-        enabled: !!activeUser?.id && !!currentTab,
+        enabled: !!targetUser?.id && !!currentTab,
     });
 
     useEffect(() => {
@@ -94,7 +95,7 @@ export function ClientUserReads({ username }: ClientUserReadsProps) {
                 };
             });
         }
-    }, [isFetched]);
+    }, [isFetched, reads[currentTab].firstFetch]);
 
     useEffect(() => {
         if (!reads[currentTab].firstFetch) {
@@ -109,7 +110,7 @@ export function ClientUserReads({ username }: ClientUserReadsProps) {
         }
     }, [currentTab]);
 
-    if (!activeUser) return;
+    if (!targetUser) return;
 
     const hasMoreReads = reads[currentTab].total > reads[currentTab].items.length;
 
@@ -155,13 +156,24 @@ export function ClientUserReads({ username }: ClientUserReadsProps) {
 
     return (
         <>
-            <Title>{isCurrentUser ? "Minhas leituras" : `Leituras de ${username}`}</Title>
-            {isCurrentUser && <Subtitle>Acompanhe todas suas leituras.</Subtitle>}
+            <div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
+                <div>
+                    <Title>{isCurrentUser ? "Minhas leituras" : `Leituras de ${username}`}</Title>
+                    {isCurrentUser && <Subtitle>Acompanhe todas suas leituras.</Subtitle>}
+                </div>
+
+                <CardUserHover user={targetUser} />
+            </div>
 
             <Separator className="my-6" />
 
             <div className="flex flex-col justify-center">
-                <Tabs value={currentTab} onValueChange={onTabChange} defaultValue="ACTIVE">
+                <Tabs
+                    value={currentTab}
+                    onValueChange={onTabChange}
+                    defaultValue="ACTIVE"
+                    className="mx-auto"
+                >
                     <TabsList>
                         <TabsTrigger value="ACTIVE" disabled={isFetching}>
                             Em andamento

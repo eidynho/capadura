@@ -25,21 +25,21 @@ const questions = [
         answer: "Com certeza! Você pode escrever e publicar resenhas de livros para compartilhar suas opiniões e pensamentos com a comunidade da Capadura. Suas resenhas aparecerão na página do livro e na seção de resenhas do seu perfil.",
     },
     {
-        question: "Como posso adicionar livros favoritos ao meu perfil?",
+        question: "Como adicionar livros favoritos ao meu perfil?",
         answer: 'Entre no seu perfil, clique em "Adicionar livro" e pesquise pelo título do livro. Assim que encontrá-lo, clique nele e terá a opção de adicioná-lo ao seu perfil.',
     },
-    {
-        question: "Como funciona o programa de indicações?",
-        answer: "Ao convidar pessoas para a plataforma, você acumula pontos que poderá ser trocado por recompensas na plataforma e souvenirs.",
-    },
-    {
-        question: "Existe um programa de recompensas para membros ativos?",
-        answer: "Ainda não, estamos trabalhando em um programa de conquistas, distintivos e desafios de leitura. Fique de olho nas nossas futuras atualizações.",
-    },
-    {
-        question: "Como posso entrar em contato com a equipe de suporte?",
-        answer: 'Se você tiver alguma dúvida, problema ou feedback, pode entrar em contato com nossa equipe de suporte por meio da opção "Fale Conosco". Estamos aqui para ajudar e melhorar sua experiência.',
-    },
+    // {
+    //     question: "Como funciona o programa de indicações?",
+    //     answer: "Ao convidar pessoas para a plataforma, você acumula pontos que poderá ser trocado por recompensas na plataforma e souvenirs.",
+    // },
+    // {
+    //     question: "Existe um programa de recompensas para membros ativos?",
+    //     answer: "Ainda não, estamos trabalhando em um programa de conquistas, distintivos e desafios de leitura. Fique de olho nas nossas futuras atualizações.",
+    // },
+    // {
+    //     question: "Como posso entrar em contato com a equipe de suporte?",
+    //     answer: 'Se você tiver alguma dúvida, problema ou feedback, pode entrar em contato com nossa equipe de suporte por meio da opção "Fale Conosco". Estamos aqui para ajudar e melhorar sua experiência.',
+    // },
 ];
 
 export function FAQSection() {

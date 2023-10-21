@@ -43,11 +43,36 @@ export function useFetchUserReadsByStatus({
     enabled = true,
 }: useFetchUserReadsByStatusProps) {
     return useQuery({
-        queryKey: ["fetchUserReadsByUser", { userId, status, page, perPage }],
+        queryKey: ["fetchUserReadsByStatus", { userId, status, page, perPage }],
         queryFn: async () => {
             const { data } = await api.get(
                 `/user-reads?userId=${userId}&status=${status}&page=${page}&perPage=${perPage}`,
             );
+
+            return data as ReadsDataResponse;
+        },
+        enabled,
+        staleTime: Infinity,
+    });
+}
+
+interface useFetchReadsByBookProps {
+    bookId: string;
+    page?: number;
+    perPage?: number;
+    enabled?: boolean;
+}
+
+export function useFetchReadsByBook({
+    bookId,
+    page = 1,
+    perPage = 5,
+    enabled = true,
+}: useFetchReadsByBookProps) {
+    return useQuery({
+        queryKey: ["fetchReadsByBook", { bookId, page, perPage }],
+        queryFn: async () => {
+            const { data } = await api.get(`/book/${bookId}/reads?page=${page}&perPage=${perPage}`);
 
             return data as ReadsDataResponse;
         },

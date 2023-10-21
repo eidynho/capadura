@@ -129,7 +129,7 @@ export function UserReads({ bookData }: UserReadsProps) {
     return (
         <>
             <div className="mt-4 flex flex-wrap items-center justify-between gap-y-2">
-                <div className="flex items-center gap-2 pl-2 pr-4 text-black dark:text-white">
+                <div className="flex items-center gap-2 text-black dark:text-white">
                     <BookMarked size={16} />
                     <h2 className="font-semibold">Minhas leituras</h2>
                 </div>
@@ -176,8 +176,9 @@ export function UserReads({ bookData }: UserReadsProps) {
                         user={user}
                         read={read}
                         bookData={bookData}
-                        canEdit={true}
-                        showExternalLink={true}
+                        canEdit
+                        showExternalLink
+                        showProgress
                     />
                 ))
             ) : (

@@ -138,7 +138,7 @@ export function useUpdateRead() {
 
             // user reads in user profile
             queryClient.setQueryData<ReadsDataResponse>(
-                ["fetchUserReadsByUser", { userId }],
+                ["fetchUserReadsByStatus", { userId }],
                 (prevData) => updateReadsQueryData(prevData),
             );
 
@@ -396,7 +396,7 @@ export function useToggleReadStatus() {
             });
 
             queryClient.invalidateQueries({
-                queryKey: ["fetchUserReadsByUser"],
+                queryKey: ["fetchUserReadsByStatus"],
                 refetchType: "none",
             });
 

@@ -23,6 +23,6 @@ export default async function SignInLayout({ children }: SignInLayoutProps) {
     if (!token) {
         return <>{children}</>;
     } else {
-        redirect("/livros");
+        redirect("/inicio");
     }
 }

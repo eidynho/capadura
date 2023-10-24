@@ -82,7 +82,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                     if (onSuccess) {
                         onSuccess();
                     } else {
-                        router.push("/livros");
+                        router.push("/inicio");
                     }
                 },
             },

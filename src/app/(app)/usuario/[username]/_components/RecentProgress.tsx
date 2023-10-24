@@ -68,7 +68,9 @@ export function RecentProgress({ username, progressData }: RecentProgressProps) 
                             </div>
 
                             {progress.description && (
-                                <p className="mt-2 text-justify text-sm">{progress.description}</p>
+                                <p className="mt-2 max-h-56 overflow-auto text-justify text-sm">
+                                    {progress.description}
+                                </p>
                             )}
 
                             {progress.read?.book?.pageCount && (
@@ -88,16 +90,7 @@ export function RecentProgress({ username, progressData }: RecentProgressProps) 
                     </span>
                     <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
                         {isCurrentUser ? (
-                            <span>
-                                Você ainda não fez nenhum progresso de leitura, que tal dar uma
-                                olhada em nossa
-                                <Link
-                                    href="/livros"
-                                    className="ml-1 font-medium text-black underline dark:text-white"
-                                >
-                                    lista de recomendações
-                                </Link>
-                            </span>
+                            <span>Você ainda não fez nenhum progresso de leitura.</span>
                         ) : (
                             `${username} ainda não tem nenhum progresso de leitura.`
                         )}

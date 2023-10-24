@@ -23,6 +23,6 @@ export default async function SignUpLayout({ children }: SignUpLayoutProps) {
     if (!token) {
         return <>{children}</>;
     } else {
-        redirect("/livros");
+        redirect("/inicio");
     }
 }

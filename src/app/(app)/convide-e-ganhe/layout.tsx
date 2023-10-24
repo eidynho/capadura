@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
 export default async function InviteAndWinLayout({ children }: InviteAndWinLayoutProps) {
     // TODO: invite and win page
-    redirect("/livros");
+    redirect("/inicio");
 
     const cookies = NextCookies();
     const token = cookies.get("token");
@@ -26,6 +26,6 @@ export default async function InviteAndWinLayout({ children }: InviteAndWinLayou
     if (!!token) {
         return <>{children}</>;
     } else {
-        redirect("/livros");
+        redirect("/inicio");
     }
 }

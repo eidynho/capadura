@@ -54,11 +54,6 @@ const mobileDropdownRoutes: routeProps[] = [
         path: `/inicio`,
         icon: Home,
     },
-    {
-        name: "Livros",
-        path: `/livros`,
-        icon: BookOpen,
-    },
 ];
 
 export function AppNavBar() {
@@ -175,10 +170,6 @@ export function AppNavBar() {
                         <div className="mr-8 hidden gap-8 text-black dark:text-white md:flex">
                             <LinkUnderline href="/inicio" className="font-medium">
                                 Início
-                            </LinkUnderline>
-
-                            <LinkUnderline href="/livros" className="font-medium">
-                                Livros
                             </LinkUnderline>
                         </div>
                     </div>

@@ -274,7 +274,7 @@ export function BookPageSection() {
                                                     </div>
                                                 </div>
 
-                                                <p className="mt-2 text-justify text-black dark:text-white">
+                                                <p className="mt-2 max-h-56 overflow-auto text-justify text-black dark:text-white">
                                                     {progress.description}
                                                 </p>
 

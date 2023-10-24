@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 import { pt } from "date-fns/locale";
 import { ImageIcon } from "lucide-react";
 
@@ -9,6 +9,7 @@ import { ProgressData } from "@/endpoints/queries/progressQueries";
 import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";
 
 import { LinkUnderline } from "@/components/LinkUnderline";
+import { ProgressBar } from "@/app/(app)/livros/[id]/components/Read/Progress/ProgressBar";
 
 interface RecentProgressProps {
     username: string;
@@ -59,11 +60,9 @@ export function RecentProgress({ username, progressData }: RecentProgressProps) 
                                         {progress.read?.book?.title}
                                     </LinkUnderline>
                                     <span className="mt-[2px] text-xs font-semibold text-muted-foreground">
-                                        {format(
-                                            parseISO(progress?.createdAt.toString()),
-                                            "dd/MM/yyyy",
-                                            { locale: pt },
-                                        )}
+                                        {format(new Date(progress?.createdAt), "dd/MM/yyyy", {
+                                            locale: pt,
+                                        })}
                                     </span>
                                 </div>
                             </div>
@@ -72,25 +71,13 @@ export function RecentProgress({ username, progressData }: RecentProgressProps) 
                                 <p className="mt-2 text-justify text-sm">{progress.description}</p>
                             )}
 
-                            <div className="mt-4 flex items-center">
-                                <div className="flex items-center gap-1 text-sm font-medium">
-                                    <span>{progress.page}</span>
-                                </div>
-                                <div className="relative mx-2 h-5 flex-1 overflow-hidden rounded border bg-muted dark:bg-muted-foreground/25">
-                                    <div
-                                        className="h-5 bg-primary/50"
-                                        style={{
-                                            width: `${progress.percentage ?? 0}%`,
-                                        }}
-                                    ></div>
-                                    <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-semibold dark:text-black">
-                                        {`${progress.percentage}%`}
-                                    </span>
-                                </div>
-                                <span className="w-8 text-sm font-medium">
-                                    {progress.read?.book?.pageCount}
-                                </span>
-                            </div>
+                            {progress.read?.book?.pageCount && (
+                                <ProgressBar
+                                    bookPageCount={progress.read?.book?.pageCount}
+                                    currentPage={progress.page}
+                                    currentPercentage={progress.percentage}
+                                />
+                            )}
                         </div>
                     </div>
                 ))

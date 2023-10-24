@@ -1,13 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 import { pt } from "date-fns/locale";
-import { ImageIcon } from "lucide-react";
+import { ExternalLink, ImageIcon } from "lucide-react";
 
 import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";
 import { ReadData } from "@/endpoints/queries/readsQueries";
 
-import { LinkUnderline } from "@/components/LinkUnderline";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 import { RatingStars } from "@/components/RatingStars";
 
 interface FinishedReadsProps {
@@ -52,12 +53,25 @@ export function FinishedReads({ username, readsData }: FinishedReadsProps) {
                         <div className="w-full">
                             <div className="flex items-start justify-between gap-2">
                                 <div className="flex items-center gap-2">
-                                    <LinkUnderline
+                                    <Link
                                         href={`/livros/${read.bookId}`}
-                                        className="font-semibold"
+                                        className="font-semibold hover:underline"
                                     >
                                         {read.book?.title}
-                                    </LinkUnderline>
+                                    </Link>
+                                </div>
+
+                                <div className="flex items-center gap-1">
+                                    {read.reviewIsSpoiler && (
+                                        <Badge variant="red" className="min-w-[103px]">
+                                            Contém spoiler
+                                        </Badge>
+                                    )}
+                                    <Link href={`/livros/${read.bookId}/leituras/${read.id}`}>
+                                        <Button size="icon-sm" variant="default">
+                                            <ExternalLink size={16} />
+                                        </Button>
+                                    </Link>
                                 </div>
                             </div>
 
@@ -68,18 +82,18 @@ export function FinishedReads({ username, readsData }: FinishedReadsProps) {
                                     <div className="ml-3 flex items-center gap-1 text-muted-foreground">
                                         <span className="text-sm font-medium">Finalizado em</span>
                                         <span className="mt-[2px] text-xs font-semibold">
-                                            {format(
-                                                parseISO(read?.endDate.toString()),
-                                                "dd/MM/yyyy",
-                                                { locale: pt },
-                                            )}
+                                            {format(new Date(read?.endDate), "dd/MM/yyyy", {
+                                                locale: pt,
+                                            })}
                                         </span>
                                     </div>
                                 )}
                             </div>
 
                             {read?.reviewContent && (
-                                <p className="mt-2 text-justify text-sm">{read?.reviewContent}</p>
+                                <p className="mt-2 max-h-56 overflow-auto text-justify text-sm">
+                                    {read?.reviewContent}
+                                </p>
                             )}
                         </div>
                     </div>

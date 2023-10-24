@@ -9,8 +9,8 @@ export type ReadStatus = "ACTIVE" | "FINISHED" | "CANCELLED" | "DELETED";
 export interface ReadData {
     id: string;
     bookId: string;
-    startDate: Date | string;
-    endDate: Date | string | null;
+    startDate: string;
+    endDate: string | null;
     isPrivate: boolean;
     reviewContent: string | null;
     reviewRating: number | null;
@@ -115,6 +115,28 @@ export function useFetchRead({ readId, enabled = true }: UseFetchReadProps) {
     });
 }
 
+interface UseFetchManyFinishedReadsProps {
+    page?: number;
+    perPage?: number;
+    enabled?: boolean;
+}
+
+export function useFetchManyFinishedReads({
+    page = 1,
+    perPage = 30,
+    enabled = true,
+}: UseFetchManyFinishedReadsProps) {
+    return useQuery({
+        queryKey: ["fetchManyFinishedReads"],
+        queryFn: async () => {
+            const { data } = await api.get(`/reads/finished-reads?page=${page}&perPage=${perPage}`);
+
+            return data as ReadsDataResponse;
+        },
+        enabled,
+    });
+}
+
 export type RatingsOptions = "0.5" | "1" | "1.5" | "2" | "2.5" | "3" | "3.5" | "4" | "4.5" | "5";
 
 interface UseFetchReadsByReviewRatingsAndUserProps {
@@ -128,8 +150,8 @@ interface UseFetchReadsByReviewRatingsAndUserProps {
 export function useFetchReadsByReviewRatingsAndUser({
     rating,
     userId,
-    page,
-    perPage,
+    page = 1,
+    perPage = 20,
     enabled = true,
 }: UseFetchReadsByReviewRatingsAndUserProps) {
     return useQuery({
@@ -156,8 +178,8 @@ interface UseFetchReadsByReviewRatingsAndBookProps {
 export function useFetchReadsByReviewRatingsAndBook({
     rating,
     bookId,
-    page,
-    perPage,
+    page = 1,
+    perPage = 20,
     enabled = true,
 }: UseFetchReadsByReviewRatingsAndBookProps) {
     return useQuery({

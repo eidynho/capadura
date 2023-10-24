@@ -12,7 +12,7 @@ export interface FetchUserActivitiesResponse {
         | "RESUME_READ"
         | "ADD_BOOK_PROGRESS"
         | "ADD_BOOK_REVIEW";
-    createdAt: Date;
+    createdAt: string;
     book: {
         title: string;
     };

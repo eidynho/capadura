@@ -34,7 +34,12 @@ export function ClientRead({ readId, bookData }: ClientReadProps) {
         enabled: !!readData?.userId,
     });
 
-    const { data: progressList, isFetched } = useFetchReadProgress({
+    const {
+        data: progressList,
+        isFetched,
+        isStale,
+        refetch: refetchProgressList,
+    } = useFetchReadProgress({
         readId,
         page,
     });
@@ -44,6 +49,16 @@ export function ClientRead({ readId, bookData }: ClientReadProps) {
             setFullProgressList((prev) => [...prev, progressList.items].flat());
         }
     }, [isFetched]);
+
+    useEffect(() => {
+        if (progressList) {
+            setFullProgressList(progressList.items);
+        }
+    }, [progressList]);
+
+    useEffect(() => {
+        refetchProgressList();
+    }, [isStale]);
 
     if (!readData || !readCreator || !progressList) return;
 

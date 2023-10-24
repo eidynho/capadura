@@ -7,7 +7,7 @@ export interface ProfileDataResponse {
     name: string;
     username: string;
     email: string;
-    createdAt?: Date | string;
+    createdAt?: string;
     description: string | null;
     location: string | null;
     website: string | null;

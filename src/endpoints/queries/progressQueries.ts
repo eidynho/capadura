@@ -6,11 +6,12 @@ import { ReadData } from "./readsQueries";
 export interface ProgressData {
     id: string;
     readId: string;
-    createdAt: Date | string;
+    createdAt: string;
     description: string;
     isSpoiler: boolean;
-    page: number | null;
-    percentage: number | null;
+    pagesRead: number;
+    page: number;
+    percentage: number;
     read?: ReadData;
 }
 
@@ -55,7 +56,7 @@ interface UseFetchReadProgressProps {
 export function useFetchReadProgress({
     readId,
     page = 1,
-    perPage = 10,
+    perPage = 30,
     enabled = true,
 }: UseFetchReadProgressProps) {
     return useQuery({
@@ -66,6 +67,25 @@ export function useFetchReadProgress({
             );
 
             return data as ProgressDataResponse;
+        },
+        enabled,
+    });
+}
+
+type UserPagesReadedByDay = { createdAt: string; pagesReaded: number }[];
+
+interface UseGetPagesReadedByDayProps {
+    userId: string;
+    enabled?: boolean;
+}
+
+export function useGetPagesReadedByDay({ userId, enabled }: UseGetPagesReadedByDayProps) {
+    return useQuery({
+        queryKey: ["getPagesReadedByDay", { userId }],
+        queryFn: async () => {
+            const { data } = await api.get(`/user/${userId}/pages-readed`);
+
+            return data as UserPagesReadedByDay;
         },
         enabled,
     });

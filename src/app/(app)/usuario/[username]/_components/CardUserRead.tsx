@@ -1,11 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 import { pt } from "date-fns/locale";
 import { ImageIcon } from "lucide-react";
 
 import { ReadData } from "@/endpoints/queries/readsQueries";
 
+import { ProgressBar } from "@/app/(app)/livros/[id]/components/Read/Progress/ProgressBar";
 import { RatingStars } from "@/components/RatingStars";
 
 interface CardUserReadProps {
@@ -55,44 +58,26 @@ export function CardUserRead({ read }: CardUserReadProps) {
                     <div className="my-1 flex flex-wrap items-center justify-between gap-2">
                         <div className="text-sm font-medium text-muted-foreground">
                             Início da leitura:{" "}
-                            {format(parseISO(read.startDate.toString()), "dd 'de' MMMM 'de' yyyy", {
+                            {format(new Date(read.startDate), "dd 'de' MMMM 'de' yyyy", {
                                 locale: pt,
                             })}
                         </div>
                         {read.endDate && (
                             <div className="text-sm font-medium text-muted-foreground">
                                 Fim da leitura:{" "}
-                                {format(
-                                    parseISO(read.endDate.toString()),
-                                    "dd 'de' MMMM 'de' yyyy",
-                                    {
-                                        locale: pt,
-                                    },
-                                )}
+                                {format(new Date(read.endDate), "dd 'de' MMMM 'de' yyyy", {
+                                    locale: pt,
+                                })}
                             </div>
                         )}
                     </div>
 
-                    {read.status === "ACTIVE" && (
-                        <div className="mt-4 flex items-center">
-                            <div className="flex items-center gap-1 text-sm font-medium text-black dark:text-white">
-                                <span>{read.progress?.[0]?.page ?? 0}</span>
-                            </div>
-                            <div className="relative mx-2 h-5 flex-1 overflow-hidden rounded border bg-muted dark:bg-muted-foreground/25">
-                                <div
-                                    className="h-5 bg-primary/50"
-                                    style={{
-                                        width: `${read.progress?.[0]?.percentage ?? 0}%`,
-                                    }}
-                                ></div>
-                                <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-semibold dark:text-black">
-                                    {`${read.progress?.[0]?.percentage ?? 0}%`}
-                                </span>
-                            </div>
-                            <span className="w-8 text-sm font-medium text-black dark:text-white">
-                                {read.book.pageCount}
-                            </span>
-                        </div>
+                    {read.status === "ACTIVE" && read.book.pageCount && (
+                        <ProgressBar
+                            bookPageCount={read.book.pageCount}
+                            currentPage={read.progress?.[0]?.page}
+                            currentPercentage={read.progress?.[0]?.percentage}
+                        />
                     )}
                 </div>
             </div>

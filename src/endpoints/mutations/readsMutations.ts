@@ -137,10 +137,16 @@ export function useUpdateRead() {
             );
 
             // user reads in user profile
-            queryClient.setQueryData<ReadsDataResponse>(
-                ["fetchUserReadsByStatus", { userId }],
-                (prevData) => updateReadsQueryData(prevData),
-            );
+            queryClient.invalidateQueries({
+                queryKey: ["fetchUserReadsByStatus", { userId, status }],
+                refetchType: "none",
+            });
+
+            // home page recent finished reads
+            queryClient.invalidateQueries({
+                queryKey: ["fetchManyFinishedReads"],
+                refetchType: "none",
+            });
 
             // read id page
             queryClient.setQueryData<ReadData>(["fetchRead", { readId }], (prevData) => {
@@ -160,8 +166,8 @@ export function useUpdateRead() {
                 return updatedRead;
             });
 
-            // is status is abount to change for "FINISHED", add total finished read count metadata count by one
             if (status === "FINISHED") {
+                // is status is abount to change for "FINISHED", add total finished read count metadata count by one
                 queryClient.setQueriesData<GetMetadataCount>(
                     ["getTotalFinishedReadsCountByBook", { bookId }],
                     (prevData) => {

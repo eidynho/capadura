@@ -2,12 +2,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
 
-import { ProgressData } from "../queries/progressQueries";
-import { ReadData, ReadsDataResponse } from "../queries/readsQueries";
+import { ProgressData, ProgressDataResponse } from "../queries/progressQueries";
+import { ReadsDataResponse } from "../queries/readsQueries";
 
+import { useAuthContext } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/UseToast";
 
-interface UseAddNewProgressProps {
+interface UseCreateProgressProps {
     bookId: string;
     readId: string;
     description?: string;
@@ -17,9 +18,10 @@ interface UseAddNewProgressProps {
     bookPageCount: number;
 }
 
-export function useAddNewProgress() {
+export function useCreateProgress() {
     const queryClient = useQueryClient();
 
+    const { user } = useAuthContext();
     const { toast } = useToast();
 
     return useMutation({
@@ -31,7 +33,7 @@ export function useAddNewProgress() {
             pagesCount,
             countType,
             bookPageCount,
-        }: UseAddNewProgressProps) => {
+        }: UseCreateProgressProps) => {
             const { data } = await api.post<ProgressData>("/progress", {
                 bookId,
                 readId,
@@ -71,19 +73,18 @@ export function useAddNewProgress() {
             );
 
             // read id page
-            queryClient.setQueryData<ReadData>(["fetchRead", { readId }], (prevData) => {
-                if (!prevData) return;
-
-                const updatedRead = { ...(prevData || {}) };
-
-                if (!updatedRead.progress) {
-                    updatedRead.progress = [];
-                }
-
-                updatedRead.progress.unshift(newData);
-
-                return updatedRead;
+            queryClient.invalidateQueries({
+                queryKey: ["fetchReadProgress", { readId, page: 1, perPage: 30 }],
+                refetchType: "none",
             });
+
+            // home page progress pages readed
+            if (user) {
+                queryClient.invalidateQueries({
+                    queryKey: ["getPagesReadedByDay", { userId: user.id }],
+                    refetchType: "none",
+                });
+            }
 
             toast({
                 title: "Progresso adicionado.",
@@ -106,9 +107,6 @@ interface UseUpdateProgressProps {
     readId: string;
     description?: string;
     isSpoiler: boolean;
-    pagesCount: number;
-    countType: string;
-    bookPageCount: number;
     bookId: string;
 }
 
@@ -118,36 +116,14 @@ export function useUpdateProgress() {
     const { toast } = useToast();
 
     return useMutation({
-        mutationFn: async ({
-            progressId,
-            description,
-            isSpoiler,
-            pagesCount,
-            countType,
-            bookPageCount,
-        }: UseUpdateProgressProps) => {
+        mutationFn: async ({ progressId, description, isSpoiler }: UseUpdateProgressProps) => {
             await api.put("/progress", {
                 id: progressId,
                 description,
                 isSpoiler,
-                pagesCount,
-                countType,
-                bookPageCount,
             });
         },
-        onSuccess: (
-            _,
-            {
-                progressId,
-                readId,
-                description,
-                isSpoiler,
-                pagesCount,
-                countType,
-                bookPageCount,
-                bookId,
-            },
-        ) => {
+        onSuccess: (_, { progressId, readId, description, isSpoiler, bookId }) => {
             queryClient.setQueryData<ReadsDataResponse>(
                 ["fetchUserReadsByBook", { bookId }],
                 (prevData) => {
@@ -165,27 +141,8 @@ export function useUpdateProgress() {
                             };
                         }
 
-                        let page = 0;
-                        let percentage = 0;
-                        if (countType === "page") {
-                            page = Math.round(pagesCount);
-                            percentage = Math.round((pagesCount / bookPageCount) * 100);
-                        }
-
-                        if (countType === "percentage") {
-                            page = Math.round((bookPageCount / 100) * pagesCount);
-                            percentage = Math.round(pagesCount);
-                        }
-
-                        if (percentage >= 100) {
-                            page = bookPageCount;
-                            percentage = 100;
-                        }
-
                         progress.description = description ?? "";
                         progress.isSpoiler = isSpoiler;
-                        progress.page = page;
-                        progress.percentage = percentage;
                     }
 
                     return {
@@ -196,42 +153,27 @@ export function useUpdateProgress() {
             );
 
             // read id page
-            queryClient.setQueryData<ReadData>(["fetchRead", { readId }], (prevData) => {
-                if (!prevData) return;
+            queryClient.setQueryData<ProgressDataResponse>(
+                ["fetchReadProgress", { readId, page: 1, perPage: 30 }],
+                (prevData) => {
+                    if (!prevData) return;
 
-                const updatedRead = { ...(prevData || {}) };
+                    const updatedProgress = { ...prevData };
 
-                const progress = updatedRead.progress.find(
-                    (progress) => progress.id === progressId,
-                );
-                if (!progress) {
-                    return updatedRead;
-                }
+                    const progress = updatedProgress.items.find(
+                        (progress) => progress.id === progressId,
+                    );
 
-                let page = 0;
-                let percentage = 0;
-                if (countType === "page") {
-                    page = Math.round(pagesCount);
-                    percentage = Math.round((pagesCount / bookPageCount) * 100);
-                }
+                    if (!progress) {
+                        return updatedProgress;
+                    }
 
-                if (countType === "percentage") {
-                    page = Math.round((bookPageCount / 100) * pagesCount);
-                    percentage = Math.round(pagesCount);
-                }
+                    progress.description = description ?? "";
+                    progress.isSpoiler = isSpoiler;
 
-                if (percentage >= 100) {
-                    page = bookPageCount;
-                    percentage = 100;
-                }
-
-                progress.description = description ?? "";
-                progress.isSpoiler = isSpoiler;
-                progress.page = page;
-                progress.percentage = percentage;
-
-                return updatedRead;
-            });
+                    return updatedProgress;
+                },
+            );
 
             toast({
                 title: "O progresso de leitura foi editado.",
@@ -258,6 +200,7 @@ interface UseDeleteProgressProps {
 export function useDeleteProgress() {
     const queryClient = useQueryClient();
 
+    const { user } = useAuthContext();
     const { toast } = useToast();
 
     return useMutation({
@@ -286,17 +229,18 @@ export function useDeleteProgress() {
             );
 
             // read id page
-            queryClient.setQueryData<ReadData>(["fetchRead", { readId }], (prevData) => {
-                if (!prevData) return;
-
-                const updatedRead = { ...(prevData || {}) };
-
-                updatedRead.progress = updatedRead.progress.filter(
-                    (progress) => progress.id !== progressId,
-                );
-
-                return updatedRead;
+            queryClient.invalidateQueries({
+                queryKey: ["fetchReadProgress", { readId, page: 1, perPage: 30 }],
+                refetchType: "none",
             });
+
+            // home page progress pages readed
+            if (user) {
+                queryClient.invalidateQueries({
+                    queryKey: ["getPagesReadedByDay", { userId: user.id }],
+                    refetchType: "none",
+                });
+            }
 
             toast({
                 title: "O progresso de leitura foi deletado.",

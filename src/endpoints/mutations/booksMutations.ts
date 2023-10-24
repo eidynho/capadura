@@ -9,7 +9,7 @@ export interface UseCreateBookProps {
     subtitle?: string;
     authors: string[];
     publisher?: string;
-    publishDate?: Date | string;
+    publishDate?: string;
     language?: string;
     pageCount?: number;
     description?: string;

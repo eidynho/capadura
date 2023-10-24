@@ -3,7 +3,7 @@
 import { Fragment, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 import { ExternalLink, Lock, MoreVertical, Undo2, Unlock } from "lucide-react";
 import { pt } from "date-fns/locale";
 
@@ -20,20 +20,21 @@ import {
     useUpdateRead,
 } from "@/endpoints/mutations/readsMutations";
 import {
-    useAddNewProgress,
+    useCreateProgress,
     useDeleteProgress,
     useUpdateProgress,
 } from "@/endpoints/mutations/progressMutations";
 import { useToast } from "@/components/ui/UseToast";
 import { useColorPalette } from "@/hooks/useColorPalette";
+import { HandleUpdateProgressProps } from "./Progress/UpdateProgressDialog/FormUpdateProgress";
 
 import { CardUserHover } from "@/components/CardUserHover";
 import { CreateReadReviewDialog } from "./ReadReview/CreateReadReviewDialog";
 import { UpdateReadReviewDialog } from "./ReadReview/UpdateReadReviewDialog";
 import { DeleteReadDialog } from "./DeleteReadDialog";
-import { NewProgressDialog } from "./Progress/NewProgressDialog";
+import { CreateProgressDialog } from "./Progress/CreateProgressDialog";
 import { DeleteProgressDialog } from "./Progress/DeleteProgressDialog";
-import { HandleUpdateProgressProps, UpdateProgressDialog } from "./Progress/UpdateProgressDialog";
+import { UpdateProgressDialog } from "./Progress/UpdateProgressDialog";
 import { Progress } from "./Progress";
 import { RatingStars } from "@/components/RatingStars";
 
@@ -52,7 +53,8 @@ export interface EditReadData {
     id: string;
     description: string;
     isSpoiler: boolean;
-    page: number | null;
+    page: number;
+    percentage: number;
     countType: "page" | "percentage";
 }
 
@@ -176,7 +178,7 @@ export function Read({
         });
     }
 
-    const addNewProgress = useAddNewProgress();
+    const addNewProgress = useCreateProgress();
     async function handleAddNewProgress({
         readId,
         description,
@@ -206,9 +208,6 @@ export function Read({
         readId,
         description,
         isSpoiler,
-        pagesCount,
-        countType,
-        bookPageCount,
     }: HandleUpdateProgressProps) {
         if (updateProgress.isLoading || !canEdit) {
             return;
@@ -220,9 +219,6 @@ export function Read({
             progressId: id,
             description,
             isSpoiler,
-            pagesCount,
-            countType,
-            bookPageCount,
         });
     }
 
@@ -236,6 +232,7 @@ export function Read({
         description,
         isSpoiler,
         page,
+        percentage,
         countType,
     }: EditReadData) {
         setProgressEditData({
@@ -244,6 +241,7 @@ export function Read({
             description,
             isSpoiler,
             page,
+            percentage,
             countType,
         });
 
@@ -439,32 +437,38 @@ export function Read({
                     <div className="my-1 flex flex-wrap items-center justify-between gap-2">
                         <div className="text-sm font-medium text-muted-foreground">
                             Início da leitura:{" "}
-                            {format(parseISO(read.startDate.toString()), "dd 'de' MMMM 'de' yyyy", {
+                            {format(new Date(read.startDate), "dd 'de' MMMM 'de' yyyy", {
                                 locale: pt,
                             })}
                         </div>
                         {read.endDate && (
                             <div className="text-sm font-medium text-muted-foreground">
                                 Fim da leitura:{" "}
-                                {format(
-                                    parseISO(read.endDate.toString()),
-                                    "dd 'de' MMMM 'de' yyyy",
-                                    { locale: pt },
-                                )}
+                                {format(new Date(read.endDate), "dd 'de' MMMM 'de' yyyy", {
+                                    locale: pt,
+                                })}
                             </div>
                         )}
                     </div>
 
-                    {read.reviewContent && (
-                        <p className="text-justify text-black dark:text-white">
-                            {read.reviewContent}
-                        </p>
-                    )}
+                    <div className="flex flex-col items-start gap-2">
+                        {read.reviewIsSpoiler && (
+                            <Badge variant="red" className="min-w-[103px]">
+                                Contém spoiler
+                            </Badge>
+                        )}
+
+                        {read.reviewContent && (
+                            <p className="max-h-96 overflow-auto text-justify text-black dark:text-white">
+                                {read.reviewContent}
+                            </p>
+                        )}
+                    </div>
 
                     {canEdit && (
                         <div className="mt-2 flex items-center gap-2">
                             {lastProgressPercentage !== 100 && (
-                                <NewProgressDialog
+                                <CreateProgressDialog
                                     readId={read.id}
                                     bookTitle={bookData.title}
                                     bookPageCount={bookData.pageCount ?? 0}
@@ -501,14 +505,16 @@ export function Read({
                 </div>
             </div>
 
-            <UpdateProgressDialog
-                isOpen={isOpenUpdateProgressDialog}
-                setIsOpen={handleOpenUpdateProgressDialog}
-                bookTitle={bookData.title}
-                bookPageCount={bookData.pageCount ?? 0}
-                editData={progressEditData}
-                handleUpdateProgress={handleUpdateProgress}
-            />
+            {progressEditData && (
+                <UpdateProgressDialog
+                    isOpen={isOpenUpdateProgressDialog}
+                    setIsOpen={handleOpenUpdateProgressDialog}
+                    bookTitle={bookData.title}
+                    bookPageCount={bookData.pageCount ?? 0}
+                    editData={progressEditData}
+                    handleUpdateProgress={handleUpdateProgress}
+                />
+            )}
             <DeleteProgressDialog
                 isOpen={isOpenDeleteProgressDialog}
                 setIsOpen={handleOpenDeleteProgressDialog}

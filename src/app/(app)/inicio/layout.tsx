@@ -5,27 +5,24 @@ import { redirect } from "next/navigation";
 
 import { BASE_URL } from "@/constants/api";
 
-interface InviteAndWinLayoutProps {
+interface AppHomeLayoutProps {
     children: ReactNode;
 }
 
 export const metadata: Metadata = {
-    title: "Convide e ganhe",
+    title: "Início",
     alternates: {
-        canonical: `${BASE_URL}/entrar`,
+        canonical: `${BASE_URL}/inicio`,
     },
 };
 
-export default async function InviteAndWinLayout({ children }: InviteAndWinLayoutProps) {
-    // TODO: invite and win page
-    redirect("/livros");
-
+export default async function AppHomeLayout({ children }: AppHomeLayoutProps) {
     const cookies = NextCookies();
     const token = cookies.get("token");
 
-    if (!!token) {
-        return <>{children}</>;
+    if (!!cookies && !token) {
+        redirect("/entrar");
     } else {
-        redirect("/livros");
+        return <>{children}</>;
     }
 }

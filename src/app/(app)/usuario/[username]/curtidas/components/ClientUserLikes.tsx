@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 import { pt } from "date-fns/locale";
 import { ImageIcon, MoreHorizontal } from "lucide-react";
 
@@ -160,7 +160,7 @@ export function ClientUserLikes({ username }: UserLikesProps) {
                                 <TableCell>{publishDateFormat(like.book.publishDate)}</TableCell>
                                 <TableCell>{like.book.pageCount}</TableCell>
                                 <TableCell>
-                                    {format(parseISO(like.createdAt), "dd/MM/yyyy", {
+                                    {format(new Date(like.createdAt), "dd/MM/yyyy", {
                                         locale: pt,
                                     })}
                                 </TableCell>

@@ -8,7 +8,7 @@ import { Star, StarHalf } from "phosphor-react";
 import { Loader2 } from "lucide-react";
 
 import { BookData } from "@/endpoints/queries/booksQueries";
-import { ReadStatus } from "@/endpoints/mutations/readsMutations";
+import { ReadStatus } from "@/endpoints/queries/readsQueries";
 
 import { ratingFormat } from "@/utils/rating-format";
 

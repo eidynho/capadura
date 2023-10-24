@@ -9,7 +9,7 @@ import { HandleAddNewProgressProps, HandleUpdateReadProps } from "./ReadReview/F
 import { BookData } from "@/endpoints/queries/booksQueries";
 import { useFetchUserReadsByBook } from "@/endpoints/queries/readsQueries";
 import { useStartNewRead, useUpdateRead } from "@/endpoints/mutations/readsMutations";
-import { useAddNewProgress } from "@/endpoints/mutations/progressMutations";
+import { useCreateProgress } from "@/endpoints/mutations/progressMutations";
 import { useToast } from "@/components/ui/UseToast";
 import { useColorPalette } from "@/hooks/useColorPalette";
 
@@ -95,7 +95,7 @@ export function UserReads({ bookData }: UserReadsProps) {
         });
     }
 
-    const addNewProgress = useAddNewProgress();
+    const addNewProgress = useCreateProgress();
     async function handleAddNewProgress({
         readId,
         description,

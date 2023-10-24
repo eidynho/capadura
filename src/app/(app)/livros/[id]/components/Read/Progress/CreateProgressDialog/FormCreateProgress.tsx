@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -20,15 +19,7 @@ export const progressFormSchema = z.object({
 
 export type ProgressFormSchema = z.infer<typeof progressFormSchema>;
 
-interface FormProgressProps {
-    editData?: {
-        readId: string;
-        id: string;
-        description: string;
-        isSpoiler: boolean;
-        page: number | null;
-        countType: "page" | "percentage";
-    } | null;
+interface FormCreateProgressProps {
     submitForm: ({
         description,
         isSpoiler,
@@ -37,12 +28,11 @@ interface FormProgressProps {
     }: ProgressFormSchema) => Promise<void>;
 }
 
-export function FormProgress({ editData, submitForm }: FormProgressProps) {
+export function FormCreateProgress({ submitForm }: FormCreateProgressProps) {
     const {
         register,
         handleSubmit,
         formState: { isSubmitting, errors },
-        setValue,
     } = useForm<ProgressFormSchema>({
         resolver: zodResolver(progressFormSchema),
         defaultValues: {
@@ -50,15 +40,6 @@ export function FormProgress({ editData, submitForm }: FormProgressProps) {
             countType: "page",
         },
     });
-
-    useEffect(() => {
-        if (editData) {
-            setValue("description", editData.description);
-            setValue("isSpoiler", editData.isSpoiler);
-            setValue("pagesCount", editData.page || 0);
-            setValue("countType", editData.countType);
-        }
-    }, [editData]);
 
     return (
         <form

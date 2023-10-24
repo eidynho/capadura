@@ -8,7 +8,7 @@ export interface FavoriteBooksData {
     order: number;
     bookId: string;
     book: BookData;
-    updatedAt: Date | string;
+    updatedAt: string;
     userId: string;
 }
 

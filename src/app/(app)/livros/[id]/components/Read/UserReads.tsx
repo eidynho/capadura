@@ -152,7 +152,7 @@ export function UserReads({ bookData }: UserReadsProps) {
                                 ? "Já li esse livro e quero ler novamente."
                                 : "Quero começar a registrar minha leitura."}
                         </CardActionDescription>
-                        <CardActionPicture className="-right-20 rotate-90 group-hover:rotate-45">
+                        <CardActionPicture className="-right-20">
                             <SpiralWavy palette={palette} />
                         </CardActionPicture>
                     </CardAction>

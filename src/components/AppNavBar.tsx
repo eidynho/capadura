@@ -4,7 +4,6 @@ import { ElementType, Fragment, useEffect, useState } from "react";
 import Link from "next/link";
 import {
     BookMarked,
-    BookOpen,
     ChevronDown,
     Hexagon,
     Home,

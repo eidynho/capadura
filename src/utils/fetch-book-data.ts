@@ -6,7 +6,7 @@ import { BookData } from "@/endpoints/queries/booksQueries";
 
 export const fetchBookData = async (bookId: string) => {
     const response = await fetch(`${API_BASE_URL}/book/${bookId}`);
-    const data = await response.json();
+    let data = await response.json();
 
     if (!data) {
         // revalidate data to verify if book exists now
@@ -15,13 +15,12 @@ export const fetchBookData = async (bookId: string) => {
                 revalidate: 0,
             },
         });
-        const refetchData = await refetchResponse.json();
 
-        if (!refetchData) {
+        data = await refetchResponse.json();
+
+        if (!data) {
             return notFound();
         }
-
-        return refetchData as BookData;
     }
 
     return data as BookData;

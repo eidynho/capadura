@@ -7,7 +7,7 @@ const CardAction = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDiv
         <div
             ref={ref}
             className={cn(
-                "group relative mt-2 flex h-32 w-full cursor-pointer flex-col justify-center overflow-hidden rounded-md border bg-white pl-8 pr-2 transition-all hover:bg-gray-200/50 dark:bg-black dark:hover:bg-accent/25",
+                "group relative mt-2 flex h-32 w-full cursor-pointer flex-col justify-center overflow-hidden rounded-md border bg-white pl-8 pr-2 transition-all hover:border-black dark:bg-black dark:hover:border-white",
                 className,
             )}
             {...props}

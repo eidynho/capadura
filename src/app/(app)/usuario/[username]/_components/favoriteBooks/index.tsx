@@ -120,7 +120,11 @@ export function FavoriteBooks({ username }: FavoriteBooksProps) {
     function updateCurrentBookWithGoogleBook(book: BookDataFromGoogle) {
         if (!book) return;
 
-        const parsedDate = parse(book.volumeInfo.publishedDate, "yyyy-MM-dd", new Date());
+        const parsedDate = parse(
+            book.volumeInfo.publishedDate,
+            "yyyy-MM-dd",
+            new Date(),
+        ).toISOString();
 
         const bookParams: BookData = {
             id: book.id,

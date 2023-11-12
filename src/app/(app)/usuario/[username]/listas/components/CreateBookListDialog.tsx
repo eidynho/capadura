@@ -118,7 +118,7 @@ export function CreateBookListDialog() {
                         <CardActionDescription>
                             Crie, personalize e compartilhe :)
                         </CardActionDescription>
-                        <CardActionPicture className="-right-40 top-32 rotate-90 opacity-100">
+                        <CardActionPicture className="-right-48 top-32 rotate-90 opacity-100">
                             <Wavy />
                         </CardActionPicture>
                     </CardAction>

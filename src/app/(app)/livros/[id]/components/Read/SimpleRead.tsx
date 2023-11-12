@@ -30,16 +30,6 @@ export function SimpleRead({ read, hasBookImage }: SimpleReadProps) {
 
                         {/* Rating stars */}
                         <div className="ml-1 inline-flex items-center gap-2">
-                            {!!read.reviewRating && (
-                                <div className="inline-flex items-center">
-                                    <RatingStars rating={read.reviewRating} />
-                                </div>
-                            )}
-
-                            {!!read.reviewRating && hasBookImage && read.book?.title && (
-                                <span className="text-black dark:text-white">-</span>
-                            )}
-
                             {hasBookImage && read.book?.title && (
                                 <Link
                                     href={`/livros/${read.book.id}`}
@@ -47,6 +37,16 @@ export function SimpleRead({ read, hasBookImage }: SimpleReadProps) {
                                 >
                                     {read.book.title}
                                 </Link>
+                            )}
+
+                            {!!read.reviewRating && hasBookImage && read.book?.title && (
+                                <span className="text-black dark:text-white">-</span>
+                            )}
+
+                            {!!read.reviewRating && (
+                                <div className="inline-flex items-center">
+                                    <RatingStars rating={read.reviewRating} />
+                                </div>
                             )}
                         </div>
                     </div>

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
-import { BookOnBookListWithBook } from "@/app/(app)/usuario/[username]/listas/page";
+import { BookOnBookListWithBook } from "@/app/(app)/usuario/[username]/listas/components/ClientUserLists";
 
 interface UseFetchBooksOnBookListProps {
     bookListId: string;

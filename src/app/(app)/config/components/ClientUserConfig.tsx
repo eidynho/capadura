@@ -183,7 +183,9 @@ export function ClientUserConfigs() {
         }
 
         try {
-            const { data } = await api.get<ProfileDataResponse>(`users/${typedUsername.trim()}`);
+            const { data } = await api.get<ProfileDataResponse>(
+                `users/username/${typedUsername.trim()}`,
+            );
             const existsUsername = !!data.username;
 
             setUsernameAlreadyExists(existsUsername);

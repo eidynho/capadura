@@ -133,7 +133,7 @@ export function ApplicationSearch() {
                 size="sm"
                 variant="outline"
                 onClick={() => setIsOpen(true)}
-                className="relative h-[42px] justify-start text-sm text-muted-foreground sm:w-40 sm:px-2 md:w-56 md:pr-12"
+                className="relative h-[42px] w-[42px] justify-start text-sm text-muted-foreground sm:w-40 sm:px-2 md:w-56 md:pr-12"
             >
                 <Search size={18} />
                 <span className="hidden sm:block">Procurar livro...</span>

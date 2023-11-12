@@ -162,7 +162,7 @@ export function AppNavBar() {
             <div className="mx-auto flex max-w-5xl items-center justify-center gap-2 px-3 py-2 text-sm transition-colors">
                 <div className="flex w-full items-center justify-between gap-1">
                     <div className="flex items-center gap-8">
-                        <Link href="/" className="mr-4 inline-block text-black dark:text-white">
+                        <Link href="/" className="inline-block text-black dark:text-white md:mr-4">
                             Capadura
                         </Link>
 

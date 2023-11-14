@@ -106,6 +106,7 @@ export function AppNavBar() {
               {
                   name: "Convide e ganhe",
                   path: "/convide-e-ganhe",
+                  disabled: true,
                   icon: UserPlus,
               },
               {

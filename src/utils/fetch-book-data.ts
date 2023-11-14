@@ -6,13 +6,12 @@ import { BookData } from "@/endpoints/queries/booksQueries";
 
 export const fetchBookData = async (bookId: string) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/book/${bookId}`, {
-            next: {
-                revalidate: 1000 * 60 * 60 * 24, // 24 hours
-            },
-        });
-
+        const response = await fetch(`${API_BASE_URL}/book/${bookId}`);
         const data = await response.json();
+
+        if (!data.id) {
+            throw new Error("Book not found: " + data);
+        }
 
         return data as BookData;
     } catch (err) {

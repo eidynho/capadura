@@ -31,7 +31,7 @@ const fetchUserByUsername = async (username: string) => {
         const data = await response.json();
 
         if (!data.id) {
-            throw new Error("Username not found");
+            throw new Error("User not found: " + data);
         }
 
         return data;

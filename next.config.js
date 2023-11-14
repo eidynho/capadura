@@ -16,6 +16,16 @@ const nextConfig = {
                 hostname: "d3pct9qj0imfur.cloudfront.net",
                 port: "",
             },
+            {
+                protocol: "https",
+                hostname: "api.capadura.io",
+                port: "",
+            },
+            {
+                protocol: "https",
+                hostname: "capadura.io",
+                port: "",
+            },
         ],
     },
     async rewrites() {

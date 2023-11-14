@@ -6,7 +6,6 @@ import { BookMarked, Heart, List, Lock } from "lucide-react";
 import { BookHeader } from "@/app/(app)/livros/[id]/components/BookHeader";
 
 import { BookDescription } from "@/app/(app)/livros/[id]/components/BookDescription";
-import { BookGradient } from "@/app/(app)/livros/[id]/components/BookGradient";
 import { CardUserHover } from "@/components/CardUserHover";
 import { RatingStars } from "../RatingStars";
 
@@ -68,10 +67,6 @@ const user = {
 export function BookPageSection() {
     return (
         <div className="relative my-12 max-h-[46rem] rounded-lg border border-zinc-300 bg-black/5 p-4 after:absolute after:-left-px after:top-1/2 after:h-40 after:w-px after:bg-gradient-to-t after:from-transparent after:via-yellow-700 after:to-transparent after:opacity-0 after:transition-all after:duration-500 after:content-[''] hover:after:top-1/4 hover:after:opacity-100 dark:border-border dark:bg-light/5 dark:after:via-primary lg:my-16">
-            <div className="relative block md:hidden">
-                <BookGradient bookImageUrl={bookData.imageUrl} className="rounded-lg" />
-            </div>
-
             <div className="flex max-h-[43.75rem] flex-col items-start gap-8 overflow-hidden rounded-lg bg-light p-4 shadow-lg transition-colors dark:bg-dark dark:shadow-2xl md:flex-row">
                 <div className="z-10 w-full md:w-[19.5rem]">
                     <BookHeader

@@ -1,8 +1,10 @@
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { API_BASE_URL, BASE_URL } from "@/constants/api";
+
+import Loading from "./loading";
 
 interface ProfileLayoutProps {
     children: ReactNode;
@@ -42,8 +44,9 @@ export default async function ProfileLayout({ children, params }: ProfileLayoutP
     try {
         await fetchUserByUsername(params.username);
     } catch (err) {
+        console.error(err);
         notFound();
     }
 
-    return <>{children}</>;
+    return <Suspense fallback={<Loading />}>{children}</Suspense>;
 }

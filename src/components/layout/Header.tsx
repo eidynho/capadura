@@ -2,9 +2,9 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/Button";
 
-export function Header() {
+export async function Header() {
     return (
-        <header className="mx-auto flex h-96 flex-col items-center justify-center">
+        <header className="mx-auto mt-0 flex h-80 flex-col items-center justify-center md:mt-12">
             <div className="z-10 max-w-3xl lg:text-center">
                 <div className="mb-4 inline-block rounded-md bg-yellow-200 px-1 text-base font-semibold leading-7 text-black">
                     Anunciando o lançamento da versão beta

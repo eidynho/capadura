@@ -36,7 +36,7 @@ const fetchUserByUsername = async (username: string) => {
 
         return data;
     } catch (err) {
-        throw new Error("Failed on fetch user by username");
+        throw new Error("Failed on fetch user by username: " + err);
     }
 };
 

@@ -23,7 +23,6 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { useThemeContext } from "@/contexts/ThemeContext";
 
 import { ApplicationSearch } from "./ApplicationSearch";
-import { LinkUnderline } from "./LinkUnderline";
 import { SignOutDialog } from "./SignOutDialog";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
@@ -163,15 +162,12 @@ export function AppNavBar() {
             <div className="mx-auto flex max-w-5xl items-center justify-center gap-2 px-3 py-2 text-sm transition-colors">
                 <div className="flex w-full items-center justify-between gap-1">
                     <div className="flex items-center gap-8">
-                        <Link href="/" className="inline-block text-black dark:text-white md:mr-4">
+                        <Link
+                            href={user ? "/inicio" : "/"}
+                            className="inline-block text-black dark:text-white md:mr-4"
+                        >
                             Capadura
                         </Link>
-
-                        <div className="mr-8 hidden gap-8 text-black dark:text-white md:flex">
-                            <LinkUnderline href="/inicio" className="font-medium">
-                                Início
-                            </LinkUnderline>
-                        </div>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -243,7 +239,7 @@ export function AppNavBar() {
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" className="w-36">
-                                    <RoutesTree routes={mobileDropdownRoutes} />
+                                    {user && <RoutesTree routes={mobileDropdownRoutes} />}
 
                                     <DropdownMenuSub>
                                         <DropdownMenuSubTrigger className="flex items-center gap-2">

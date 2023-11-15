@@ -11,12 +11,10 @@ import { LastUsersReads } from "./LastUserReads";
 export function ClientAppHome() {
     const { user } = useAuthContext();
 
-    if (!user?.username) return;
-
     return (
         <>
-            <Title>Olá, {user.username},</Title>
-            <Subtitle>Bem vindo(a) de volta.</Subtitle>
+            <Title>Olá, {user?.username || "visitante"}</Title>
+            {user && <Subtitle>Bem vindo(a) de volta.</Subtitle>}
 
             <Separator className="my-6" />
 

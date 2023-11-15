@@ -105,7 +105,7 @@ export function ClientSignUp() {
                 variant: "destructive",
             });
 
-            throw new Error("Failed on verify user username.");
+            console.error("Failed on verify user username.");
         } finally {
             setIsValidatingUsername(false);
         }

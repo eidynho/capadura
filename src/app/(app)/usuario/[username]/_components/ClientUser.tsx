@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+// import { useState } from "react";
 import { notFound } from "next/navigation";
 import { Link as LinkIcon, MapPin, Twitter } from "lucide-react";
 
@@ -16,7 +16,7 @@ import { ProgressData, useFetchUserProgress } from "@/endpoints/queries/progress
 import Loading from "../loading";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
-import { Calendar } from "@/components/ui/Calendar";
+// import { Calendar } from "@/components/ui/Calendar";
 import { EditProfileButton } from "../_components/EditProfileButton";
 import { FavoriteBooks } from "../_components/favoriteBooks";
 import { FinishedReads } from "../_components/FinishedReads";
@@ -52,7 +52,7 @@ interface ClientUserProps {
 }
 
 export function ClientUser({ username }: ClientUserProps) {
-    const [date, setDate] = useState<Date | undefined>(new Date());
+    // const [date, setDate] = useState<Date | undefined>(new Date());
 
     const { width } = useWindowSize();
 
@@ -209,7 +209,7 @@ export function ClientUser({ username }: ClientUserProps) {
 
                 <div className="w-full lg:w-72">
                     <div className="flex w-full flex-col gap-8 sm:flex-row lg:flex-col">
-                        <div className="w-full sm:w-1/2 lg:w-full">
+                        {/* <div className="w-full sm:w-1/2 lg:w-full">
                             <h2 className="font-semibold text-black dark:text-white">Calendário</h2>
                             <Calendar
                                 mode="single"
@@ -217,7 +217,7 @@ export function ClientUser({ username }: ClientUserProps) {
                                 onSelect={setDate}
                                 className="mt-2 rounded-md border bg-white transition-colors dark:bg-dark"
                             />
-                        </div>
+                        </div> */}
 
                         <div className="w-full sm:w-1/2 lg:w-full">
                             <h2 className="font-semibold text-black dark:text-white">Avaliações</h2>

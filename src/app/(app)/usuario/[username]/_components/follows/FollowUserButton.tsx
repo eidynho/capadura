@@ -18,13 +18,13 @@ interface FollowUserButtonProps {
 }
 
 export function FollowUserButton({ username, targetUserId }: FollowUserButtonProps) {
-    const { user, isAuthenticated } = useAuthContext();
+    const { user } = useAuthContext();
 
     const isCurrentUser = isPageUserSameCurrentUser(username);
 
     const { data } = useGetIsCurrentUserFollowingTargetUser({
         targetUserId,
-        enabled: isAuthenticated && !!targetUserId,
+        enabled: !!user && !!targetUserId,
     });
 
     const queryClient = useQueryClient();
@@ -88,7 +88,7 @@ export function FollowUserButton({ username, targetUserId }: FollowUserButtonPro
 
     return (
         <>
-            {isAuthenticated && !isCurrentUser && (
+            {!!user && !isCurrentUser && (
                 <Button
                     size="sm"
                     variant="outline"

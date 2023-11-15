@@ -18,12 +18,7 @@ const nextConfig = {
             },
             {
                 protocol: "https",
-                hostname: "api.capadura.io",
-                port: "",
-            },
-            {
-                protocol: "https",
-                hostname: "capadura.io",
+                hostname: "www.capadura.io",
                 port: "",
             },
         ],

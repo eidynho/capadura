@@ -13,7 +13,7 @@ import { useSignIn } from "@/endpoints/mutations/usersMutations";
 interface AuthContextType {
     user?: ProfileDataResponse;
     isFetchingCurrentUser: boolean;
-    isAuthenticated: boolean;
+    isFetchedCurrentUser: boolean;
     signIn: (data: SignInRequestProps) => void;
     isSignInLoading: boolean;
     isOpenAuthDialog: boolean;
@@ -42,12 +42,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const {
         data: user,
         isFetching: isFetchingCurrentUser,
+        isFetched: isFetchedCurrentUser,
         isError,
     } = useFetchCurrentUser({
         enabled: !!token,
     });
-
-    const isAuthenticated = !!user;
 
     if (isError) {
         signOut();
@@ -98,7 +97,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             value={{
                 user,
                 isFetchingCurrentUser,
-                isAuthenticated,
+                isFetchedCurrentUser,
                 signIn,
                 isSignInLoading,
                 isOpenAuthDialog,

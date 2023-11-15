@@ -29,7 +29,7 @@ interface UserReadsProps {
 }
 
 export function UserReads({ bookData }: UserReadsProps) {
-    const { user, isAuthenticated } = useAuthContext();
+    const { user } = useAuthContext();
     const { toast } = useToast();
 
     const [currentTab, setCurrentTab] = useState("all");
@@ -38,7 +38,7 @@ export function UserReads({ bookData }: UserReadsProps) {
 
     const { data: userReads } = useFetchUserReadsByBook({
         bookId: bookData.id || "",
-        enabled: isAuthenticated && !!bookData.id,
+        enabled: !!user && !!bookData.id,
     });
 
     const filteredReads = userReads?.items?.filter((item) => {
@@ -121,7 +121,7 @@ export function UserReads({ bookData }: UserReadsProps) {
         });
     }
 
-    if (!user || !isAuthenticated || !filteredReads) return;
+    if (!user || !filteredReads) return;
 
     const hasPreviousReads = userReads?.items?.length;
     const lastReadIsFinished = userReads?.items[0]?.status === "FINISHED";

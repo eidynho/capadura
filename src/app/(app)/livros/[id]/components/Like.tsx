@@ -14,11 +14,11 @@ interface LikeProps {
 }
 
 export function Like({ bookId }: LikeProps) {
-    const { user, isAuthenticated, toggleAuthDialog } = useAuthContext();
+    const { user, toggleAuthDialog } = useAuthContext();
 
     const { data: like } = useGetUserLikedBook({
         bookId,
-        enabled: isAuthenticated,
+        enabled: !!user,
     });
 
     const addLikeBook = useAddLikeBook();
@@ -27,7 +27,7 @@ export function Like({ bookId }: LikeProps) {
     async function handleToggleLikeBook() {
         if (!user?.id) return;
 
-        if (!isAuthenticated) {
+        if (!user) {
             toggleAuthDialog(true);
             return;
         }

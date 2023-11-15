@@ -1,6 +1,7 @@
 "use client";
 
 import { useFetchManyFinishedReads } from "@/endpoints/queries/readsQueries";
+
 import { SimpleRead } from "../../livros/[id]/components/Read/SimpleRead";
 
 export function LastUsersReads() {

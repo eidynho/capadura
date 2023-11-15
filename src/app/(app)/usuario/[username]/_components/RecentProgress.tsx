@@ -41,6 +41,7 @@ export function RecentProgress({ username, progressData }: RecentProgressProps) 
                                         alt={`Capa do livro ${progress.read.book.title}`}
                                         title={`Capa do livro ${progress.read.book.title}`}
                                         className="w-full overflow-hidden"
+                                        unoptimized
                                     />
                                 </Link>
                             ) : (

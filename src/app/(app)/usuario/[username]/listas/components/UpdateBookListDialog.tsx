@@ -157,6 +157,7 @@ export function UpdateBookListDialog({
                                                             alt={`Capa da lista ${bookList.name}`}
                                                             title={`Capa da lista ${bookList.name}`}
                                                             className="rounded-md transition-all group-hover:brightness-50"
+                                                            unoptimized
                                                         />
                                                     ) : (
                                                         <div className="flex h-44 w-44 items-center justify-center rounded-md text-white">

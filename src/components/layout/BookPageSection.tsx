@@ -76,9 +76,7 @@ export function BookPageSection() {
                     />
 
                     <div className="flex w-full gap-6">
-                        <canvas id="canvas" className="hidden"></canvas>
                         <Image
-                            id="book-principal-image"
                             src={bookData.imageUrl}
                             width={312}
                             height={468}

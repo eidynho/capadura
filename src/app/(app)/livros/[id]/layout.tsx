@@ -81,6 +81,7 @@ export default async function BookLayout({ children, params }: BookLayoutProps) 
                                 alt={`Capa do livro ${bookData.title}`}
                                 title={`Capa do livro ${bookData.title}`}
                                 className="mx-auto rounded-md"
+                                unoptimized
                             />
                         ) : (
                             <div className="flex h-96 w-full flex-col items-center justify-center rounded-md border bg-zinc-500/10 opacity-75">

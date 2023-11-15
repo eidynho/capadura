@@ -41,6 +41,7 @@ export function FinishedReads({ username, readsData }: FinishedReadsProps) {
                                         alt={`Capa do livro ${read.book.title}`}
                                         title={`Capa do livro ${read.book.title}`}
                                         className="w-full overflow-hidden"
+                                        unoptimized
                                     />
                                 </Link>
                             ) : (

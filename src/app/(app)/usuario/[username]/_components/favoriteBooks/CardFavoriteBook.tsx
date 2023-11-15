@@ -46,6 +46,7 @@ export function CardFavoriteBook({
                             alt={`Capa do livro ${currentBook.title}`}
                             title={`Capa do livro ${currentBook.title}`}
                             className="w-full overflow-hidden"
+                            unoptimized
                         />
                     </Link>
                 ) : (

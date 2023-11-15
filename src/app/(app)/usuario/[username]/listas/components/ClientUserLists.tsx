@@ -215,6 +215,7 @@ export function ClientUserLists({ username }: ClientUserListsProps) {
                                         alt={`Capa da lista ${bookLists[activeBookList].name}`}
                                         title={`Capa da lista ${bookLists[activeBookList].name}`}
                                         className="rounded-md"
+                                        unoptimized
                                     />
                                 ) : (
                                     <div className="flex h-56 w-56 items-center justify-center rounded-md text-white">

@@ -32,6 +32,7 @@ export function CardUserRead({ read }: CardUserReadProps) {
                             alt={`Capa do livro ${read.book.title}`}
                             title={`Capa do livro ${read.book.title}`}
                             className="w-full overflow-hidden"
+                            unoptimized
                         />
                     </Link>
                 ) : (

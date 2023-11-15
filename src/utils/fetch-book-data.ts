@@ -13,8 +13,6 @@ export const fetchBookData = async (bookId: string) => {
         const response = await fetch(`${API_BASE_URL}/book/${bookId}`);
         const data = await response.json();
 
-        console.log(`${API_BASE_URL}/book/${bookId}`, data);
-
         if (!data?.id) {
             throw new Error("Book not found.");
         }

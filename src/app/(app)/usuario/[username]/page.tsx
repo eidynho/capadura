@@ -23,8 +23,6 @@ const fetchUserByUsername = async (username: string) => {
         const response = await fetch(`${API_BASE_URL}/users/username/${username}`);
         const data = await response.json();
 
-        console.log(`${API_BASE_URL}/users/username/${username}`, data);
-
         if (!data?.id) {
             throw new Error("User not found: " + data);
         }

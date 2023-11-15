@@ -11,6 +11,8 @@ interface BookGradientProps {
 }
 
 export function BookGradient({ bookImageUrl, className }: BookGradientProps) {
+    if (typeof document === "undefined") return;
+
     const palette = useColorPalette(bookImageUrl);
 
     const gradientStyle = {

@@ -141,6 +141,7 @@ export function ClientUserLikes({ username }: UserLikesProps) {
                                                     alt={`Capa do livro ${like.book.title}`}
                                                     title={`Capa do livro ${like.book.title}`}
                                                     className="w-full overflow-hidden rounded-md"
+                                                    unoptimized
                                                 />
                                             ) : (
                                                 <div className="flex h-full items-center justify-center rounded-sm border">

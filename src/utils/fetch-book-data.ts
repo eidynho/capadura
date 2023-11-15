@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import axios from "axios";
 
 import { API_BASE_URL } from "@/constants/api";
 
@@ -10,11 +11,14 @@ export const fetchBookData = async (bookId: string) => {
             throw new Error("bookId not provided.");
         }
 
-        const response = await fetch(`${API_BASE_URL}/book/${bookId}`);
-        const data = await response.json();
+        const { data } = await axios.get(`${API_BASE_URL}/book/${bookId}`);
 
         if (!data?.id) {
-            throw new Error("Book not found.");
+            const { data } = await axios.post(`${API_BASE_URL}/book`, {
+                bookId,
+            });
+
+            return data as BookData;
         }
 
         return data as BookData;

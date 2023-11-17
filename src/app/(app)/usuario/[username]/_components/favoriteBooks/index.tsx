@@ -5,7 +5,7 @@ import { isValid, parse } from "date-fns";
 import { Loader2 } from "lucide-react";
 
 import { BookDataFromGoogle, GoogleAPIData } from "@/components/ApplicationSearch";
-import { BookData } from "@/endpoints/queries/booksQueries";
+import { BookData, useFetchBook } from "@/endpoints/queries/booksQueries";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useDidMountEffect } from "@/hooks/useDidMountEffect";
 import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";
@@ -31,6 +31,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/Dialog";
+import { useCreateBook } from "@/endpoints/mutations/booksMutations";
 
 interface FavoriteBooksProps {
     username: string;
@@ -120,11 +121,9 @@ export function FavoriteBooks({ username }: FavoriteBooksProps) {
     function updateCurrentBookWithGoogleBook(book: BookDataFromGoogle) {
         if (!book) return;
 
-        const parsedDate = parse(
-            book.volumeInfo.publishedDate,
-            "yyyy-MM-dd",
-            new Date(),
-        ).toISOString();
+        const parsedDate = book.volumeInfo.publishedDate
+            ? parse(book.volumeInfo.publishedDate, "yyyy-MM-dd", new Date())
+            : null;
 
         const bookParams: BookData = {
             id: book.id,
@@ -132,19 +131,35 @@ export function FavoriteBooks({ username }: FavoriteBooksProps) {
             title: book.volumeInfo.title,
             authors: book.volumeInfo.authors,
             pageCount: book.volumeInfo.pageCount,
-            publishDate: isValid(parsedDate) ? parsedDate : undefined,
+            publishDate: parsedDate && isValid(parsedDate) ? parsedDate.toISOString() : null,
         };
 
         setCurrentBook(bookParams);
         setSearchName("");
     }
 
+    const { data: fetchedBook, isFetching: isFetchingCurrentBook } = useFetchBook({
+        bookId: currentBook?.id || "",
+        enabled: !!currentBook?.id,
+    });
+
+    const createBook = useCreateBook();
     const createFavoriteBook = useCreateFavoriteBook();
     const updateFavoriteBook = useUpdateFavoriteBook();
-    const isLoading = createFavoriteBook.isLoading || updateFavoriteBook.isLoading;
+    const isLoading =
+        isFetchingCurrentBook ||
+        createBook.isLoading ||
+        createFavoriteBook.isLoading ||
+        updateFavoriteBook.isLoading;
 
     async function saveFavoriteBook() {
         if (isLoading || !isCurrentUser || !currentBook?.id || favoriteBooks === undefined) return;
+
+        if (!fetchedBook) {
+            await createBook.mutateAsync({
+                bookId: currentBook.id,
+            });
+        }
 
         const params = {
             username,
@@ -203,7 +218,7 @@ export function FavoriteBooks({ username }: FavoriteBooksProps) {
                         <span className="text-base font-semibold text-black dark:text-white">
                             Nenhum livro favorito.
                         </span>
-                        <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
+                        <p className="mt-2 px-4 text-sm leading-6 text-muted-foreground sm:w-[26rem]">
                             {username} ainda não favoritou seus livros de cabeceira.
                         </p>
                     </div>
@@ -304,7 +319,7 @@ export function FavoriteBooks({ username }: FavoriteBooksProps) {
                                                             <h2 className="text-base font-semibold">
                                                                 Nenhum resultado encontrado.
                                                             </h2>
-                                                            <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
+                                                            <p className="mt-2 px-4 text-sm leading-6 text-muted-foreground sm:w-[26rem]">
                                                                 Não encontramos nenhum item com esse
                                                                 termo, tente procurar algo
                                                                 diferente.

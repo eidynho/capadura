@@ -104,7 +104,7 @@ export function FinishedReads({ username, readsData }: FinishedReadsProps) {
                     <span className="text-base font-semibold text-black dark:text-white">
                         Nenhuma leitura finalizada.
                     </span>
-                    <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
+                    <p className="mt-2 px-4 text-sm leading-6 text-muted-foreground sm:w-[26rem]">
                         {isCurrentUser
                             ? "Você ainda não terminou de ler um livro, vamos registar algum?"
                             : `${username} ainda não terminou de ler nenhum livro.`}

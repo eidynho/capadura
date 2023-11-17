@@ -204,7 +204,7 @@ export function ClientUserLists({ username }: ClientUserListsProps) {
                         } flex w-full flex-col gap-8 md:w-2/3`}
                     >
                         <div className="flex gap-4">
-                            <div className="flex h-56 w-56 rounded-md bg-neutral-800 transition-all">
+                            <div className="flex h-28 w-28 rounded-md bg-neutral-800 transition-all sm:h-56 sm:w-56">
                                 {bookLists[activeBookList].imageUrl ? (
                                     <Image
                                         src={bookLists[activeBookList].imageUrl as string}
@@ -218,7 +218,7 @@ export function ClientUserLists({ username }: ClientUserListsProps) {
                                         unoptimized
                                     />
                                 ) : (
-                                    <div className="flex h-56 w-56 items-center justify-center rounded-md text-white">
+                                    <div className="flex h-28 w-28 items-center justify-center rounded-md text-white sm:h-56 sm:w-56">
                                         <Library size={32} />
                                     </div>
                                 )}
@@ -226,7 +226,7 @@ export function ClientUserLists({ username }: ClientUserListsProps) {
 
                             <div className="flex flex-1 flex-col justify-between gap-3">
                                 <div>
-                                    <div className="flex items-center justify-between gap-2">
+                                    <div className="flex items-start justify-between gap-2">
                                         <h2 className="flex-1 text-xl font-medium leading-relaxed tracking-tight text-black dark:text-white">
                                             {bookLists[activeBookList].name}
                                         </h2>
@@ -343,7 +343,7 @@ export function ClientUserLists({ username }: ClientUserListsProps) {
                                 <span className="text-base font-semibold text-black dark:text-white">
                                     Nenhum livro na lista.
                                 </span>
-                                <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
+                                <p className="mt-2 px-4 text-sm leading-6 text-muted-foreground sm:w-[26rem]">
                                     Vamos adicionar livros para organizar sua leitura?
                                 </p>
                             </div>
@@ -358,7 +358,7 @@ export function ClientUserLists({ username }: ClientUserListsProps) {
                                 ? "Nenhuma lista para chamar de sua."
                                 : `${username} não possui nenhuma lista.`}
                         </span>
-                        <div className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
+                        <div className="mt-2 px-4 text-sm leading-6 text-muted-foreground sm:w-[26rem]">
                             Está sem ideias de nomes para listas? Que tal esses:
                             <ul>
                                 <li>- Meus favoritos</li>

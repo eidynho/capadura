@@ -190,7 +190,7 @@ export function UserReads({ bookData }: UserReadsProps) {
                                     ? "Você não tem uma leitura em andamento."
                                     : "Você não tem uma leitura finalizada."}
                             </span>
-                            <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
+                            <p className="mt-2 px-4 text-sm leading-6 text-muted-foreground sm:w-[26rem]">
                                 {currentTab === "active"
                                     ? "Inicie sua leitura e comece a marcar seus progressos."
                                     : "Finalize a leitura do livro para ver seu histórico."}

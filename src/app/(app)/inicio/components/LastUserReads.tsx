@@ -20,12 +20,12 @@ export function LastUsersReads() {
 
             <div className="mt-2 flex flex-col gap-2 lg:flex-row">
                 <div className="flex flex-col gap-2 lg:w-1/2">
-                    {evenReads.length &&
+                    {!!evenReads.length &&
                         evenReads.map((read) => <SimpleRead read={read} hasBookImage />)}
                 </div>
 
                 <div className="flex flex-col gap-2 lg:w-1/2">
-                    {oddReads.length &&
+                    {!!oddReads.length &&
                         oddReads.map((read) => <SimpleRead read={read} hasBookImage />)}
                 </div>
             </div>

@@ -1,7 +1,7 @@
 function HeaderInfo() {
     return (
         <div className="flex w-full flex-col gap-5 md:w-[28rem]">
-            <div className="mt-1 flex gap-x-8 gap-y-3">
+            <div className="mt-5 flex gap-x-8 gap-y-3 md:mt-3">
                 <div className="h-6 w-20 items-center rounded-md bg-zinc-300 dark:bg-accent"></div>
                 <div className="h-6 w-20 items-center rounded-md bg-zinc-300 dark:bg-accent"></div>
                 <div className="h-6 w-20 items-center rounded-md bg-zinc-300 dark:bg-accent"></div>
@@ -54,12 +54,12 @@ export default async function Loading() {
                         <div className="mb-1 h-6 w-32 items-center rounded-md bg-zinc-300 dark:bg-accent"></div>
 
                         <div className="flex items-center justify-between gap-3">
-                            {Array.from({ length: 4 }, (_, index) => (
-                                <div
-                                    key={index}
-                                    className="h-64 w-44 items-center rounded-md bg-zinc-300 dark:bg-accent"
-                                ></div>
-                            ))}
+                            <div className="mt-2 grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
+                                <div className="h-28 w-full items-center rounded-md bg-zinc-300 dark:bg-accent"></div>
+                                <div className="h-28 w-full items-center rounded-md bg-zinc-300 dark:bg-accent"></div>
+                                <div className="h-28 w-full items-center rounded-md bg-zinc-300 dark:bg-accent"></div>
+                                <div className="h-28 w-full items-center rounded-md bg-zinc-300 dark:bg-accent"></div>
+                            </div>
                         </div>
                     </div>
 

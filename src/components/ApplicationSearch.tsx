@@ -189,7 +189,7 @@ export function ApplicationSearch() {
                                               <h2 className="text-base font-semibold">
                                                   Nenhum resultado encontrado.
                                               </h2>
-                                              <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
+                                              <p className="mt-2 px-4 text-sm leading-6 text-muted-foreground sm:w-[26rem]">
                                                   Não encontramos nenhum item com esse termo, tente
                                                   procurar algo diferente.
                                               </p>

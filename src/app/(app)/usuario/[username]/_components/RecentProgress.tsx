@@ -89,7 +89,7 @@ export function RecentProgress({ username, progressData }: RecentProgressProps) 
                     <span className="text-base font-semibold text-black dark:text-white">
                         Nenhum progresso recente.
                     </span>
-                    <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
+                    <p className="mt-2 px-4 text-sm leading-6 text-muted-foreground sm:w-[26rem]">
                         {isCurrentUser ? (
                             <span>Você ainda não fez nenhum progresso de leitura.</span>
                         ) : (

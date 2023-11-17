@@ -1,6 +1,5 @@
 import { ReactNode, Suspense } from "react";
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
 import Image from "next/image";
 import { ImageOff } from "lucide-react";
 
@@ -21,7 +20,11 @@ interface BookLayoutProps {
     };
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata({
+    params,
+}: {
+    params: { id: string };
+}): Promise<Metadata | null> {
     try {
         const response = await fetch(`${BASE_URL}/api/book/${params.id}`);
         const { data: bookData }: { data: BookData } = await response.json();
@@ -48,7 +51,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
         };
     } catch (err) {
         console.error(err);
-        notFound();
+        return null;
     }
 }
 
@@ -80,11 +83,11 @@ export default async function BookLayout({ children, params }: BookLayoutProps) 
                                 priority
                                 alt={`Capa do livro ${bookData.title}`}
                                 title={`Capa do livro ${bookData.title}`}
-                                className="mx-auto rounded-md"
+                                className="mx-auto h-[323px] w-52 rounded-md md:h-[484px] md:w-[312px]"
                                 unoptimized
                             />
                         ) : (
-                            <div className="flex h-96 w-full flex-col items-center justify-center rounded-md border bg-zinc-500/10 opacity-75">
+                            <div className="flex h-[323px] w-full flex-col items-center justify-center rounded-md border bg-zinc-500/10 opacity-75 md:h-[484px]">
                                 <ImageOff size={36} strokeWidth={1.6} />
                                 <span className="mt-1 text-sm font-medium text-muted-foreground">
                                     Sem imagem

@@ -199,7 +199,7 @@ export function ClientUserReads({ username }: ClientUserReadsProps) {
                             <span className="text-base font-semibold text-black dark:text-white">
                                 Nenhuma leitura {reads[currentTab].humanized}.
                             </span>
-                            <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
+                            <p className="mt-2 px-4 text-sm leading-6 text-muted-foreground sm:w-[26rem]">
                                 Verifique se o status da sua leitura está correto.
                             </p>
                         </div>

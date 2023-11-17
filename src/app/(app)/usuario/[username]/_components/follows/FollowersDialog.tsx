@@ -239,7 +239,7 @@ export function FollowersDialog({ username, targetUserId, followersCount }: Foll
                 ) : (
                     <div className="flex h-36 flex-col items-center justify-center text-center">
                         <h2 className="text-base font-semibold">Nenhum seguidor encontrado.</h2>
-                        <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
+                        <p className="mt-2 px-4 text-sm leading-6 text-muted-foreground sm:w-[26rem]">
                             {isCurrentUser
                                 ? "Que tal convidar seus amigos para te seguir e compartilhar leituras?"
                                 : `Que tal seguir ${username} para acompanhar suas leituras?`}

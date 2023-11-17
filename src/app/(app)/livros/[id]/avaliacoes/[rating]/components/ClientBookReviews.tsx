@@ -105,7 +105,7 @@ export function ClientBookReviews({ bookId, rating }: ClientBookReviewsProps) {
                         <span className="text-base font-semibold text-black dark:text-white">
                             Nenhuma avaliação com nota {rating} para esse livro.
                         </span>
-                        <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
+                        <p className="mt-2 px-4 text-sm leading-6 text-muted-foreground sm:w-[26rem]">
                             As avaliações dos membros aparecerão aqui.
                         </p>
                     </div>

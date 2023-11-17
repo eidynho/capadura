@@ -241,7 +241,7 @@ export function FollowingDialog({ username, targetUserId, followingCount }: Foll
                         <h2 className="text-base font-semibold">
                             {isCurrentUser ? "Você" : `${username}`} não está seguindo ninguém.
                         </h2>
-                        <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
+                        <p className="mt-2 px-4 text-sm leading-6 text-muted-foreground sm:w-[26rem]">
                             {isCurrentUser
                                 ? "Que tal seguir seus amigos e acompanhar suas leituras?"
                                 : `Atualmente ${username} prefere não acompanhar a leitura  dos outros usuários.`}

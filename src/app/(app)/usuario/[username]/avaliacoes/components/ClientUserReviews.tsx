@@ -285,7 +285,7 @@ export function ClientUserReviews({ username }: ClientUserReviewsProps) {
                             <span className="text-base font-semibold text-black dark:text-white">
                                 Nenhuma avaliação com nota {currentTab}.
                             </span>
-                            <p className="mt-2 w-[26rem] text-sm leading-6 text-muted-foreground">
+                            <p className="mt-2 px-4 text-sm leading-6 text-muted-foreground sm:w-[26rem]">
                                 Avalie suas leituras para aparecer aqui.
                             </p>
                         </div>

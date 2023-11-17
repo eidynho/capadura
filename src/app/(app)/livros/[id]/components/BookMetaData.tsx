@@ -13,6 +13,7 @@ import { Like } from "./Like";
 
 import { Separator } from "@/components/ui/Separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/Tooltip";
+import { getISOCode } from "@/utils/get-iso-639-1";
 
 interface BookMetaDataProps {
     bookData: BookData;
@@ -163,7 +164,7 @@ export function BookMetaData({ bookData }: BookMetaDataProps) {
 
                 <div className="mx-4 flex justify-between text-sm">
                     <span className="font-semibold">Idioma</span>
-                    <span>{bookData.language ?? "Sem informação"}</span>
+                    <span>{getISOCode(bookData.language)}</span>
                 </div>
 
                 <Separator className="my-4" />

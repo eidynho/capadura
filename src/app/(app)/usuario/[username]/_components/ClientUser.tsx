@@ -95,7 +95,7 @@ export function ClientUser({ username }: ClientUserProps) {
 
     const ProfileHeader = () => (
         <div className="flex w-full flex-col gap-5 md:w-[28rem]">
-            <div className="mt-1 flex gap-x-8 gap-y-3">
+            <div className="mt-5 flex gap-x-8 gap-y-3 md:mt-3">
                 {!!targetUser?.id && (
                     <>
                         <FollowersDialog

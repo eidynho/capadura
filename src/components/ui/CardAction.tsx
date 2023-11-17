@@ -44,7 +44,7 @@ const CardActionPicture = React.forwardRef<HTMLDivElement, React.HTMLAttributes<
         <div
             ref={ref}
             className={cn(
-                "absolute -right-20 w-[38rem] opacity-25 transition-all duration-300 group-hover:scale-105 group-hover:opacity-75",
+                "absolute -right-20 w-[38rem] opacity-25 transition-all duration-300 group-hover:scale-[1.01] group-hover:opacity-75",
                 className,
             )}
             {...props}

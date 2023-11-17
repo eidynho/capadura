@@ -5,44 +5,15 @@ import { BookData } from "@/endpoints/queries/booksQueries";
 
 export interface UseCreateBookProps {
     bookId: string;
-    title: string;
-    subtitle?: string;
-    authors: string[];
-    publisher?: string;
-    publishDate?: string;
-    language?: string;
-    pageCount?: number;
-    description?: string;
-    imageLink?: string;
 }
 
 export function useCreateBook() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async ({
-            bookId,
-            title,
-            subtitle,
-            authors,
-            publisher,
-            publishDate,
-            language,
-            pageCount,
-            description,
-            imageLink,
-        }: UseCreateBookProps) => {
+        mutationFn: async ({ bookId }: UseCreateBookProps) => {
             const { data } = await api.post("/book", {
-                id: bookId,
-                title,
-                subtitle,
-                authors,
-                publisher,
-                publishDate,
-                language,
-                pageCount,
-                description,
-                imageLink,
+                bookId,
             });
 
             return data as BookData;

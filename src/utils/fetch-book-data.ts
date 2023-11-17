@@ -23,7 +23,13 @@ export const fetchBookData = async (bookId: string) => {
 
         return data as BookData;
     } catch (err) {
-        console.error(err);
-        notFound();
+        // retry get data one more time
+        try {
+            const { data } = await axios.get(`${API_BASE_URL}/book/${bookId}`);
+            return data as BookData;
+        } catch (err) {
+            console.error(err);
+            notFound();
+        }
     }
 };

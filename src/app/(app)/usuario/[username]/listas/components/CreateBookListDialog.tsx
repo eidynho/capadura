@@ -24,6 +24,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/Dialog";
+import { ImageCropDialog } from "@/components/ImageCropDialog";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Textarea } from "@/components/ui/Textarea";
@@ -71,6 +72,7 @@ type CreateBookListFormSchema = z.infer<typeof createBookListFormSchema>;
 export function CreateBookListDialog() {
     const { user } = useAuthContext();
     const [isOpen, setIsOpen] = useState(false);
+    const [isOpenImageCropDialog, setIsOpenImageCropDialog] = useState(false);
 
     const {
         register,
@@ -168,6 +170,20 @@ export function CreateBookListDialog() {
                                                     <div className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 text-white group-hover:block">
                                                         <PencilLine size={32} />
                                                     </div>
+
+                                                    {selectedImage?.[0] && (
+                                                        <ImageCropDialog
+                                                            imageSrc={URL.createObjectURL(
+                                                                selectedImage[0],
+                                                            )}
+                                                            isOpen={isOpenImageCropDialog}
+                                                            setIsOpen={setIsOpenImageCropDialog}
+                                                            onSave={(blobURL: File[]) => {
+                                                                field.onChange(blobURL);
+                                                                setIsOpenImageCropDialog(false);
+                                                            }}
+                                                        />
+                                                    )}
                                                 </div>
                                             </Label>
 
@@ -177,7 +193,10 @@ export function CreateBookListDialog() {
                                                 name="image"
                                                 type="file"
                                                 className="hidden"
-                                                onChange={(e) => field.onChange(e.target.files)}
+                                                onChange={(e) => {
+                                                    field.onChange(e.target.files);
+                                                    setIsOpenImageCropDialog(true);
+                                                }}
                                             />
                                         </>
                                     )}

@@ -114,7 +114,7 @@ export function ClientUser({ username }: ClientUserProps) {
             </div>
 
             {targetUser?.description && (
-                <h1 className="text-sm text-muted-foreground">{targetUser?.description}</h1>
+                <p className="text-sm text-muted-foreground">{targetUser?.description}</p>
             )}
 
             <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
@@ -172,9 +172,9 @@ export function ClientUser({ username }: ClientUserProps) {
                     <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-4 md:flex-row md:items-start">
                             <div>
-                                <span className="block text-xl font-bold leading-relaxed tracking-tight text-black dark:text-white">
+                                <h1 className="block text-xl font-bold leading-relaxed tracking-tight text-black dark:text-white">
                                     {targetUser?.name}
-                                </span>
+                                </h1>
                                 <span className="font-medium text-black dark:text-white">
                                     @{targetUser?.username}
                                 </span>

@@ -25,11 +25,8 @@ export function Like({ bookId }: LikeProps) {
     const dislikeBook = useDislikeBook();
 
     async function handleToggleLikeBook() {
-        if (!user?.id) return;
-
         if (!user) {
-            toggleAuthDialog(true);
-            return;
+            return toggleAuthDialog(true);
         }
 
         const isLiked = !!like;

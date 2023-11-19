@@ -5,7 +5,6 @@ import { Separator } from "@/components/ui/Separator";
 export default async function Loading() {
     return (
         <>
-            {/* Book tabs */}
             <div className="mt-4 w-full items-center rounded-md border border-zinc-300 p-6 dark:border-accent">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">

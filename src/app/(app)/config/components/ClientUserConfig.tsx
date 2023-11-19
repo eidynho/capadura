@@ -6,23 +6,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
 
-import { useAuthContext } from "@/contexts/AuthContext";
-import { signOut } from "@/utils/sign-out";
-
+import { api } from "@/lib/api";
 import { ProfileDataResponse } from "@/endpoints/queries/usersQueries";
+import { signOut } from "@/utils/sign-out";
+import { useAuthContext } from "@/contexts/AuthContext";
 import { useUpdateUserData } from "@/endpoints/mutations/usersMutations";
-
 import { useToast } from "@/components/ui/UseToast";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
+import { ImageCropDialog } from "@/components/ImageCropDialog";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Separator } from "@/components/ui/Separator";
 import { Subtitle } from "@/components/Subtitle";
 import { Textarea } from "@/components/ui/Textarea";
 import { Title } from "@/components/Title";
-import { api } from "@/lib/api";
 
 const configTabs = ["Perfil"];
 
@@ -87,6 +86,7 @@ export function ClientUserConfigs() {
     const [isValidatingUsername, setIsValidatingUsername] = useState(false);
     const [containsInvalidChars, setContainsInvalidChars] = useState(false);
     const [usernameAlreadyExists, setUsernameAlreadyExists] = useState(false);
+    const [isOpenImageCropDialog, setIsOpenImageCropDialog] = useState(false);
     const [currentTab, setCurrentTab] = useState(0);
 
     useEffect(() => {
@@ -126,7 +126,7 @@ export function ClientUserConfigs() {
 
         const { id, name, username, image, description, location, website, twitter } = data;
 
-        // TODO: BE ABLE TO UPDATE USERNAME AND E-MAIL (UNIQUE)
+        // TODO: BE ABLE TO UPDATE E-MAIL (UNIQUE)
         updateUserData.mutate(
             {
                 id,
@@ -256,7 +256,7 @@ export function ClientUserConfigs() {
                                     name="name"
                                     type="text"
                                     maxLength={100}
-                                    placeholder="Harry J. Potter"
+                                    placeholder="Nome"
                                     className={`${
                                         errors.name ? "border-destructive" : ""
                                     } mt-2 w-2/3 lg:w-1/2`}
@@ -277,7 +277,7 @@ export function ClientUserConfigs() {
                                         name="username"
                                         type="text"
                                         maxLength={50}
-                                        placeholder="harry"
+                                        placeholder="usuario"
                                         className={`${
                                             isInvalidUsername ? "border-destructive" : ""
                                         } w-full pr-9`}
@@ -319,7 +319,7 @@ export function ClientUserConfigs() {
                                     name="email"
                                     type="text"
                                     disabled
-                                    placeholder="harry@email.com"
+                                    placeholder="exemplo@email.com"
                                     className={`${
                                         errors.email ? "border-destructive" : ""
                                     } mt-2 w-2/3 lg:w-1/3`}
@@ -335,16 +335,14 @@ export function ClientUserConfigs() {
                             </div>
 
                             <div className="flex flex-col">
-                                <div className="inline-block">
-                                    <Label htmlFor="config-profile-image">Foto de perfil</Label>
-                                </div>
+                                <Label htmlFor="config-profile-image">Foto de perfil</Label>
                                 <div className="mt-2 flex items-center gap-2">
                                     <Controller
                                         name="image"
                                         control={control}
                                         render={({ field }) => (
                                             <>
-                                                <Avatar className="h-16 w-16">
+                                                <Avatar className="h-24 w-24">
                                                     <AvatarImage
                                                         src={
                                                             selectedImage?.[0]
@@ -353,8 +351,8 @@ export function ClientUserConfigs() {
                                                                   )
                                                                 : user.imageUrl
                                                         }
-                                                        width={64}
-                                                        height={64}
+                                                        width={96}
+                                                        height={96}
                                                         loading="eager"
                                                         alt={`Foto de perfil de ${user.username}`}
                                                         title={`Foto de perfil de ${user.username}`}
@@ -384,8 +382,25 @@ export function ClientUserConfigs() {
                                                     name="image"
                                                     type="file"
                                                     className="hidden"
-                                                    onChange={(e) => field.onChange(e.target.files)}
+                                                    onChange={(e) => {
+                                                        field.onChange(e.target.files);
+                                                        setIsOpenImageCropDialog(true);
+                                                    }}
                                                 />
+
+                                                {selectedImage?.[0] && (
+                                                    <ImageCropDialog
+                                                        imageSrc={URL.createObjectURL(
+                                                            selectedImage[0],
+                                                        )}
+                                                        isOpen={isOpenImageCropDialog}
+                                                        setIsOpen={setIsOpenImageCropDialog}
+                                                        onSave={(blobURL: File[]) => {
+                                                            field.onChange(blobURL);
+                                                            setIsOpenImageCropDialog(false);
+                                                        }}
+                                                    />
+                                                )}
                                             </>
                                         )}
                                     ></Controller>
@@ -405,7 +420,7 @@ export function ClientUserConfigs() {
                                     id="config-profile-description"
                                     rows={4}
                                     maxLength={600}
-                                    placeholder="Harry Potter: Bruxo corajoso, amigos leais, combate o mal, símbolo de esperança."
+                                    placeholder="Uma breve descrição sobre você."
                                     className="mt-2"
                                 ></Textarea>
                                 {errors.description && (
@@ -424,7 +439,7 @@ export function ClientUserConfigs() {
                                         name="location"
                                         type="text"
                                         maxLength={50}
-                                        placeholder="Hogwarts"
+                                        placeholder="Brasil"
                                         className={`${
                                             errors.location ? "border-destructive" : ""
                                         } mt-2 w-full`}
@@ -443,7 +458,7 @@ export function ClientUserConfigs() {
                                         id="config-profile-website"
                                         name="website"
                                         type="text"
-                                        placeholder="https://www.wizardingworld.com"
+                                        placeholder="https://www.exemplo.com"
                                         className={`${
                                             errors.website ? "border-destructive" : ""
                                         } mt-2 w-full`}
@@ -463,7 +478,7 @@ export function ClientUserConfigs() {
                                     id="config-profile-twitter"
                                     name="twitter"
                                     type="text"
-                                    placeholder="harrypotter"
+                                    placeholder="twitter"
                                     className={`${
                                         errors.twitter ? "border-destructive" : ""
                                     } mt-2 w-2/3 lg:w-1/4`}

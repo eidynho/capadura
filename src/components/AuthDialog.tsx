@@ -43,7 +43,7 @@ export function AuthDialog() {
         <Dialog open={isOpenAuthDialog} onOpenChange={toggleAuthDialog}>
             <DialogContent>
                 <div className="flex flex-col items-center justify-center gap-4 px-3 py-2">
-                    <h1>Capadura</h1>
+                    <span>Capadura</span>
 
                     <div className="flex w-full flex-col gap-8">
                         <Button asChild size="md" variant="outline">

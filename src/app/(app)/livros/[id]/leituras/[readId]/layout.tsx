@@ -1,7 +1,9 @@
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 import { Metadata } from "next";
 
 import { BASE_URL } from "@/constants/api";
+
+import Loading from "./loading";
 
 interface BookLayoutProps {
     children: ReactNode;
@@ -21,5 +23,5 @@ export function generateMetadata({ params }: BookLayoutProps): Metadata {
 }
 
 export default async function BookReadLayout({ children }: BookLayoutProps) {
-    return <>{children}</>;
+    return <Suspense fallback={<Loading />}>{children}</Suspense>;
 }

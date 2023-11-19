@@ -251,9 +251,9 @@ export function BookPageSection() {
                                             {read.reviewContent}
                                         </p>
 
-                                        <h4 className="my-2 font-bold text-black dark:text-white">
+                                        <h3 className="my-2 font-bold text-black dark:text-white">
                                             Progressos recentes
-                                        </h4>
+                                        </h3>
 
                                         {read.progress.map((progress) => (
                                             <div key={progress.id} className="border-t p-4">

@@ -36,8 +36,6 @@ Para quem deseja contribuir: recomendo abrir uma discussão com a alteração qu
 
 ## ⚙️ Variaveis de ambiente
 
-To run this project, you will need to add the following environment variables to your .env file
-
 Para rodar esse projeto, você precisará adicionar as seguintes variáveis de ambiente ao no arquivo .env
 
 ```

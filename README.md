@@ -1,4 +1,4 @@
-![Screenshot](/public/capadura-app.png)
+![Screenshot](/public/capadura-homepage.jpg)
 
 # Projeto Capadura - Repo Front-end
 

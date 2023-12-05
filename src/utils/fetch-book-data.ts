@@ -21,6 +21,20 @@ export const fetchBookData = async (bookId: string) => {
             return data as BookData;
         }
 
+        if (!data.imageKey) {
+            const googleBook = await axios.get(
+                `https://www.googleapis.com/books/v1/volumes/${bookId}`,
+            );
+
+            const imageLink = googleBook.data?.volumeInfo?.imageLinks?.medium;
+
+            if (imageLink) {
+                await axios.putForm(`${API_BASE_URL}/book/${bookId}`, {
+                    imageLink: imageLink.replace("&edge=curl", ""),
+                });
+            }
+        }
+
         return data as BookData;
     } catch (err) {
         // retry get data one more time

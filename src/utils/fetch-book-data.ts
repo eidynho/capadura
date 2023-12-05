@@ -5,7 +5,7 @@ import { API_BASE_URL } from "@/constants/api";
 
 import { BookData } from "@/endpoints/queries/booksQueries";
 
-export const fetchBookData = async (bookId: string) => {
+export const fetchBookData = async (bookId: string, canCreate: boolean) => {
     try {
         if (!bookId) {
             throw new Error("bookId not provided.");
@@ -13,7 +13,7 @@ export const fetchBookData = async (bookId: string) => {
 
         const { data } = await axios.get(`${API_BASE_URL}/book/${bookId}`);
 
-        if (!data?.id) {
+        if (!data?.id && canCreate) {
             const { data } = await axios.post(`${API_BASE_URL}/book`, {
                 bookId,
             });
@@ -23,10 +23,12 @@ export const fetchBookData = async (bookId: string) => {
 
         if (!data.imageKey) {
             const googleBook = await axios.get(
-                `https://www.googleapis.com/books/v1/volumes/${bookId}`,
+                `https://www.googleapis.com/books/v1/volumes/${bookId}?fields=volumeInfo(imageLinks)`,
             );
 
-            const imageLink = googleBook.data?.volumeInfo?.imageLinks?.medium;
+            const imageLinks = googleBook.data?.volumeInfo?.imageLinks;
+
+            const imageLink = imageLinks?.medium || imageLinks?.large || imageLinks?.extraLarge;
 
             if (imageLink) {
                 await axios.putForm(`${API_BASE_URL}/book/${bookId}`, {

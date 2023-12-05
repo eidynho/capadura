@@ -56,7 +56,7 @@ export async function generateMetadata({
 }
 
 export default async function BookLayout({ children, params }: BookLayoutProps) {
-    const bookData = await fetchBookData(params.id);
+    const bookData = await fetchBookData(params.id, true);
 
     return (
         <div id="book-page-container">

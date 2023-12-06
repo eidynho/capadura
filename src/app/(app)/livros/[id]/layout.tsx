@@ -4,7 +4,6 @@ import Image from "next/image";
 import { ImageOff } from "lucide-react";
 
 import { BASE_URL } from "@/constants/api";
-import { BookData } from "@/endpoints/queries/booksQueries";
 import { fetchBookData } from "@/utils/fetch-book-data";
 
 import Loading from "./loading";
@@ -26,8 +25,7 @@ export async function generateMetadata({
     params: { id: string };
 }): Promise<Metadata | null> {
     try {
-        const response = await fetch(`${BASE_URL}/api/book/${params.id}`);
-        const { data: bookData }: { data: BookData } = await response.json();
+        const bookData = await fetchBookData(params.id, true);
 
         return {
             title: {
@@ -77,17 +75,17 @@ export default async function BookLayout({ children, params }: BookLayoutProps) 
                                 id="book-principal-image"
                                 src={bookData.imageUrl}
                                 width={312}
-                                height={468}
+                                height={448}
                                 quality={100}
                                 loading="eager"
                                 priority
                                 alt={`Capa do livro ${bookData.title}`}
                                 title={`Capa do livro ${bookData.title}`}
-                                className="mx-auto h-[323px] w-52 rounded-md md:h-[484px] md:w-[312px]"
+                                className="mx-auto h-[323px] w-52 rounded-md md:h-[448px] md:w-[312px]"
                                 unoptimized
                             />
                         ) : (
-                            <div className="flex h-[323px] w-full flex-col items-center justify-center rounded-md border bg-zinc-500/10 opacity-75 md:h-[484px]">
+                            <div className="flex h-[323px] w-full flex-col items-center justify-center rounded-md border bg-zinc-500/10 opacity-75 md:h-[448px]">
                                 <ImageOff size={36} strokeWidth={1.6} />
                                 <span className="mt-1 text-sm font-medium text-muted-foreground">
                                     Sem imagem

@@ -4,12 +4,28 @@ import axios from "axios";
 import { API_BASE_URL } from "@/constants/api";
 
 import { BookData } from "@/endpoints/queries/booksQueries";
+import { throwIfUndefined } from "./throw-if-undefined";
+
+const handleUploadBookImage = async (bookId: string) => {
+    const GOOGLE_BOOKS_API_URL = "https://www.googleapis.com/books/v1/volumes";
+
+    const { data } = await axios.get(
+        `${GOOGLE_BOOKS_API_URL}/${bookId}?fields=volumeInfo(imageLinks)`,
+    );
+
+    const imageLinks = data?.volumeInfo?.imageLinks;
+    const imageLink = imageLinks?.medium || imageLinks?.large || imageLinks?.extraLarge;
+
+    if (imageLink) {
+        await axios.put(`${API_BASE_URL}/book/${bookId}`, {
+            imageLink: imageLink.replace("&edge=curl", ""),
+        });
+    }
+};
 
 export const fetchBookData = async (bookId: string, canCreate: boolean) => {
     try {
-        if (!bookId) {
-            throw new Error("bookId not provided.");
-        }
+        throwIfUndefined(bookId, "bookId not provided.");
 
         const { data } = await axios.get(`${API_BASE_URL}/book/${bookId}`);
 
@@ -22,19 +38,7 @@ export const fetchBookData = async (bookId: string, canCreate: boolean) => {
         }
 
         if (!data.imageKey) {
-            const googleBook = await axios.get(
-                `https://www.googleapis.com/books/v1/volumes/${bookId}?fields=volumeInfo(imageLinks)`,
-            );
-
-            const imageLinks = googleBook.data?.volumeInfo?.imageLinks;
-
-            const imageLink = imageLinks?.medium || imageLinks?.large || imageLinks?.extraLarge;
-
-            if (imageLink) {
-                await axios.putForm(`${API_BASE_URL}/book/${bookId}`, {
-                    imageLink: imageLink.replace("&edge=curl", ""),
-                });
-            }
+            handleUploadBookImage(bookId);
         }
 
         return data as BookData;

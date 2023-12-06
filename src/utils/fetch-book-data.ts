@@ -37,7 +37,7 @@ export const fetchBookData = async (bookId: string, canCreate: boolean) => {
             return data as BookData;
         }
 
-        if (!data.imageKey) {
+        if (data && !data.imageKey) {
             handleUploadBookImage(bookId);
         }
 

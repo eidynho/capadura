@@ -10,7 +10,7 @@ interface BookReadProps {
 }
 
 export default async function BookRead({ params }: BookReadProps) {
-    const bookData = await fetchBookData(params.id, false);
+    const bookData = await fetchBookData(params.id);
 
     return (
         <>

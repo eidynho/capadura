@@ -23,30 +23,34 @@ const handleUploadBookImage = async (bookId: string) => {
     }
 };
 
-export const fetchBookData = async (bookId: string, canCreate: boolean) => {
+export const fetchBookData = async (bookId: string) => {
     try {
         throwIfUndefined(bookId, "bookId not provided.");
 
         const { data } = await axios.get(`${API_BASE_URL}/book/${bookId}`);
 
-        if (!data?.id && canCreate) {
-            const { data } = await axios.post(`${API_BASE_URL}/book`, {
+        if (!data) {
+            const { data: createdBook } = await axios.post(`${API_BASE_URL}/book`, {
                 bookId,
             });
 
-            return data as BookData;
+            if (!createdBook) {
+                throw new Error("Book not found.");
+            }
+
+            return createdBook as BookData;
         }
 
-        if (data && !data.imageKey) {
-            handleUploadBookImage(bookId);
+        if (!data.imageKey) {
+            await handleUploadBookImage(bookId);
         }
 
         return data as BookData;
     } catch (err) {
         // retry get data one more time
         try {
-            const { data } = await axios.get(`${API_BASE_URL}/book/${bookId}`);
-            return data as BookData;
+            const { data: refetchedBook } = await axios.get(`${API_BASE_URL}/book/${bookId}`);
+            return refetchedBook as BookData;
         } catch (err) {
             console.error(err);
             notFound();

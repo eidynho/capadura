@@ -3,10 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 
 import { BookListData } from "../queries/bookListsQueries";
-import {
-    BookOnBookList,
-    BookOnBookListWithBook,
-} from "@/app/(app)/usuario/[username]/listas/components/ClientUserLists";
+import { BookOnBookList, BookOnBookListWithBook } from "@/app/(app)/usuario/[username]/listas/page";
 import { GetMetadataCount } from "@/app/(app)/livros/[id]/components/BookMetaData";
 
 import { useToast } from "@/components/ui/UseToast";

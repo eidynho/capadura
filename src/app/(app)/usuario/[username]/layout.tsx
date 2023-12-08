@@ -1,9 +1,7 @@
-import { ReactNode, Suspense } from "react";
+import { ReactNode } from "react";
 import { Metadata } from "next";
 
 import { BASE_URL } from "@/constants/api";
-
-import Loading from "./loading";
 
 interface ProfileLayoutProps {
     children: ReactNode;
@@ -13,17 +11,22 @@ interface ProfileLayoutProps {
 }
 
 export function generateMetadata({ params }: ProfileLayoutProps): Metadata {
+    let username = params.username;
+    if (username.endsWith(".prefetch")) {
+        username = username.replace(".prefetch", "");
+    }
+
     return {
         title: {
-            template: `${params.username}: %s | Capadura`,
-            default: `${params.username}`,
+            template: `${username}: %s | Capadura`,
+            default: `${username}`,
         },
         alternates: {
-            canonical: `${BASE_URL}/@${params.username}`,
+            canonical: `${BASE_URL}/@${username}`,
         },
     };
 }
 
 export default async function ProfileLayout({ children }: ProfileLayoutProps) {
-    return <Suspense fallback={<Loading />}>{children}</Suspense>;
+    return <>{children}</>;
 }

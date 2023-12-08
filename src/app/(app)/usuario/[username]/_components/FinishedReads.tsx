@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { format } from "date-fns";
@@ -5,7 +7,8 @@ import { pt } from "date-fns/locale";
 import { ExternalLink, ImageIcon } from "lucide-react";
 
 import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";
-import { ReadData } from "@/endpoints/queries/readsQueries";
+import { useFetchUserReadsByStatus } from "@/endpoints/queries/readsQueries";
+import { ProfileDataResponse } from "@/endpoints/queries/usersQueries";
 
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -13,21 +16,24 @@ import { RatingStars } from "@/components/RatingStars";
 
 interface FinishedReadsProps {
     username: string;
-    readsData: {
-        items: ReadData[];
-        total: number;
-    };
+    targetUser: ProfileDataResponse;
 }
 
-export function FinishedReads({ username, readsData }: FinishedReadsProps) {
+export function FinishedReads({ targetUser, username }: FinishedReadsProps) {
     const isCurrentUser = isPageUserSameCurrentUser(username);
+
+    const { data: userReads } = useFetchUserReadsByStatus({
+        userId: targetUser?.id || "",
+        status: "FINISHED",
+        enabled: !!targetUser?.id,
+    });
 
     return (
         <div className="flex flex-col text-black dark:text-white">
             <h2 className="font-semibold">Leituras finalizadas</h2>
 
-            {!!readsData.items?.length ? (
-                readsData.items.map((read) => (
+            {!!userReads?.items?.length ? (
+                userReads.items.map((read) => (
                     <div key={read.id} className="flex gap-4 border-t py-4 last:border-b">
                         <div className="h-24 w-20 overflow-hidden rounded-sm">
                             {read?.book?.imageUrl ? (

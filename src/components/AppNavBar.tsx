@@ -131,7 +131,11 @@ export function AppNavBar() {
                             <DropdownMenuSeparator />
                         ) : (
                             <DropdownMenuItem asChild disabled={disabled}>
-                                <Link href={path} className="flex items-center gap-2">
+                                <Link
+                                    href={path}
+                                    prefetch={false}
+                                    className="flex items-center gap-2"
+                                >
                                     {Icon && <Icon size={16} />}
                                     {name}
                                 </Link>

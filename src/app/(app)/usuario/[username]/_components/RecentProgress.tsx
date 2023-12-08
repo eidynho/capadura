@@ -1,33 +1,38 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
 import { ImageIcon } from "lucide-react";
 
-import { ProgressData } from "@/endpoints/queries/progressQueries";
+import { useFetchUserProgress } from "@/endpoints/queries/progressQueries";
 
 import { isPageUserSameCurrentUser } from "@/utils/is-page-user-same-current-user";
+import { ProfileDataResponse } from "@/endpoints/queries/usersQueries";
 
 import { LinkUnderline } from "@/components/LinkUnderline";
 import { ProgressBar } from "@/app/(app)/livros/[id]/components/Read/Progress/ProgressBar";
 
 interface RecentProgressProps {
     username: string;
-    progressData: {
-        items: ProgressData[];
-        total: number;
-    };
+    targetUser: ProfileDataResponse;
 }
 
-export function RecentProgress({ username, progressData }: RecentProgressProps) {
+export function RecentProgress({ username, targetUser }: RecentProgressProps) {
     const isCurrentUser = isPageUserSameCurrentUser(username);
+
+    const { data: userProgress } = useFetchUserProgress({
+        userId: targetUser?.id || "",
+        enabled: !!targetUser?.id,
+    });
 
     return (
         <div className="flex flex-col text-black dark:text-white">
             <h2 className="font-semibold">Progressos recentes</h2>
 
-            {!!progressData?.items?.length ? (
-                progressData.items.map((progress) => (
+            {!!userProgress?.items?.length ? (
+                userProgress.items.map((progress) => (
                     <div key={progress.id} className="flex gap-4 border-t py-4 last:border-b">
                         <div className="h-24 w-20 overflow-hidden rounded-sm">
                             {progress.read?.book?.imageUrl ? (

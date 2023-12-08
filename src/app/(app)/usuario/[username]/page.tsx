@@ -1,16 +1,15 @@
 "use client";
 
+import { useEffect } from "react";
 import { notFound } from "next/navigation";
-import { Link as LinkIcon, MapPin, Twitter } from "lucide-react";
 
 import { ProfileDataResponse } from "@/endpoints/queries/usersQueries";
 
 import { useWindowSize } from "@/hooks/useWindowSize";
 
 import { useFetchUserByUsername } from "@/endpoints/queries/usersQueries";
-import { useGetUsersFollowsCount } from "@/endpoints/queries/followsQueries";
-import { ReadData, useFetchUserReadsByStatus } from "@/endpoints/queries/readsQueries";
-import { ProgressData, useFetchUserProgress } from "@/endpoints/queries/progressQueries";
+import { ReadData } from "@/endpoints/queries/readsQueries";
+import { ProgressData } from "@/endpoints/queries/progressQueries";
 
 import Loading from "./loading";
 
@@ -19,12 +18,10 @@ import { EditProfileButton } from "./_components/EditProfileButton";
 import { FavoriteBooks } from "./_components/favoriteBooks";
 import { FinishedReads } from "./_components/FinishedReads";
 import { FollowUserButton } from "./_components/follows/FollowUserButton";
-import { FollowersDialog } from "./_components/follows/FollowersDialog";
-import { FollowingDialog } from "./_components/follows/FollowingDialog";
-import { LinkUnderline } from "@/components/LinkUnderline";
 import { RatingChart } from "@/components/RatingChart";
 import { RecentProgress } from "./_components/RecentProgress";
 import { UserActivities } from "./_components/UserActivities";
+import { ProfileHeader } from "./_components/ProfileHeader";
 
 export interface HandleToggleFollowUserProps {
     userId: string;
@@ -56,101 +53,23 @@ export default function User({ params }: UserProps) {
 
     const { width } = useWindowSize();
 
-    // ----- queries ----- //
     const {
         data: targetUser,
         isFetched: isFetchedUser,
         isError: isErrorFetchUser,
     } = useFetchUserByUsername({
         username: username,
-        enabled: !!username,
     });
 
-    const { data: followingCount, isFetched: isFetchedFollowsCount } = useGetUsersFollowsCount({
-        userId: targetUser?.id || "",
-        enabled: !!targetUser?.id,
-    });
+    useEffect(() => {
+        if ((isFetchedUser && !targetUser) || isErrorFetchUser) {
+            notFound();
+        }
+    }, [isFetchedUser, targetUser, isErrorFetchUser]);
 
-    const { data: userReads, isFetched: isFetchedUserReads } = useFetchUserReadsByStatus({
-        userId: targetUser?.id || "",
-        status: "FINISHED",
-        enabled: !!targetUser?.id,
-    });
-
-    const { data: userProgress, isFetched: isFetchedUserProgress } = useFetchUserProgress({
-        userId: targetUser?.id || "",
-        enabled: !!targetUser?.id,
-    });
-
-    const isMounting =
-        !isFetchedUser || !isFetchedFollowsCount || !isFetchedUserReads || !isFetchedUserProgress;
-
-    if ((isFetchedUser && !targetUser) || isErrorFetchUser) {
-        notFound();
-    }
-
-    if (isMounting) {
+    if (!isFetchedUser) {
         return <Loading />;
     }
-
-    const ProfileHeader = () => (
-        <div className="flex w-full flex-col gap-5 md:w-[28rem]">
-            <div className="mt-5 flex gap-x-8 gap-y-3 md:mt-3">
-                {!!targetUser?.id && (
-                    <>
-                        <FollowersDialog
-                            username={username}
-                            targetUserId={targetUser.id}
-                            followersCount={followingCount?.followers || 0}
-                        />
-
-                        <FollowingDialog
-                            username={username}
-                            targetUserId={targetUser.id}
-                            followingCount={followingCount?.following || 0}
-                        />
-                    </>
-                )}
-            </div>
-
-            {targetUser?.description && (
-                <p className="text-sm text-muted-foreground">{targetUser?.description}</p>
-            )}
-
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
-                {targetUser?.location && (
-                    <div className="flex items-center gap-1">
-                        <MapPin size={16} className="text-black dark:text-white" />
-
-                        <span className="text-muted-foreground">{targetUser.location}</span>
-                    </div>
-                )}
-
-                {targetUser?.website && (
-                    <div className="flex items-center gap-1">
-                        <LinkIcon size={15} className="text-black dark:text-white" />
-
-                        <LinkUnderline asChild className="font-semibold text-muted-foreground">
-                            <a href={targetUser.website} target="_blank">
-                                {targetUser.website}
-                            </a>
-                        </LinkUnderline>
-                    </div>
-                )}
-
-                {targetUser?.twitter && (
-                    <div className="flex items-center gap-1">
-                        <Twitter size={16} className="text-black dark:text-white" />
-                        <LinkUnderline asChild className="font-semibold text-muted-foreground">
-                            <a href={`https://twitter.com/${targetUser?.twitter}`} target="_blank">
-                                {targetUser.twitter}
-                            </a>
-                        </LinkUnderline>
-                    </div>
-                )}
-            </div>
-        </div>
-    );
 
     return (
         <>
@@ -162,7 +81,7 @@ export default function User({ params }: UserProps) {
                             width={160}
                             height={160}
                             loading="eager"
-                            alt={`Foto de perfil dea ${targetUser?.username}`}
+                            alt={`Foto de perfil de ${targetUser?.username}`}
                             title={`Foto de perfil de ${targetUser?.username}`}
                         />
                         <AvatarFallback className="text-2xl">
@@ -189,22 +108,24 @@ export default function User({ params }: UserProps) {
                             )}
                         </div>
 
-                        {!!width && width >= 768 && <ProfileHeader />}
+                        {!!targetUser && !!width && width >= 768 && (
+                            <ProfileHeader username={username} targetUser={targetUser} />
+                        )}
                     </div>
                 </div>
 
-                {!!width && width < 768 && <ProfileHeader />}
+                {!!targetUser && !!width && width < 768 && (
+                    <ProfileHeader username={username} targetUser={targetUser} />
+                )}
             </div>
 
             <div className="mt-8 flex flex-col justify-center gap-8 lg:flex-row">
                 <div className="flex w-full flex-col gap-12 lg:w-3/5">
                     <FavoriteBooks username={username} />
 
-                    {!!userReads && <FinishedReads username={username} readsData={userReads} />}
+                    {!!targetUser && <FinishedReads username={username} targetUser={targetUser} />}
 
-                    {!!userProgress && (
-                        <RecentProgress username={username} progressData={userProgress} />
-                    )}
+                    {!!targetUser && <RecentProgress username={username} targetUser={targetUser} />}
                 </div>
 
                 <div className="w-full lg:w-72">

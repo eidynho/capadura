@@ -22,10 +22,14 @@ interface RecentProgressProps {
 export function RecentProgress({ username, targetUser }: RecentProgressProps) {
     const isCurrentUser = isPageUserSameCurrentUser(username);
 
-    const { data: userProgress } = useFetchUserProgress({
+    const { data: userProgress, isFetching } = useFetchUserProgress({
         userId: targetUser?.id || "",
         enabled: !!targetUser?.id,
     });
+
+    if (isFetching) {
+        return <LoadingSkeleton />;
+    }
 
     return (
         <div className="flex flex-col text-black dark:text-white">
@@ -106,3 +110,30 @@ export function RecentProgress({ username, targetUser }: RecentProgressProps) {
         </div>
     );
 }
+
+const LoadingSkeleton = () => {
+    return (
+        <div className="flex animate-pulse flex-col px-4">
+            <div className="mb-1 h-6 w-40 items-center rounded-md bg-zinc-300 dark:bg-accent"></div>
+
+            {Array.from({ length: 3 }, (_, index) => (
+                <div key={index} className="flex gap-4 border-t border-dark/20 py-4 last:border-b">
+                    <div className="h-28 w-20 items-center rounded-md bg-zinc-300 dark:bg-accent"></div>
+                    <div className="w-full">
+                        <div className="flex items-start justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                                <div className="mb-1 h-6 w-44 items-center rounded-md bg-zinc-300 dark:bg-accent"></div>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center">
+                            <div className="h-5 w-32 items-center rounded-md bg-zinc-300 dark:bg-accent"></div>
+                        </div>
+
+                        <div className="mt-3 h-4 w-2/3 items-center rounded-md bg-zinc-300 dark:bg-accent"></div>
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+};

@@ -96,11 +96,18 @@ export function CardFavoriteBook({
                     )}
                 </div>
                 <div className="flex items-center gap-6">
-                    <div className="flex items-center gap-1">
-                        <span className="text-sm text-muted-foreground">
-                            Publicado em {publishDateFormat(currentBook.publishDate)}
-                        </span>
-                    </div>
+                    <TooltipProvider delayDuration={400} skipDelayDuration={0}>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <span className="cursor-default text-sm text-muted-foreground">
+                                    {publishDateFormat(currentBook.publishDate)}
+                                </span>
+                            </TooltipTrigger>
+                            <TooltipContent side="top">
+                                <span>Ano de publicação</span>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
 
                     <TooltipProvider delayDuration={400} skipDelayDuration={0}>
                         <Tooltip>

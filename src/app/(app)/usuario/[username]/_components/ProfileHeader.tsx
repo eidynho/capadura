@@ -14,10 +14,14 @@ interface ProfileHeaderProps {
 }
 
 export function ProfileHeader({ targetUser, username }: ProfileHeaderProps) {
-    const { data: followingCount } = useGetUsersFollowsCount({
+    const { data: followingCount, isFetching } = useGetUsersFollowsCount({
         userId: targetUser?.id || "",
         enabled: !!targetUser?.id,
     });
+
+    if (isFetching) {
+        return <LoadingSkeleton />;
+    }
 
     return (
         <div className="flex w-full flex-col gap-5 md:w-[28rem]">
@@ -74,6 +78,29 @@ export function ProfileHeader({ targetUser, username }: ProfileHeaderProps) {
                         </LinkUnderline>
                     </div>
                 )}
+            </div>
+        </div>
+    );
+}
+
+function LoadingSkeleton() {
+    return (
+        <div className="flex w-full animate-pulse flex-col gap-5 md:w-[28rem]">
+            <div className="mt-5 flex gap-x-8 gap-y-3 md:mt-3">
+                <div className="h-6 w-20 items-center rounded-md bg-zinc-300 dark:bg-accent"></div>
+                <div className="h-6 w-20 items-center rounded-md bg-zinc-300 dark:bg-accent"></div>
+                <div className="h-6 w-20 items-center rounded-md bg-zinc-300 dark:bg-accent"></div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+                <div className="h-5 w-full items-center rounded-md bg-zinc-300 dark:bg-accent"></div>
+                <div className="h-5 w-2/3 items-center rounded-md bg-zinc-300 dark:bg-accent"></div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
+                <div className="h-6 w-24 items-center rounded-md bg-zinc-300 dark:bg-accent"></div>
+                <div className="h-6 w-24 items-center rounded-md bg-zinc-300 dark:bg-accent"></div>
+                <div className="h-6 w-24 items-center rounded-md bg-zinc-300 dark:bg-accent"></div>
             </div>
         </div>
     );

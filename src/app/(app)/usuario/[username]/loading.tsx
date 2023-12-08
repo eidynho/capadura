@@ -1,4 +1,4 @@
-function HeaderInfo() {
+function ProfileHeader() {
     return (
         <div className="flex w-full flex-col gap-5 md:w-[28rem]">
             <div className="mt-5 flex gap-x-8 gap-y-3 md:mt-3">
@@ -38,13 +38,13 @@ export default async function Loading() {
                         </div>
 
                         <div className="hidden md:block">
-                            <HeaderInfo />
+                            <ProfileHeader />
                         </div>
                     </div>
                 </div>
 
                 <div className="block md:hidden">
-                    <HeaderInfo />
+                    <ProfileHeader />
                 </div>
             </div>
 

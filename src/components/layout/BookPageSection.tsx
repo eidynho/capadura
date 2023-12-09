@@ -25,7 +25,7 @@ const bookData = {
     description:
         '<p>Tudo é rio é o livro de estreia de Carla Madeira. Com uma narrativa madura, precisa e ao mesmo tempo delicada e poética, o romance narra a história do casal Dalva e Venâncio, que tem a vida transformada após uma perda trágica, resultado do ciúme doentio do marido, e de Lucy, a prostituta mais depravada e cobiçada da cidade, que entra no caminho deles, formando um triângulo amoroso. <br>Na orelha do livro, Martha Medeiros escreve: "Tudo é rio é uma obra-prima, e não há exagero no que afirmo. É daqueles livros que, ao ser terminado, dá vontade de começar de novo, no mesmo instante, desta vez para se demorar em cada linha, saborear cada frase, deixar-se abraçar pela poesia da prosa. Na primeira leitura, essa entrega mais lenta é quase impossível, pois a correnteza dos acontecimentos nos leva até a última página sem nos dar chance para respirar. É preciso manter-se à tona ou a gente se afoga." <br>A metáfora do rio se revela por meio da narrativa que flui - ora intensa, ora mais branda - de forma ininterrupta, mas também por meio do suor, da saliva, do sangue, das lágrimas, do sêmen, e Carla faz isso sem ser apelativa, sem sentimentalismo barato, com a habilidade que só os melhores escritores possuem.</p>',
     imageKey: "book-6KwXEAAAQBAJ",
-    imageUrl: "/tudo-e-rio.jpeg",
+    imageUrl: "/tudo-e-rio.jpg",
 };
 
 const readsList = [
@@ -56,17 +56,17 @@ const user = {
     name: "",
     username: "eidy",
     email: "",
-    description: "euuzinho",
+    description: "hello world :)",
     location: "maringá",
     website: "https://viniciuseidy.com",
     twitter: "eidyota",
     imageKey: "",
-    imageUrl: "/user-example.jpeg",
+    imageUrl: "/user-example.jpg",
 };
 
 export function BookPageSection() {
     return (
-        <div className="relative my-12 max-h-[46rem] rounded-lg border border-zinc-300 bg-black/5 p-4 after:absolute after:-left-px after:top-1/2 after:h-40 after:w-px after:bg-gradient-to-t after:from-transparent after:via-yellow-700 after:to-transparent after:opacity-0 after:transition-all after:duration-500 after:content-[''] hover:after:top-1/4 hover:after:opacity-100 dark:border-border dark:bg-light/5 dark:after:via-primary lg:my-16">
+        <div className="relative my-12 max-h-[46rem] rounded-lg border border-zinc-300 bg-black/5 p-4 after:absolute after:-left-px after:top-1/2 after:h-64 after:w-px after:bg-gradient-to-t after:from-transparent after:via-yellow-600 after:to-transparent after:opacity-0 after:transition-all after:duration-500 after:content-[''] hover:after:top-1/4 hover:after:opacity-100 dark:border-border dark:bg-light/5 dark:after:via-primary lg:my-16">
             <div className="flex max-h-[43.75rem] flex-col items-start gap-8 overflow-hidden rounded-lg bg-light p-4 shadow-lg transition-colors dark:bg-dark dark:shadow-2xl md:flex-row">
                 <div className="z-10 w-full md:w-[19.5rem]">
                     <BookHeader

@@ -2,6 +2,11 @@
   "name": "capadura",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
+  "author": {
+    "name": "Vinicius Eidy",
+    "url": "https://www.viniciuseidy.com"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",

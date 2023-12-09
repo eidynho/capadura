@@ -21,6 +21,8 @@ export const metadata: Metadata = {
         template: "%s | Capadura",
         default: "A sua rede social de livros | Capadura",
     },
+    description:
+        "Conecte-se com apaixonados por livros, descubra recomendações, compartilhe leituras e explore um mundo literário colaborativo. Junte-se a nós!",
     alternates: {
         canonical: `${BASE_URL}`,
     },
@@ -29,12 +31,6 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: RootLayoutProps) {
     return (
         <html lang="pt">
-            <head>
-                <meta
-                    name="description"
-                    content="Conecte-se com apaixonados por livros, descubra recomendações, compartilhe leituras e explore um mundo literário colaborativo. Junte-se a nós!"
-                />
-            </head>
             <body className="bg-white transition-colors dark:bg-dark">
                 <div className={`${manrope.variable} mx-auto max-w-[120rem] font-manrope`}>
                     <Providers>
